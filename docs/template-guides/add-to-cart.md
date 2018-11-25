@@ -1,4 +1,4 @@
-# Add to Carts
+# Add to Cart
 
 A great feature for a Commerce site is to allow your customers to create wishlist's of product they want to purchase, saved to their account for later purchase. To provide an even more seamless user experience would be to allow customers to add these wishlist items to their cart to purchase.
 
