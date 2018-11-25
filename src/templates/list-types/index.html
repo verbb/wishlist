@@ -1,0 +1,54 @@
+{% extends 'wishlist/_layouts' %}
+
+{% set title = 'List Types' | t('wishlist') %}
+{% set selectedSubnavItem = 'listTypes' %}
+
+{% set crumbs = [
+    { label: craft.wishlist.getPluginName() | t('wishlist'), url: url('wishlist') },
+    { label: 'List Types' | t('wishlist'), url: url('wishlist/list-types') },
+] %}
+
+{% block blockContent %}
+    <div id="noListTypes"{% if listTypes %} class="hidden"{% endif %}>
+        <p>{{ 'No list types exist yet.' | t('wishlist') }}</p>
+    </div>
+
+    {% if listTypes | length %}
+        <table id="listTypes" class="data fullwidth collapsible">
+            <thead>
+                <th scope="col">{{ 'Name' | t('wishlist') }}</th>
+                <th scope="col">{{ 'Handle' | t('wishlist') }}</th>
+                <th scope="col">{{ 'Default?' | t('wishlist') }}</th>
+                <td class="thin"></td>
+            </thead>
+            <tbody>
+                {% for listType in listTypes %}
+                    <tr data-id="{{ listType.id }}" data-name="{{ listType.name | t('wishlist') }}">
+                        <th scope="row" data-title="{{ 'Name' | t('wishlist') }}"><a href="{{ url('wishlist/list-types/' ~ listType.id) }}">{{ listType.name | t('wishlist') }}</a></th>
+                        <td data-title="{{ 'Handle' | t('wishlist') }}"><code>{{ listType.handle }}</code></td>
+                        <td data-title="{{ 'Default?' | t('wishlist') }}">
+                            {% if listType.default %}
+                                <span data-icon="check" title="{{ 'Yes' | t('wishlist') }}"></span>
+                            {% endif %}
+                        </td>
+                        <td class="thin"><a class="delete icon" title="{{ 'Delete' | t('wishlist') }}" role="button"></a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <div id="newListType" class="buttons">
+        <a href="{{ url('wishlist/list-types/new') }}" class="btn submit add icon">{{ 'New list type' | t('wishlist') }}</a>
+    </div>
+{% endblock %}
+
+{% js %}
+    var adminTable = new Craft.AdminTable({
+        tableSelector: '#listTypes',
+        noObjectsSelector: '#noListTypes',
+        newObjectBtnSelector: '#newListType',
+        deleteAction: 'wishlist/list-types/delete',
+        confirmDeleteMessage: '{{ 'Are you sure you want to delete “{name}” and all its lists?' | t('wishlist') }}'
+    });
+{% endjs %}

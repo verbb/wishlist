@@ -1,0 +1,176 @@
+{% extends 'wishlist/_layouts' %}
+{% set selectedSubnavItem = 'lists' %}
+
+{% set crumbs = [
+    { label: craft.wishlist.getPluginName() | t('wishlist'), url: url('wishlist') },
+    { label: 'Lists' | t('wishlist'), url: url('wishlist/lists') },
+] %}
+
+{% set fullPageForm = true %}
+{% set saveShortcutRedirect = continueEditingUrl %}
+
+{% import '_includes/forms' as forms %}
+
+{% block actionButton %}
+    <div class="btngroup">
+        <input type="submit" class="btn submit" value="{{ 'Save' | t('wishlist') }}">
+        <div class="btn submit menubtn"></div>
+        <div class="menu">
+            <ul>
+                <li>
+                    <a class="formsubmit" data-redirect="{{ continueEditingUrl | hash }}">
+                        {{ 'Save and continue editing' | t('wishlist') }}
+                        {{ forms.optionShortcutLabel('S') }}
+                    </a>
+                </li>
+
+                {% if list.id %}
+                    <li>
+                        <a class="formsubmit" data-param="listId" data-value="" data-redirect="{{ continueEditingUrl | hash }}">
+                            {{ 'Save as a new list' | t('wishlist') }}
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+
+            {% if list.id %}
+                <hr>
+                <ul>
+                    <li>
+                        <a class="formsubmit error" data-action="wishlist/lists/delete" data-confirm="{{ 'Are you sure you want to delete this list?' | t('wishlist') }}" data-redirect="{{ 'wishlist/lists' | hash }}">
+                            {{ 'Delete' | t('wishlist') }}
+                        </a>
+                    </li>
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <input type="hidden" name="action" value="wishlist/lists/save-list">
+    {{ redirectInput('wishlist/lists') }}
+    <input type="hidden" name="typeId" value="{{ listType.id }}">
+    {% if list.id %}<input type="hidden" name="listId" value="{{ list.id }}">{% endif %}
+
+    <div id="fields">
+        {{ forms.textField({
+            label: 'Title' | t('wishlist'),
+            site: list.site,
+            id: 'title',
+            name: 'title',
+            value: list.title,
+            placeholder: 'Enter title' | t('wishlist'),
+            errors: list.getErrors('title'),
+            first: true,
+            autofocus: true,
+            required: true,
+            maxlength: 255
+        }) }}
+
+        <div>
+            {% set tabs = listType.getListFieldLayout().getTabs() %}
+
+            {% for tab in tabs %}
+                <div id="tab{{ loop.index }}" {% if not loop.first %} class="hidden" {% endif %}>
+                    {% include "_includes/fields" with {
+                        fields: tab.getFields(),
+                        element: list,
+                    } only %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <hr>
+
+    <div id="items" class="">
+        <h2>{{ 'List Items' | t('comments') }}</h2>
+
+        {% if list.items.count() %}
+            {% set elementAttr = {
+                elementType: className(list),
+                disabledElementIds: null,
+                attributes: {
+                    id: ['id', { label: 'Item' | t('wishlist') }],
+                    type: ['elementDisplay', { label: 'Type' | t('wishlist') }],
+                    dateCreated: ['dateCreated', { label: 'Date Created' | t('wishlist') }],
+                },
+                elements: list.items.all(),
+                showCheckboxes: false,
+            } %}
+
+            <div class="elementindex">
+                {% include '_elements/tableview/container' with elementAttr %}
+            </div>
+        {% else %}
+            <p><em>{{ 'No items in this list.' | t('wishlist') }}</em></p>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block details %}
+    <div class="meta">
+        {{ forms.lightswitchField({
+            label: 'Enabled' | t('wishlist'),
+            id: 'enabled',
+            name: 'enabled',
+            on: list.enabled,
+            first: true,
+        }) }}
+
+        <div class="field">
+            <div class="heading">
+                <label>{{ 'Reference' | t('wishlist') }}</label>
+            </div>
+
+            <div class="input ltr">
+                <code>{{ list.reference }}</code>
+            </div>
+        </div>
+
+        <div class="field">
+            <div class="heading">
+                <label>{{ 'IP Address' | t('wishlist') }}</label>
+            </div>
+
+            <div class="input ltr">
+                <code>{{ list.lastIp }}</code>
+            </div>
+        </div>
+        
+        <div class="field">
+            <div class="heading">
+                <label>{{ 'Owner' | t('wishlist') }}</label>
+            </div>
+
+            {% if list.user %}
+                <div class="input ltr">
+                    <a href="{{ list.user.cpEditUrl }}">{{ list.user }}</a>
+                </div>
+            {% else %}
+                <div class="input ltr">
+                    {{ 'Guest' | t('wishlist') }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <hr>
+
+    {% if list.id %}
+        <hr>
+
+        <div class="meta read-only">
+            <div class="data">
+                <h5 class="heading">{{ 'Date Created' | t('wishlist') }}</h5>
+                <div class="value">{{ list.dateCreated | date('short') }} {{ list.dateCreated | time('short') }}</div>
+            </div>
+
+            <div class="data">
+                <h5 class="heading">{{ 'Date Updated' | t('wishlist') }}</h5>
+                <div class="value">{{ list.dateUpdated | date('short') }} {{ list.dateUpdated | time('short') }}</div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

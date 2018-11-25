@@ -1,0 +1,116 @@
+{% extends 'wishlist/_layouts' %}
+{% set selectedSubnavItem = 'lists' %}
+
+{% set crumbs = [
+    { label: craft.wishlist.getPluginName() | t('wishlist'), url: url('wishlist') },
+    { label: 'Lists' | t('wishlist'), url: url('wishlist/lists') },
+    { label: list.title | t('wishlist'), url: list.cpEditUrl },
+] %}
+
+{% set fullPageForm = true %}
+{% set saveShortcutRedirect = continueEditingUrl %}
+
+{% import '_includes/forms' as forms %}
+
+{% block actionButton %}
+    <div class="btngroup">
+        <input type="submit" class="btn submit" value="{{ 'Save' | t('wishlist') }}">
+        <div class="btn submit menubtn"></div>
+        <div class="menu">
+            <ul>
+                <li>
+                    <a class="formsubmit" data-redirect="{{ continueEditingUrl | hash }}">
+                        {{ 'Save and continue editing' | t('wishlist') }}
+                        {{ forms.optionShortcutLabel('S') }}
+                    </a>
+                </li>
+
+                {% if item.id %}
+                    <li>
+                        <a class="formsubmit" data-param="itemId" data-value="" data-redirect="{{ continueEditingUrl | hash }}">
+                            {{ 'Save as a new item' | t('wishlist') }}
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+
+            {% if item.id %}
+                <hr>
+                <ul>
+                    <li>
+                        <a class="formsubmit error" data-action="wishlist/items/delete" data-confirm="{{ 'Are you sure you want to delete this item?' | t('wishlist') }}" data-redirect="{{ 'wishlist/items' | hash }}">
+                            {{ 'Delete' | t('wishlist') }}
+                        </a>
+                    </li>
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <input type="hidden" name="action" value="wishlist/items/save-item">
+    {{ redirectInput('wishlist/items') }}
+    {% if item.id %}<input type="hidden" name="itemId" value="{{ item.id }}">{% endif %}
+
+    <div id="fields">
+        <div>
+            {% set tabs = item.getFieldLayout().getTabs() %}
+
+            {% for tab in tabs %}
+                <div id="tab{{ loop.index }}" {% if not loop.first %} class="hidden" {% endif %}>
+                    {% include "_includes/fields" with {
+                        fields: tab.getFields(),
+                        element: item,
+                    } only %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block details %}
+    <div class="meta">
+        {{ forms.lightswitchField({
+            label: 'Enabled' | t('wishlist'),
+            id: 'enabled',
+            name: 'enabled',
+            on: item.enabled,
+            first: true,
+        }) }}
+
+        <div class="field">
+            <div class="heading">
+                <label>{{ 'Element' | t('wishlist') }}</label>
+            </div>
+
+            {% if item.element %}
+                <div class="input ltr">
+                    <a href="{{ item.element.cpEditUrl }}">{{ item.element }}</a>
+                </div>
+            {% else %}
+                <div class="input ltr">
+                    {{ 'Element not found' | t('wishlist') }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <hr>
+
+    {% if item.id %}
+        <hr>
+
+        <div class="meta read-only">
+            <div class="data">
+                <h5 class="heading">{{ 'Date Created' | t('wishlist') }}</h5>
+                <div class="value">{{ item.dateCreated | date('short') }} {{ item.dateCreated | time('short') }}</div>
+            </div>
+
+            <div class="data">
+                <h5 class="heading">{{ 'Date Updated' | t('wishlist') }}</h5>
+                <div class="value">{{ item.dateUpdated | date('short') }} {{ item.dateUpdated | time('short') }}</div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

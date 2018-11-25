@@ -1,0 +1,74 @@
+{% extends 'wishlist/_layouts' %}
+{% set selectedSubnavItem = 'listTypes' %}
+
+{% set crumbs = [
+    { label: craft.wishlist.getPluginName() | t('wishlist'), url: url('wishlist') },
+    { label: 'List Types' | t('wishlist'), url: url('wishlist/list-types') },
+] %}
+
+{% set fullPageForm = true %}
+
+{% import '_includes/forms' as forms %}
+
+{% block blockContent %}
+    <input type="hidden" name="action" value="wishlist/list-types/save-list-type">
+    {{ redirectInput('wishlist/list-types') }}
+    {% if listType.id %}<input type="hidden" name="listTypeId" value="{{ listType.id }}">{% endif %}
+
+    <div id="list-type-settings">
+        {{ forms.textField({
+            first: true,
+            label: 'Name' | t('wishlist'),
+            instructions: 'What this list type will be called in the CP.' | t('wishlist'),
+            id: 'name',
+            name: 'name',
+            value: listType.name,
+            errors: listType.getErrors('name'),
+            autofocus: true,
+            required: true,
+            translatable: true
+        }) }}
+
+        {{ forms.textField({
+            label: 'Handle' | t('wishlist'),
+            instructions: 'How you’ll refer to this list type in the templates.' | t('wishlist'),
+            id: 'handle',
+            class: 'code',
+            name: 'handle',
+            value: listType.handle,
+            errors: listType.getErrors('handle'),
+            required: true
+        }) }}
+
+        {{ forms.checkboxField({
+            label: 'Use this list type by default for new lists.' | t('wishlist'),
+            id: 'default',
+            name: 'default',
+            value: 1,
+            checked: listType is defined ? listType.default,
+            errors: listType is defined ? listType.getErrors('default')
+        }) }}
+    </div>
+
+    <div id="list-fields" class="hidden">
+        {% include '_includes/fieldlayoutdesigner' with {
+            fieldLayout: listType.getListFieldLayout(),
+        } only %}
+    </div>
+
+    <div id="item-fields" class="hidden">
+        {% namespace 'item-layout' %}
+            {% include '_includes/fieldlayoutdesigner' with {
+                fieldLayout: listType.getItemFieldLayout(),
+                customizableTabs: false
+            } only %}
+        {% endnamespace %}
+    </div>
+
+{% endblock %}
+
+{% if brandNewListType %}
+    {% js %}
+        new Craft.HandleGenerator('#name', '#handle');
+    {% endjs %}
+{% endif %}

@@ -1,0 +1,15 @@
+{% extends '_layouts/elementindex' %}
+
+{% set title = 'Lists' | t('gift-voucher') %}
+{% set selectedSubnavItem = 'lists' %}
+
+{% set docTitle = title ~ ' - Wishlist' %}
+{% set elementType = 'verbb\\wishlist\\elements\\ListElement' %}
+
+{% if listTypeHandle is defined %}
+    {% js %}
+       window.defaultListTypeHandle = '{{ listTypeHandle }}';
+    {% endjs %}
+{% endif %}
+
+{% do view.registerAssetBundle('verbb\\wishlist\\assetbundles\\WishlistAsset') -%}
