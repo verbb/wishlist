@@ -15,6 +15,8 @@ All sharable via a unique URL of course.
 - Single-click add to cart for any purchasables in a list.
 - Easy sharing of lists.
 
+<img src="https://verbb.io/uploads/plugins/wishlist/control-panel.png" style="box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-radius: 4px; border: 1px solid rgba(0,0,0,0.12);">
+
 ## Documentation
 
 Visit the [Wishlist Plugin page](https://verbb.io/craft-plugins/wishlist) for all documentation, guides, pricing and developer resources.
