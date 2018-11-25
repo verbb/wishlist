@@ -2,17 +2,18 @@
 
 <img width="500" src="https://verbb.io/uploads/plugins/wishlist/_800x455_crop_center-center_none/wishlist-social-card.png">
 
+Allow your site users to create lists for any element, for a variety of use-cases. Create a favourites list for entries, or create a wishlist for products to easily one-click add to your cart.
+
+All sharable via a unique URL of course.
 
 ## Features
 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
+- Guests and logged-in users both supported.
+- Create multiple lists, or just use the default one.
+- Allow registered users to manage their own lists, creating new ones, deleting or clearing.
+- Custom fields for lists and list items.
+- Single-click add to cart for any purchasables in a list.
+- Easy sharing of lists.
 
 ## Documentation
 
