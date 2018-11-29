@@ -196,6 +196,15 @@ class ListElement extends Element
         return $this->userId ?? $this->sessionId ?? null;
     }
 
+    public function getOwner()
+    {
+        if ($this->userId) {
+            return $this->getUser();
+        }
+
+        return null;
+    }
+
 
     // URLs
     // -------------------------------------------------------------------------
@@ -272,6 +281,15 @@ class ListElement extends Element
         $listType = $this->getType();
 
         switch ($attribute) {
+            case 'owner':
+                $owner = $this->getOwner();
+
+                if ($owner) {
+                    return '<a href="' . $owner->getCpEditUrl() . '">' . $owner . '</a>';
+                }
+
+                return Craft::t('wishlist', 'Guest');
+
             case 'type':
                 return ($listType ? Craft::t('site', $listType->name) : '');
 

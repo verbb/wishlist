@@ -94,6 +94,10 @@ class ItemsController extends BaseController
         return $this->redirectToPostedUrl($item);
     }
 
+
+    // Front-end Methods
+    // =========================================================================
+
     public function actionAdd()
     {
         $request = Craft::$app->getRequest();
