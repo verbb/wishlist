@@ -295,7 +295,8 @@ class ListElement extends Element
 
             case 'items':
                 return $this->items->count();
-
+            case  'owner':
+                return $this->user ?? Craft::t('site', 'Guest');
             default:
                 return parent::tableAttributeHtml($attribute);
         }
