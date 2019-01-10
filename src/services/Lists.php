@@ -29,7 +29,7 @@ class Lists extends Component
         return Craft::$app->getElements()->getElementById($id, ListElement::class, $siteId);
     }
 
-    public function getList($id = null, $forceSave = false): ListElement
+    public function getList($id = null, $forceSave = false, $listTypeId = null): ListElement
     {
         $session = Craft::$app->getSession();
 
@@ -42,16 +42,28 @@ class Lists extends Component
         }
 
         if ($this->_list === null) {
-            $this->_list = $this->getListQueryForOwner()->default(true)->one();
-
+            if($listTypeId){
+                // Get the first list of the typeId we find for the user.  If it needs to be more precise, use id.
+                $this->_list = $this->getListQueryForOwner()->typeId($listTypeId)->one();
+            }else {
+                $this->_list = $this->getListQueryForOwner()->default(true)->one();
+            }
             if (!$this->_list) {
-                $listType = Wishlist::getInstance()->getListTypes()->getDefaultListType();
+                $listType = null;
+                if($listTypeId){
+                    // If this list type is new for the user, let's create a new list for it.
+                    $listType = Wishlist::getInstance()->getListTypes()->getListTypeById($listTypeId);
+                }
 
+                if($listType === null) {
+                    // If we still don't have a valid list type, let's get the default one.
+                    $listType = Wishlist::getInstance()->getListTypes()->getDefaultListType();
+                }
                 $this->_list = new ListElement();
                 $this->_list->reference = $this->generateReferenceNumber();
                 $this->_list->typeId = $listType->id;
                 $this->_list->title = $listType->name;
-                $this->_list->default = true;
+                $this->_list->default = $listType->default;
                 $this->_list->sessionId = $this->getSessionId();
             }
         }
