@@ -44,7 +44,7 @@ class Items extends Component
         return true;
     }
 
-    public function createItem($elementId, $listId, $listTypeId)
+    public function createItem($elementId, $listId, $listTypeId = null)
     {
         $list = Wishlist::$plugin->getLists()->getList($listId, true, $listTypeId);
         $element = Craft::$app->getElements()->getElementById($elementId);
