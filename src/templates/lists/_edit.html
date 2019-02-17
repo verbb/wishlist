@@ -87,7 +87,7 @@
     <div id="items" class="">
         <h2>{{ 'List Items' | t('comments') }}</h2>
 
-        {% if list.items.count() %}
+        {% if list.id and list.items.count() %}
             {% set elementAttr = {
                 elementType: className(list),
                 disabledElementIds: null,
