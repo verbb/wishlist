@@ -140,10 +140,11 @@ class ItemsController extends BaseController
         $listTypeId = $request->getParam('listTypeId');
         $listTypeHandle = $request->getParam('listTypeHandle');
 
-        if(!$listTypeId && $listTypeHandle){
+        if (!$listTypeId && $listTypeHandle) {
             // Always take the ID first. If both are sent, Handle is ignored.
             $listType = WishList::$plugin->getListTypes()->getListTypeByHandle($listTypeHandle);
-            if($listType) {
+            
+            if ($listType) {
                 $listTypeId = $listType->id;
             }
         }
@@ -179,10 +180,11 @@ class ItemsController extends BaseController
         $listTypeId = $request->getParam('listTypeId');
         $listTypeHandle = $request->getParam('listTypeHandle');
 
-        if(!$listTypeId && $listTypeHandle){
+        if (!$listTypeId && $listTypeHandle) {
             // Always take the ID first. If both are sent, Handle is ignored.
             $listType = WishList::$plugin->getListTypes()->getListTypeByHandle($listTypeHandle);
-            if($listType) {
+            
+            if ($listType) {
                 $listTypeId = $listType->id;
             }
         }
@@ -245,10 +247,11 @@ class ItemsController extends BaseController
         $listTypeId = $request->getParam('listTypeId');
         $listTypeHandle = $request->getParam('listTypeHandle');
 
-        if(!$listTypeId && $listTypeHandle){
+        if (!$listTypeId && $listTypeHandle) {
             // Always take the ID first. If both are sent, Handle is ignored.
             $listType = WishList::$plugin->getListTypes()->getListTypeByHandle($listTypeHandle);
-            if($listType) {
+            
+            if ($listType) {
                 $listTypeId = $listType->id;
             }
         }

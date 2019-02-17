@@ -42,23 +42,26 @@ class Lists extends Component
         }
 
         if ($this->_list === null) {
-            if($listTypeId){
+            if ($listTypeId) {
                 // Get the first list of the typeId we find for the user.  If it needs to be more precise, use id.
                 $this->_list = $this->getListQueryForOwner()->typeId($listTypeId)->one();
-            }else {
+            } else {
                 $this->_list = $this->getListQueryForOwner()->default(true)->one();
             }
+
             if (!$this->_list) {
                 $listType = null;
-                if($listTypeId){
+
+                if ($listTypeId) {
                     // If this list type is new for the user, let's create a new list for it.
                     $listType = Wishlist::getInstance()->getListTypes()->getListTypeById($listTypeId);
                 }
 
-                if($listType === null) {
+                if ($listType === null) {
                     // If we still don't have a valid list type, let's get the default one.
                     $listType = Wishlist::getInstance()->getListTypes()->getDefaultListType();
                 }
+
                 $this->_list = new ListElement();
                 $this->_list->reference = $this->generateReferenceNumber();
                 $this->_list->typeId = $listType->id;
