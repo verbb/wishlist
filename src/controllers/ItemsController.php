@@ -137,7 +137,18 @@ class ItemsController extends BaseController
         $elementId = $request->getParam('elementId');
         $listId = $request->getParam('listId');
 
-        $list = Wishlist::$plugin->getLists()->getList($listId, true);
+        $listTypeId = $request->getParam('listTypeId');
+        $listTypeHandle = $request->getParam('listTypeHandle');
+
+        if(!$listTypeId && $listTypeHandle){
+            // Always take the ID first. If both are sent, Handle is ignored.
+            $listType = WishList::$plugin->getListTypes()->getListTypeByHandle($listTypeHandle);
+            if($listType) {
+                $listTypeId = $listType->id;
+            }
+        }
+        
+        $list = Wishlist::$plugin->getLists()->getList($listId, true, $listTypeId);
 
         if (!$elementId) {
             return $this->returnError('Element ID must be provided.');
@@ -165,7 +176,19 @@ class ItemsController extends BaseController
         $elementId = $request->getParam('elementId');
         $listId = $request->getParam('listId');
 
-        $list = Wishlist::$plugin->getLists()->getList($listId, true);
+        $listTypeId = $request->getParam('listTypeId');
+        $listTypeHandle = $request->getParam('listTypeHandle');
+
+        if(!$listTypeId && $listTypeHandle){
+            // Always take the ID first. If both are sent, Handle is ignored.
+            $listType = WishList::$plugin->getListTypes()->getListTypeByHandle($listTypeHandle);
+            if($listType) {
+                $listTypeId = $listType->id;
+            }
+        }
+
+        $list = Wishlist::$plugin->getLists()->getList($listId, true, $listTypeId);
+
 
         if (!$elementId) {
             return $this->returnError('Element ID must be provided.');
@@ -219,7 +242,18 @@ class ItemsController extends BaseController
         $elementId = $request->getParam('elementId');
         $listId = $request->getParam('listId');
 
-        $item = WishList::$plugin->getItems()->createItem($elementId, $listId);
+        $listTypeId = $request->getParam('listTypeId');
+        $listTypeHandle = $request->getParam('listTypeHandle');
+
+        if(!$listTypeId && $listTypeHandle){
+            // Always take the ID first. If both are sent, Handle is ignored.
+            $listType = WishList::$plugin->getListTypes()->getListTypeByHandle($listTypeHandle);
+            if($listType) {
+                $listTypeId = $listType->id;
+            }
+        }
+
+        $item = WishList::$plugin->getItems()->createItem($elementId, $listId, $listTypeId);
 
         return $item;
     }

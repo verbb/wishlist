@@ -112,6 +112,7 @@ class Wishlist extends Plugin
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event) {
             $event->rules = array_merge($event->rules, [
                 'wishlist' => 'wishlist/lists/index',
+                'wishlist/lists/<listTypeHandle:{handle}>' => 'wishlist/lists/index',
                 'wishlist/lists/<listTypeHandle:{handle}>/new' => 'wishlist/lists/edit-list',
                 'wishlist/lists/<listTypeHandle:{handle}>/<listId:\d+>' => 'wishlist/lists/edit-list',
                 'wishlist/lists/<listTypeHandle:{handle}>/<listId:\d+>/items/<itemId:\d+>' => 'wishlist/items/edit-item',
