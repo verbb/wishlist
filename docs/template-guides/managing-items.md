@@ -12,7 +12,12 @@ You can Add, Remove or Toggle items in any list. You have the option of either u
         {{ csrfInput() }}
 
         <input type="text" name="elementId" value="{{ entry.id }}">
+
+        {# Optional: Pass content for custom fields #}
         <input type="text" name="fields[myField]" value="My Value">
+
+        {# Optional: Pass specific list type handle #}
+        <input type="text" name="listTypeHandle" value="favourites">
 
         <input type="submit" value="Add to List">
     </form>
