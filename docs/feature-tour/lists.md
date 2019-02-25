@@ -1,6 +1,6 @@
 # Lists
 
-Lists are simply that - a list of elements for a particular user. Any element on your Craft site can be added to a list, such as Entries, Categories and Commerce Products/Variants. A default list is always created for a user when they first add an item to their list. Use the [Template Guides](docs:template-guides/items) to allow users to manage the items in their list.
+Lists are simply that - a list of elements for a particular user. Any element on your Craft site can be added to a list, such as Entries, Categories and Commerce Products/Variants. A default list is always created for a user when they first add an item to their list. Use the [Template Guides](docs:template-guides/managing-items) to allow users to manage the items in their list.
 
 Lists are session-based, and are populated as long as the current session is active. For guests, as soon as their session ends – such as they close their browser – their list items will be gone. For registered and logged-in users, lists will be persisted against their account, so its important to prompt your users to login or register to save their list contents. In fact, it works pretty similar to a typical Cart!
 
