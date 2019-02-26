@@ -77,7 +77,7 @@ class Wishlist extends Plugin
             ];
         }
 
-        if (Craft::$app->getUser()->checkPermission('wishlist-manageLists')) {
+        if (Craft::$app->getUser()->checkPermission('wishlist-manageListTypes')) {
             $navItems['subnav']['listTypes'] = [
                 'label' => Craft::t('wishlist', 'List Types'),
                 'url' => 'wishlist/list-types',
