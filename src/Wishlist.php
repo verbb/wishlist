@@ -68,7 +68,7 @@ class Wishlist extends Plugin
     {
         $navItems = parent::getCpNavItem();
 
-        $navItem['label'] = $this->getPluginName();
+        $navItems['label'] = $this->getPluginName();
 
         if (Craft::$app->getUser()->checkPermission('wishlist-manageLists')) {
             $navItems['subnav']['lists'] = [
