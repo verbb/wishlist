@@ -202,8 +202,10 @@ class Lists extends Component
 
         return (new Query())
             ->select(['lists.id'])
-            ->where('[[lists.dateUpdated]] <= :edge', ['edge' => $edge->format('Y-m-d H:i:s')])
-            ->from(['lists' => '{{%wishlist_lists}}'])
+            ->from(['{{%wishlist_lists}} lists'])
+            ->join('LEFT OUTER JOIN', '{{%wishlist_items}} items', 'lists.id = items.listId')
+            ->where('lists.dateUpdated <= :edge', ['edge' => $edge->format('Y-m-d H:i:s')])
+            ->andWhere(['is', 'items.listId', null])
             ->column();
     }
     
