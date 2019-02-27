@@ -194,7 +194,7 @@ class Lists extends Component
 
     private function _getListsIdsToPurge(): array
     {
-        $configInterval = Plugin::getInstance()->getSettings()->purgeInactiveListsDuration;
+        $configInterval = Wishlist::getInstance()->getSettings()->purgeInactiveListsDuration;
         $edge = new \DateTime();
         $interval = new \DateInterval($configInterval);
         $interval->invert = 1;
