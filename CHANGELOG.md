@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.3 - 2019-02-27
+
+### Fixed
+- Fix typo in purge lists function.
+
 ## 1.0.2 - 2019-02-26
 
 ### Fixed
