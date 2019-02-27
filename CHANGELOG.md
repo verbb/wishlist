@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.4 - 2019-02-27
+
+### Fixed
+- Fix purge function to only remove lists with zero items.
+
 ## 1.0.3 - 2019-02-27
 
 ### Fixed
