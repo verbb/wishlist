@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.5 - 2019-03-01
+
+### Fixed
+- Fix setting field params via URL not working correctly.
+
 ## 1.0.4 - 2019-02-27
 
 ### Fixed
