@@ -140,6 +140,29 @@ class Item extends Element
         return false;
     }
 
+    public function setFieldValuesFromRequest(string $paramNamespace = '')
+    {
+        $this->setFieldParamNamespace($paramNamespace);
+        $values = Craft::$app->getRequest()->getParam($paramNamespace, []);
+
+        foreach ($this->fieldLayoutFields() as $field) {
+            // Do we have any post data for this field?
+            if (isset($values[$field->handle])) {
+                $value = $values[$field->handle];
+            } else if (!empty($this->_fieldParamNamePrefix) && UploadedFile::getInstancesByName($this->_fieldParamNamePrefix . '.' . $field->handle)) {
+                // A file was uploaded for this field
+                $value = null;
+            } else {
+                continue;
+            }
+
+            $this->setFieldValue($field->handle, $value);
+
+            // Normalize it now in case the system language changes later
+            $this->normalizeFieldValue($field->handle);
+        }
+    }
+
 
     // URLs
     // -------------------------------------------------------------------------
