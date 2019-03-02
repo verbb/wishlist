@@ -94,6 +94,42 @@ class ItemsController extends BaseController
         return $this->redirectToPostedUrl($item);
     }
 
+    public function actionDelete()
+    {
+        $this->requirePostRequest();
+
+        $request = Craft::$app->getRequest();
+        $itemId = $request->getBodyParam('itemId');
+        $item = Wishlist::getInstance()->getItems()->getItemById($itemId);
+
+        if (!$item) {
+            throw new Exception(Craft::t('wishlist', 'Item not found with the ID “{id}”', ['id' => $itemId]));
+        }
+
+        if (!Craft::$app->getElements()->deleteElement($item)) {
+            if ($request->getAcceptsJson()) {
+                return $this->asJson(['success' => false]);
+            }
+
+            Craft::$app->getSession()->setError(Craft::t('wishlist', 'Couldn’t delete item.'));
+
+            // Send the item back to the template
+            Craft::$app->getUrlManager()->setRouteParams([
+                'item' => $item,
+            ]);
+
+            return null;
+        }
+
+        if ($request->getAcceptsJson()) {
+            return $this->asJson(['success' => true]);
+        }
+
+        Craft::$app->getSession()->setNotice(Craft::t('wishlist', 'Item deleted.'));
+
+        return $this->redirectToPostedUrl($item);
+    }
+
 
     // Front-end Methods
     // =========================================================================
