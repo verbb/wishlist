@@ -38,7 +38,7 @@
                 <hr>
                 <ul>
                     <li>
-                        <a class="formsubmit error" data-action="wishlist/items/delete" data-confirm="{{ 'Are you sure you want to delete this item?' | t('wishlist') }}" data-redirect="{{ 'wishlist/items' | hash }}">
+                        <a class="formsubmit error" data-action="wishlist/items/delete" data-confirm="{{ 'Are you sure you want to delete this item?' | t('wishlist') }}" data-redirect="{{ list.cpEditUrl | hash }}">
                             {{ 'Delete' | t('wishlist') }}
                         </a>
                     </li>
@@ -50,7 +50,7 @@
 
 {% block content %}
     <input type="hidden" name="action" value="wishlist/items/save-item">
-    {{ redirectInput('wishlist/items') }}
+    {{ redirectInput(list.cpEditUrl) }}
     {% if item.id %}<input type="hidden" name="itemId" value="{{ item.id }}">{% endif %}
 
     <div id="fields">
