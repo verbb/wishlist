@@ -1,6 +1,6 @@
 # Managing Items
 
-You can Add, Remove or Toggle items in any list. You have the option of either using a `<form>` element or simply via a URL, depending on your templating needs.
+You can Add, Remove, Update or Toggle items in any list. You have the option of either using a `<form>` element or simply via a URL, depending on your templating needs.
 
 ### Add Item
 
@@ -72,6 +72,37 @@ You can Add, Remove or Toggle items in any list. You have the option of either u
         <input type="text" name="elementId" value="{{ entry.id }}">
 
         <input type="submit" value="Toggle in List">
+    </form>
+{% endfor %}
+```
+
+```twig URL
+{% for entry in craft.entries.section('news').all() %}
+    {% set item = craft.wishlist.item(entry.id) %}
+
+    <a href="{{ item.toggleUrl() }}">Toggle</a>
+{% endfor %}
+```
+:::
+
+### Update Item
+
+::: code
+```twig Form
+{% for entry in craft.entries.section('news').all() %}
+    <form method="POST">
+        <input type="hidden" name="action" value="wishlist/items/update">
+        {{ csrfInput() }}
+
+        {% set item = craft.wishlist.item(324) %}
+
+        {% if item %}
+            <input type="hidden" name="itemId" value="{{ item.id }}">
+        {% endif %}
+
+        <input type="text" name="fields[plainText]" value="Updated Value">
+
+        <input type="submit" value="Update">
     </form>
 {% endfor %}
 ```

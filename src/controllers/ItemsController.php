@@ -15,7 +15,7 @@ class ItemsController extends BaseController
     // Properties
     // =========================================================================
 
-    protected $allowAnonymous = ['add', 'remove', 'toggle'];
+    protected $allowAnonymous = ['add', 'remove', 'update', 'toggle'];
 
 
     // Public Methods
@@ -250,6 +250,30 @@ class ItemsController extends BaseController
         }
 
         return $this->returnSuccess('Item toggled in list.');
+    }
+
+    public function actionUpdate()
+    {
+        $request = Craft::$app->getRequest();
+        $itemId = $request->getParam('itemId');
+
+        if (!$itemId) {
+            return $this->returnError('Item ID must be provided.');
+        }
+
+        $item = Craft::$app->getElements()->getElementById($itemId);
+
+        if (!$item) {
+            return $this->returnError('Unable to find item.');
+        }
+
+        $item->setFieldValuesFromRequest('fields');
+        
+        if (!Craft::$app->getElements()->saveElement($item)) {
+            return $this->returnError('Unable to update item in list.', ['item' => $item]);
+        }
+
+        return $this->returnSuccess('Item updated in list.');
     }
 
 

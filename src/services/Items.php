@@ -49,6 +49,10 @@ class Items extends Component
         $list = Wishlist::$plugin->getLists()->getList($listId, true, $listTypeId);
         $element = Craft::$app->getElements()->getElementById($elementId);
 
+        if (!$element || !$list) {
+            return null;
+        }
+
         $item = new Item();
         $item->listId = $list->id;
         $item->elementId = $element->id;
