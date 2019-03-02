@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.0.6 - 2019-03-02
+
+### Added
+- Add update controller action for items.
+
+### Fixed
+- Fix title on CP edit item page.
+- Fix saving items in the CP.
+- Fix missing delete action for items
+
 ## 1.0.5 - 2019-03-01
 
 ### Fixed
