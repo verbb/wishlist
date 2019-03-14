@@ -1,5 +1,6 @@
 {% extends 'wishlist/_layouts' %}
 {% import '_includes/forms' as forms %}
+{% import 'wishlist/_macros' as macros %}
 
 {% set selectedSubnavItem = 'settings' %}
 
@@ -20,10 +21,11 @@
         id: 'pluginName',
         name: 'pluginName',
         label: 'Plugin Name' | t('app'),
+        instructions: 'Plugin name for the end user.' | t('wishlist'),
         value: settings.pluginName,
         first: true,
         autofocus: true,
-        instructions: 'Plugin name for the end user.' | t('wishlist'),
+        warning: macros.configWarning('pluginName', 'wishlist'),
     }) }}
 {% endnamespace %}
 
