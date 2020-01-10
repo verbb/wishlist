@@ -4,6 +4,7 @@ namespace verbb\wishlist\controllers;
 use verbb\wishlist\Wishlist;
 use verbb\wishlist\elements\Item;
 use verbb\wishlist\elements\ListElement;
+use verbb\wishlist\errors\ItemError;
 
 use Craft;
 use craft\web\Controller;
@@ -136,41 +137,68 @@ class ItemsController extends BaseController
 
     public function actionAdd()
     {
-        $request = Craft::$app->getRequest();
-        $elementId = $request->getParam('elementId');
-
         $settings = Wishlist::$plugin->getSettings();
+        $request = Craft::$app->getRequest();
 
-        if (!$elementId) {
-            return $this->returnError('Element ID must be provided.');
+        $errors = [];
+
+        // By default, handle multi-items, but if not - set them up as one
+        $postItems = $request->getParam('items', [[
+            'elementId' => $request->getParam('elementId'),
+            'fields' => $request->getParam('fields'),
+        ]]);
+
+        foreach ($postItems as $key => $postItem) {
+            $elementId = $postItem['elementId'] ?? '';
+            
+            if (!$elementId) {
+                $errors[$key] = new ItemError('Element ID must be provided.');
+
+                continue;
+            }
+
+            $element = Craft::$app->getElements()->getElementById($elementId);
+
+            if (!$element) {
+                $errors[$key] = new ItemError('Unable to find element.');
+
+                continue;
+            }
+
+            $item = $this->_setItemFromPost($elementId);
+
+            // Check if this is in the list
+            $existingItem = Item::find()->elementId($elementId)->listId($item->listId)->one();
+            
+            if ($existingItem && !$settings->allowDuplicates) {
+                $errors[$key] = new ItemError('Item already in list.');
+
+                continue;
+            }
+
+            // Add custom fields
+            $fields = $postItem['fields'] ?? [];
+            $item->setFieldValues($fields);
+
+            if (!Craft::$app->getElements()->saveElement($item)) {
+                $errors[$key] = new ItemError('Unable to save item to list.', ['item' => $item]);
+
+                continue;
+            }
         }
 
-        $element = Craft::$app->getElements()->getElementById($elementId);
-
-        if (!$element) {
-            return $this->returnError('Unable to find element.');
+        if ($errors) {
+            foreach ($errors as $itemError) {
+                return $this->returnError($itemError->message, $itemError->params);
+            }
         }
 
-        $item = $this->_setItemFromPost();
-
-        // Check if this is in the list
-        $existingItem = Item::find()->elementId($elementId)->listId($item->listId)->one();
-        
-        if ($existingItem && !$settings->allowDuplicates) {
-            return $this->returnError('Item already in list.');
-        }
-
-        if (!Craft::$app->getElements()->saveElement($item)) {
-            return $this->returnError('Unable to save item to list.', ['item' => $item]);
-        }
-
-        return $this->returnSuccess('Item added to list.');
+        return $this->returnSuccess('Item' . ((count($postItems) > 1) ? 's' : '') . ' added to list.');
     }
 
     public function actionRemove()
     {
         $request = Craft::$app->getRequest();
-        $elementId = $request->getParam('elementId');
         $listId = $request->getParam('listId');
 
         $listTypeId = $request->getParam('listTypeId');
@@ -187,21 +215,45 @@ class ItemsController extends BaseController
         
         $list = Wishlist::$plugin->getLists()->getList($listId, true, $listTypeId);
 
-        if (!$elementId) {
-            return $this->returnError('Element ID must be provided.');
+        $errors = [];
+
+        // By default, handle multi-items, but if not - set them up as one
+        $postItems = $request->getParam('items', [[
+            'elementId' => $request->getParam('elementId'),
+            'fields' => $request->getParam('fields'),
+        ]]);
+
+        foreach ($postItems as $key => $postItem) {
+            $elementId = $postItem['elementId'] ?? '';
+            
+            if (!$elementId) {
+                $errors[$key] = new ItemError('Element ID must be provided.');
+
+                continue;
+            }
+
+            $item = Item::find()
+                ->elementId($elementId)
+                ->listId($list->id)
+                ->one();
+
+            if (!$item) {
+                $errors[$key] = new ItemError('Unable to find item in list.');
+            
+                continue;
+            }
+
+            if (!Craft::$app->getElements()->deleteElement($item)) {
+                $errors[$key] = new ItemError('Unable to delete item from list.', ['item' => $item]);
+            
+                continue;
+            }
         }
 
-        $item = Item::find()
-            ->elementId($elementId)
-            ->listId($list->id)
-            ->one();
-
-        if (!$item) {
-            return $this->returnError('Unable to find item in list.');
-        }
-
-        if (!Craft::$app->getElements()->deleteElement($item)) {
-            return $this->returnError('Unable to delete item from list.', ['item' => $item]);
+        if ($errors) {
+            foreach ($errors as $itemError) {
+                return $this->returnError($itemError->message, $itemError->params);
+            }
         }
 
         return $this->returnSuccess('Item removed from list.');
@@ -210,7 +262,6 @@ class ItemsController extends BaseController
     public function actionToggle()
     {
         $request = Craft::$app->getRequest();
-        $elementId = $request->getParam('elementId');
         $listId = $request->getParam('listId');
 
         $listTypeId = $request->getParam('listTypeId');
@@ -227,25 +278,48 @@ class ItemsController extends BaseController
 
         $list = Wishlist::$plugin->getLists()->getList($listId, true, $listTypeId);
 
+        $errors = [];
 
-        if (!$elementId) {
-            return $this->returnError('Element ID must be provided.');
+        // By default, handle multi-items, but if not - set them up as one
+        $postItems = $request->getParam('items', [[
+            'elementId' => $request->getParam('elementId'),
+            'fields' => $request->getParam('fields'),
+        ]]);
+
+        foreach ($postItems as $key => $postItem) {
+            $elementId = $postItem['elementId'] ?? '';
+
+            if (!$elementId) {
+                $errors[$key] = new ItemError('Element ID must be provided.');
+
+                continue;
+            }
+
+            $item = Item::find()
+                ->elementId($elementId)
+                ->listId($list->id)
+                ->one();
+
+            if ($item) {
+                if (!Craft::$app->getElements()->deleteElement($item)) {
+                    $errors[$key] = new ItemError('Unable to delete item from list.', ['item' => $item]);
+                    
+                    continue;
+                }
+            } else {
+                $item = $this->_setItemFromPost($elementId);
+
+                if (!Craft::$app->getElements()->saveElement($item)) {
+                    $errors[$key] = new ItemError('Unable to save item to list.', ['item' => $item]);
+                    
+                    continue;
+                }
+            }
         }
 
-        $item = Item::find()
-            ->elementId($elementId)
-            ->listId($list->id)
-            ->one();
-
-        if ($item) {
-            if (!Craft::$app->getElements()->deleteElement($item)) {
-                return $this->returnError('Unable to delete item from list.', ['item' => $item]);
-            }
-        } else {
-            $item = $this->_setItemFromPost();
-
-            if (!Craft::$app->getElements()->saveElement($item)) {
-                return $this->returnError('Unable to save item to list.', ['item' => $item]);
+        if ($errors) {
+            foreach ($errors as $itemError) {
+                return $this->returnError($itemError->message, $itemError->params);
             }
         }
 
@@ -298,10 +372,10 @@ class ItemsController extends BaseController
         $variables['list'] = Craft::$app->getElements()->getElementById($variables['listId'], ListElement::class);
     }
 
-    private function _setItemFromPost(): Item
+    private function _setItemFromPost($elementId = null): Item
     {
         $request = Craft::$app->getRequest();
-        $elementId = $request->getParam('elementId');
+        $elementId = $request->getParam('elementId', $elementId);
         $listId = $request->getParam('listId');
 
         $listTypeId = $request->getParam('listTypeId');

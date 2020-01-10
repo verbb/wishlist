@@ -128,6 +128,24 @@ Any of the above actions will by made on the users' default list. You can also t
 ```
 :::
 
+## Multiple Items
+You can also manage multiple items at a time, for example, adding multiple items:
+
+```twig
+<form method="POST">
+    <input type="hidden" name="action" value="wishlist/items/add">
+    {{ csrfInput() }}
+
+    {% for entry in craft.entries.section('news').all() %}
+        <input type="text" name="items[{{ loop.index }}][elementId]" value="{{ entry.id }}">
+
+        {# Optional: Pass content for custom fields #}
+        <input type="text" name="items[{{ loop.index }}][fields][myField]" value="My Value">
+    {% endfor %}
+
+    <input type="submit" value="Add to List">
+</form>
+```
 
 ## Check if in List
 

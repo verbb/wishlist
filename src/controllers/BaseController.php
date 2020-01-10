@@ -43,6 +43,8 @@ class BaseController extends Controller
         }
 
         if ($request->getIsPost()) {
+            Craft::$app->getSession()->setError($error);
+
             if ($params) {
                 Craft::$app->getUrlManager()->setRouteParams($params);
             }
