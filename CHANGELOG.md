@@ -11,9 +11,13 @@
 - Add email share action for lists. Users can directly and easily send their list via email.
 - Allow managing of list items in the CP, including add and delete.
 
+### Changed
+- Add `forceSave` to `craft.wishlist.lists()` to force a new list to be generated.
+
 ### Fixed
 - Fixed SQL error for PostgreSQL. (thanks @Tam).
 - Fix `craft.wishlist.item()` when called for a specific list.
+- Fix issue when calling multiple lists in the same request not returning the correct list.
 
 ## 1.0.6 - 2019-03-02
 
