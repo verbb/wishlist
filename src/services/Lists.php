@@ -18,7 +18,7 @@ class Lists extends Component
     // =========================================================================
 
     protected $listName = 'wishlist_list';
-    private $_list;
+    private $_lists = [];
 
 
     // Public Methods
@@ -33,23 +33,30 @@ class Lists extends Component
     {
         $session = Craft::$app->getSession();
 
-        if ($id) {
-            $this->_list = Wishlist::$plugin->getLists()->getListById($id);
+        $cacheKey = $id . ':' . $listTypeId;
 
-            if ($this->_list) {
-                return $this->_list;
+        if ($id) {
+            $this->_lists[$cacheKey] = Wishlist::$plugin->getLists()->getListById($id);
+
+            if ($this->_lists[$cacheKey]) {
+                return $this->_lists[$cacheKey];
             }
         }
 
-        if ($this->_list === null) {
+        // We need maintain potential different lists in our cache
+        if (!isset($this->_lists[$cacheKey])) {
+            $this->_lists[$cacheKey] = null;
+        }
+
+        if ($this->_lists[$cacheKey] === null) {
             if ($listTypeId) {
                 // Get the first list of the typeId we find for the user.  If it needs to be more precise, use id.
-                $this->_list = $this->getListQueryForOwner()->typeId($listTypeId)->one();
+                $this->_lists[$cacheKey] = $this->getListQueryForOwner()->typeId($listTypeId)->one();
             } else {
-                $this->_list = $this->getListQueryForOwner()->default(true)->one();
+                $this->_lists[$cacheKey] = $this->getListQueryForOwner()->default(true)->one();
             }
 
-            if (!$this->_list) {
+            if (!$this->_lists[$cacheKey]) {
                 $listType = null;
 
                 if ($listTypeId) {
@@ -62,36 +69,36 @@ class Lists extends Component
                     $listType = Wishlist::getInstance()->getListTypes()->getDefaultListType();
                 }
 
-                $this->_list = new ListElement();
-                $this->_list->reference = $this->generateReferenceNumber();
-                $this->_list->typeId = $listType->id;
-                $this->_list->title = $listType->name;
-                $this->_list->default = $listType->default;
-                $this->_list->sessionId = $this->getSessionId();
+                $this->_lists[$cacheKey] = new ListElement();
+                $this->_lists[$cacheKey]->reference = $this->generateReferenceNumber();
+                $this->_lists[$cacheKey]->typeId = $listType->id;
+                $this->_lists[$cacheKey]->title = $listType->name;
+                $this->_lists[$cacheKey]->default = $listType->default;
+                $this->_lists[$cacheKey]->sessionId = $this->getSessionId();
             }
         }
 
-        $originalIp = $this->_list->lastIp;
-        $originalUserId = $this->_list->userId;
+        $originalIp = $this->_lists[$cacheKey]->lastIp;
+        $originalUserId = $this->_lists[$cacheKey]->userId;
 
         // These values should always be kept up to date when a list is retrieved from session.
-        $this->_list->lastIp = Craft::$app->getRequest()->userIP;
-        $this->_list->userId = Craft::$app->getUser()->getIdentity()->id ?? null;
+        $this->_lists[$cacheKey]->lastIp = Craft::$app->getRequest()->userIP;
+        $this->_lists[$cacheKey]->userId = Craft::$app->getUser()->getIdentity()->id ?? null;
 
-        $changedIp = $originalIp != $this->_list->lastIp;
-        $changedUserId = $originalUserId != $this->_list->userId;
+        $changedIp = $originalIp != $this->_lists[$cacheKey]->lastIp;
+        $changedUserId = $originalUserId != $this->_lists[$cacheKey]->userId;
 
-        if ($this->_list->id) {
+        if ($this->_lists[$cacheKey]->id) {
             if ($changedIp || $changedUserId) {
-                Craft::$app->getElements()->saveElement($this->_list, false);
+                Craft::$app->getElements()->saveElement($this->_lists[$cacheKey], false);
             }
         } else {
             if ($forceSave) {
-                Craft::$app->getElements()->saveElement($this->_list, false);
+                Craft::$app->getElements()->saveElement($this->_lists[$cacheKey], false);
             }
         }
 
-        return $this->_list;
+        return $this->_lists[$cacheKey];
     }
 
     public function getListQueryForOwner()
