@@ -7,6 +7,7 @@ use verbb\wishlist\elements\ListElement;
 use Craft;
 use craft\base\Component;
 use craft\db\Query;
+use craft\elements\User as UserElement;
 use craft\helpers\StringHelper;
 use craft\models\Structure;
 
@@ -180,6 +181,26 @@ class Lists extends Component
     public function generateSessionId(): string
     {
         return md5(uniqid(mt_rand(), true));
+    }
+
+    public function loginHandler(UserEvent $event)
+    {
+        $user = $event->identity;
+
+        // Consolidates lists to the user
+        $this->consolidateListsToUser($user);
+    }
+
+    public function consolidateListsToUser(UserElement $user, array $lists = null): bool
+    {
+        // Try and find the default list for the guest
+        $sessionId = $this->getSessionId();
+
+        Craft::$app->getDb()->createCommand()
+            ->update('{{%wishlist_lists}}', ['userId' => $user->id], ['sessionId' => $sessionId, 'default' => true, 'userId' => null])
+            ->execute();
+
+        return true;
     }
 
 

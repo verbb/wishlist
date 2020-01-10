@@ -11,6 +11,7 @@ use verbb\wishlist\variables\WishlistVariable;
 
 use Craft;
 use craft\base\Plugin;
+use craft\elements\User as UserElement;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterUrlRulesEvent;
 use craft\events\RegisterUserPermissionsEvent;
@@ -55,6 +56,7 @@ class Wishlist extends Plugin
         $this->_setLogging();
         $this->_registerCpRoutes();
         $this->_registerPermissions();
+        $this->_registerSessionEventListeners();
         $this->_registerVariables();
         $this->_registerElementTypes();
         $this->_registerProjectConfigEventListeners();
@@ -186,5 +188,12 @@ class Wishlist extends Plugin
             // Deletes lists that meet the purge settings
             Wishlist::$plugin->getLists()->purgeInactiveLists();
         });
+    }
+
+    private function _registerSessionEventListeners()
+    {
+        if (!Craft::$app->getRequest()->getIsConsoleRequest()) {
+            Event::on(User::class, User::EVENT_AFTER_LOGIN, [$this->getLists(), 'loginHandler']);
+        }
     }
 }
