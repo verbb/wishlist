@@ -22,7 +22,7 @@ class ItemsController extends BaseController
     // Public Methods
     // =========================================================================
 
-    public function actionEditItem(string $listTypeHandle, int $listId, int $itemId, Item $item = null): Response
+    public function actionEditItem(string $listTypeHandle, int $listId, int $itemId = null, Item $item = null): Response
     {
         $variables = [
             'listTypeHandle' => $listTypeHandle,
@@ -32,6 +32,11 @@ class ItemsController extends BaseController
         ];
 
         $this->_prepareVariableArray($variables);
+
+        // Properly bootstrap a new item
+        if (!$variables['item']->id) {
+            $variables['item']->listId = $listId;
+        }
 
         // Can't just use the entry's getCpEditUrl() because that might include the site handle when we don't want it
         $variables['baseCpEditUrl'] = 'wishlist/lists/' . $listTypeHandle . '/' . $listId . '/items/{id}';

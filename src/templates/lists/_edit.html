@@ -118,6 +118,10 @@
         {% else %}
             <p><em>{{ 'No items in this list.' | t('wishlist') }}</em></p>
         {% endif %}
+
+        <hr>
+
+        <a class="btn formsubmit submit icon add" data-redirect="{{ url('wishlist/lists/' ~ list.type.handle ~ '/' ~ list.id ~ '/items/new') | hash }}">{{ 'Add item' }}</a>
     </div>
 {% endblock %}
 

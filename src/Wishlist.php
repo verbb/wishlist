@@ -124,13 +124,17 @@ class Wishlist extends Plugin
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event) {
             $event->rules = array_merge($event->rules, [
                 'wishlist' => 'wishlist/lists/index',
+                
                 'wishlist/lists/<listTypeHandle:{handle}>' => 'wishlist/lists/index',
                 'wishlist/lists/<listTypeHandle:{handle}>/new' => 'wishlist/lists/edit-list',
                 'wishlist/lists/<listTypeHandle:{handle}>/<listId:\d+>' => 'wishlist/lists/edit-list',
+                'wishlist/lists/<listTypeHandle:{handle}>/<listId:\d+>/items/new' => 'wishlist/items/edit-item',
                 'wishlist/lists/<listTypeHandle:{handle}>/<listId:\d+>/items/<itemId:\d+>' => 'wishlist/items/edit-item',
+                
                 'wishlist/list-types' => 'wishlist/list-types/list-type-index',
                 'wishlist/list-types/<listTypeId:\d+>' => 'wishlist/list-types/edit-list-type',
                 'wishlist/list-types/new' => 'wishlist/list-types/edit-list-type',
+                
                 'wishlist/settings' => 'wishlist/default/settings',
             ]);
         });

@@ -7,7 +7,7 @@
     { label: list.title | t('wishlist'), url: list.cpEditUrl },
 ] %}
 
-{% set title = item.title %}
+{% set title = item.title ?? 'Add item' %}
 
 {% set fullPageForm = true %}
 {% set saveShortcutRedirect = continueEditingUrl %}
@@ -81,21 +81,19 @@
             first: true,
         }) }}
 
-        <div class="field">
-            <div class="heading">
-                <label>{{ 'Element' | t('wishlist') }}</label>
-            </div>
+        {# Not sure the best way to handle this for new entries... #}
+        {% set elementType = item.elementClass ?? 'craft\\elements\\Entry' %}
 
-            {% if item.element %}
-                <div class="input ltr">
-                    <a href="{{ item.element.cpEditUrl }}">{{ item.element }}</a>
-                </div>
-            {% else %}
-                <div class="input ltr">
-                    {{ 'Element not found' | t('wishlist') }}
-                </div>
-            {% endif %}
-        </div>
+        {{ forms.elementSelectField({
+            label: 'Element' | t('wishlist'),
+            id: 'elementId',
+            name: 'elementId',
+            elementType: elementType,
+            elements: (item.element is defined and item.element ? [item.element]),
+            selectionLabel: "Choose" | t('app'),
+            limit: 1,
+            errors: item ? item.getErrors('elementId'),
+        }) }}
     </div>
 
     <hr>
