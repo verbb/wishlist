@@ -13,6 +13,7 @@
 
 ### Fixed
 - Fixed SQL error for PostgreSQL. (thanks @Tam).
+- Fix `craft.wishlist.item()` when called for a specific list.
 
 ## 1.0.6 - 2019-03-02
 
