@@ -1,6 +1,7 @@
 <?php
 namespace verbb\wishlist\services;
 
+use verbb\wishlist\elements\Item;
 use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\events\ListTypeEvent;
 use verbb\wishlist\models\ListType;
@@ -9,6 +10,17 @@ use verbb\wishlist\records\ListType as ListTypeRecord;
 
 use Craft;
 use craft\db\Query;
+use craft\events\ConfigEvent;
+use craft\events\DeleteSiteEvent;
+use craft\events\FieldEvent;
+use craft\events\SiteEvent;
+use craft\helpers\App;
+use craft\helpers\ArrayHelper;
+use craft\helpers\Db;
+use craft\helpers\ProjectConfig as ProjectConfigHelper;
+use craft\helpers\StringHelper;
+use craft\models\FieldLayout;
+
 use yii\base\Component;
 use yii\base\Exception;
 
@@ -19,6 +31,7 @@ class ListTypes extends Component
 
     const EVENT_BEFORE_SAVE_LISTTYPE = 'beforeSaveListType';
     const EVENT_AFTER_SAVE_LISTTYPE = 'afterSaveListType';
+    const CONFIG_LISTTYPES_KEY = 'wishlist.listTypes';
 
 
     // Properties
@@ -30,6 +43,7 @@ class ListTypes extends Component
     private $_allListTypeIds;
     private $_editableListTypeIds;
     private $_defaultListType;
+    private $_savingListTypes = [];
 
 
     // Public Methods
@@ -156,51 +170,186 @@ class ListTypes extends Component
             return false;
         }
 
-        if (!$isNewListType) {
-            $listTypeRecord = ListTypeRecord::findOne($listType->id);
+        if ($isNewListType) {
+            $listType->uid = StringHelper::UUID();
+        } else {
+            $existingListTypeRecord = ListTypeRecord::find()
+                ->where(['id' => $listType->id])
+                ->one();
 
-            if (!$listTypeRecord) {
+            if (!$existingListTypeRecord) {
                 throw new ListTypeNotFoundException("No list type exists with the ID '{$listType->id}'");
             }
-        } else {
-            $listTypeRecord = new ListTypeRecord();
+
+            $listType->uid = $existingListTypeRecord->uid;
         }
 
-        $listTypeRecord->name = $listType->name;
-        $listTypeRecord->handle = $listType->handle;
-        $listTypeRecord->default = $listType->default;
+        $this->_savingListTypes[$listType->uid] = $listType;
+
+        $projectConfig = Craft::$app->getProjectConfig();
+
+        $configData = [
+            'name' => $listType->name,
+            'handle' => $listType->handle,
+            'default' => $listType->default,
+        ];
+
+        $generateLayoutConfig = function(FieldLayout $fieldLayout): array {
+            $fieldLayoutConfig = $fieldLayout->getConfig();
+
+            if ($fieldLayoutConfig) {
+                if (empty($fieldLayout->id)) {
+                    $layoutUid = StringHelper::UUID();
+                    $fieldLayout->uid = $layoutUid;
+                } else {
+                    $layoutUid = Db::uidById('{{%fieldlayouts}}', $fieldLayout->id);
+                }
+
+                return [$layoutUid => $fieldLayoutConfig];
+            }
+
+            return [];
+        };
+
+        $configData['listFieldLayouts'] = $generateLayoutConfig($listType->getFieldLayout());
+        $configData['itemFieldLayouts'] = $generateLayoutConfig($listType->getItemFieldLayout());
+
+        $configPath = self::CONFIG_LISTTYPES_KEY . '.' . $listType->uid;
+        $projectConfig->set($configPath, $configData);
+
+        if ($isNewListType) {
+            $listType->id = Db::idByUid('{{%wishlist_listtypes}}', $listType->uid);
+        }
+
+        return true;
+
+    }
+
+    public function handleChangedListType(ConfigEvent $event)
+    {
+        $listTypeUid = $event->tokenMatches[0];
+        $data = $event->newValue;
+
+        // Make sure fields and sites are processed
+        ProjectConfigHelper::ensureAllFieldsProcessed();
 
         $db = Craft::$app->getDb();
         $transaction = $db->beginTransaction();
 
         try {
-            // List Field Layout
-            $fieldLayout = $listType->getListFieldLayout();
-            Craft::$app->getFields()->saveLayout($fieldLayout);
-            $listType->fieldLayoutId = $fieldLayout->id;
-            $listTypeRecord->fieldLayoutId = $fieldLayout->id;
+            // Basic data
+            $listTypeRecord = $this->_getListTypeRecord($listTypeUid);
+            $isNewListType = $listTypeRecord->getIsNewRecord();
+            $fieldsService = Craft::$app->getFields();
 
-            // Item Field Layout
-            $itemFieldLayout = $listType->getItemFieldLayout();
-            Craft::$app->getFields()->saveLayout($itemFieldLayout);
-            $listType->itemFieldLayoutId = $itemFieldLayout->id;
-            $listTypeRecord->itemFieldLayoutId = $itemFieldLayout->id;
+            $listTypeRecord->uid = $listTypeUid;
+            $listTypeRecord->name = $data['name'];
+            $listTypeRecord->handle = $data['handle'];
+            $listTypeRecord->default = $data['default'];
 
-            // Save the list type
+            if (!empty($data['listFieldLayouts']) && !empty($config = reset($data['listFieldLayouts']))) {
+                // Save the main field layout
+                $layout = FieldLayout::createFromConfig($config);
+                $layout->id = $listTypeRecord->fieldLayoutId;
+                $layout->type = ListElement::class;
+                $layout->uid = key($data['listFieldLayouts']);
+
+                $fieldsService->saveLayout($layout);
+
+                $listTypeRecord->fieldLayoutId = $layout->id;
+            } else if ($listTypeRecord->fieldLayoutId) {
+                // Delete the main field layout
+                $fieldsService->deleteLayoutById($listTypeRecord->fieldLayoutId);
+                $listTypeRecord->fieldLayoutId = null;
+            }
+
+            if (!empty($data['itemFieldLayouts']) && !empty($config = reset($data['itemFieldLayouts']))) {
+                // Save the item field layout
+                $layout = FieldLayout::createFromConfig($config);
+                $layout->id = $listTypeRecord->itemFieldLayoutId;
+                $layout->type = Item::class;
+                $layout->uid = key($data['itemFieldLayouts']);
+                
+                $fieldsService->saveLayout($layout);
+                
+                $listTypeRecord->itemFieldLayoutId = $layout->id;
+            } else if ($listTypeRecord->itemFieldLayoutId) {
+                // Delete the item field layout
+                $fieldsService->deleteLayoutById($listTypeRecord->itemFieldLayoutId);
+                $listTypeRecord->itemFieldLayoutId = null;
+            }
+
+            // // If this was the default make all others not the default.
+            // if ($listType->default) {
+            //     ListTypeRecord::updateAll(['default' => 0], ['not', ['id' => $listTypeRecord->id]]);
+            // }
+
             $listTypeRecord->save(false);
 
-            // Now that we have a list type ID, save it on the model
-            if (!$listType->id) {
-                $listType->id = $listTypeRecord->id;
+            $transaction->commit();
+        } catch (\Throwable $e) {
+            $transaction->rollBack();
+            throw $e;
+        }
+
+        // Clear caches
+        $this->_allListTypeIds = null;
+        $this->_editableListTypeIds = null;
+        $this->_fetchedAllListTypes = false;
+        
+        unset(
+            $this->_listTypesById[$listTypeRecord->id],
+            $this->_listTypesByHandle[$listTypeRecord->handle]
+        );
+
+        // Fire an 'afterSaveListType' event
+        if ($this->hasEventHandlers(self::EVENT_AFTER_SAVE_LISTTYPE)) {
+            $this->trigger(self::EVENT_AFTER_SAVE_LISTTYPE, new ListTypeEvent([
+                'listType' => $this->getListTypeById($listTypeRecord->id),
+                'isNew' => empty($this->_savingListTypes[$listTypeUid]),
+            ]));
+        }
+    }
+
+    public function deleteListTypeById(int $id): bool
+    {
+        $listType = $this->getListTypeById($id);
+        Craft::$app->getProjectConfig()->remove(self::CONFIG_LISTTYPES_KEY . '.' . $listType->uid);
+        return true;
+    }
+
+    public function handleDeletedListType(ConfigEvent $event)
+    {
+        $uid = $event->tokenMatches[0];
+        $listTypeRecord = $this->_getListTypeRecord($uid);
+
+        if (!$listTypeRecord->id) {
+            return;
+        }
+
+        $db = Craft::$app->getDb();
+        $transaction = $db->beginTransaction();
+
+        try {
+            $lists = ListElement::find()
+                ->typeId($listTypeRecord->id)
+                ->anyStatus()
+                ->limit(null)
+                ->all();
+
+            foreach ($lists as $list) {
+                Craft::$app->getElements()->deleteElement($list);
             }
 
-            // If this was the default make all others not the default.
-            if ($listType->default) {
-                ListTypeRecord::updateAll(['default' => 0], ['not', ['id' => $listTypeRecord->id]]);
+            $fieldLayoutId = $listTypeRecord->fieldLayoutId;
+            $itemFieldLayoutId = $listTypeRecord->itemFieldLayoutId;
+            Craft::$app->getFields()->deleteLayoutById($fieldLayoutId);
+
+            if ($itemFieldLayoutId) {
+                Craft::$app->getFields()->deleteLayoutById($itemFieldLayoutId);
             }
 
-            // Might as well update our cache of the list type while we have it.
-            $this->_listTypesById[$listType->id] = $listType;
+            $listTypeRecord->delete();
 
             $transaction->commit();
         } catch (\Throwable $e) {
@@ -209,51 +358,49 @@ class ListTypes extends Component
             throw $e;
         }
 
-        // Fire an 'afterSaveListType' event
-        if ($this->hasEventHandlers(self::EVENT_AFTER_SAVE_LISTTYPE)) {
-            $this->trigger(self::EVENT_AFTER_SAVE_LISTTYPE, new ListTypeEvent([
-                'listType' => $listType,
-                'isNew' => $isNewListType,
-            ]));
-        }
-
-        return true;
+        // Clear caches
+        $this->_allListTypeIds = null;
+        $this->_editableListTypeIds = null;
+        $this->_fetchedAllListTypes = false;
+        
+        unset(
+            $this->_listTypesById[$listTypeRecord->id],
+            $this->_listTypesByHandle[$listTypeRecord->handle]
+        );
     }
 
-    public function deleteListTypeById(int $id): bool
+    public function pruneDeletedField(FieldEvent $event)
     {
-        $db = Craft::$app->getDb();
-        $transaction = $db->beginTransaction();
+        /** @var Field $field */
+        $field = $event->field;
+        $fieldUid = $field->uid;
 
-        try {
-            $listType = $this->getListTypeById($id);
+        $projectConfig = Craft::$app->getProjectConfig();
+        $listTypes = $projectConfig->get(self::CONFIG_LISTTYPES_KEY);
 
-            $criteria = ListElement::find();
-            $criteria->typeId = $listType->id;
-            $criteria->status = null;
-            $criteria->limit = null;
-            $lists = $criteria->all();
+        // Loop through the list types and prune the UID from field layouts.
+        if (is_array($listTypes)) {
+            foreach ($listTypes as $listTypeUid => $listType) {
+                if (!empty($listType['listFieldLayouts'])) {
+                    foreach ($listType['listFieldLayouts'] as $layoutUid => $layout) {
+                        if (!empty($layout['tabs'])) {
+                            foreach ($layout['tabs'] as $tabUid => $tab) {
+                                $projectConfig->remove(self::CONFIG_LISTTYPES_KEY . '.' . $listTypeUid . '.listFieldLayouts.' . $layoutUid . '.tabs.' . $tabUid . '.fields.' . $fieldUid);
+                            }
+                        }
+                    }
+                }
 
-            foreach ($lists as $list) {
-                Craft::$app->getElements()->deleteElement($list);
+                if (!empty($listType['itemFieldLayouts'])) {
+                    foreach ($listType['itemFieldLayouts'] as $layoutUid => $layout) {
+                        if (!empty($layout['tabs'])) {
+                            foreach ($layout['tabs'] as $tabUid => $tab) {
+                                $projectConfig->remove(self::CONFIG_LISTTYPES_KEY . '.' . $listTypeUid . '.itemFieldLayouts.' . $layoutUid . '.tabs.' . $tabUid . '.fields.' . $fieldUid);
+                            }
+                        }
+                    }
+                }
             }
-
-            $fieldLayoutId = $listType->getListFieldLayout()->id;
-            Craft::$app->getFields()->deleteLayoutById($fieldLayoutId);
-            Craft::$app->getFields()->deleteLayoutById($listType->getItemFieldLayout()->id);
-
-            $listTypeRecord = ListTypeRecord::findOne($listType->id);
-            $affectedRows = $listTypeRecord->delete();
-
-            if ($affectedRows) {
-                $transaction->commit();
-            }
-
-            return (bool)$affectedRows;
-        } catch (\Throwable $e) {
-            $transaction->rollBack();
-
-            throw $e;
         }
     }
 
@@ -280,6 +427,11 @@ class ListTypes extends Component
         return $this->_listTypesById[$listTypeId];
     }
 
+    public function getListTypeByUid(string $uid)
+    {
+        return ArrayHelper::firstWhere($this->getAllListTypes(), 'uid', $uid, true);
+    }
+
 
     // Private methods
     // =========================================================================
@@ -294,13 +446,23 @@ class ListTypes extends Component
     {
         return (new Query())
             ->select([
-                'id',
-                'fieldLayoutId',
-                'itemFieldLayoutId',
-                'name',
-                'handle',
-                'default',
+                'listTypes.id',
+                'listTypes.fieldLayoutId',
+                'listTypes.itemFieldLayoutId',
+                'listTypes.name',
+                'listTypes.handle',
+                'listTypes.default',
+                'listTypes.uid',
             ])
-            ->from(['{{%wishlist_listtypes}}']);
+            ->from(['{{%wishlist_listtypes}} listTypes']);
+    }
+
+    private function _getListTypeRecord(string $uid): ListTypeRecord
+    {
+        if ($listType = ListTypeRecord::findOne(['uid' => $uid])) {
+            return $listType;
+        }
+
+        return new ListTypeRecord();
     }
 }

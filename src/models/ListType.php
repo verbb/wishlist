@@ -25,6 +25,7 @@ class ListType extends Model
     public $fieldLayoutId;
     public $itemFieldLayoutId;
     public $default;
+    public $uid;
 
 
     // Public Methods

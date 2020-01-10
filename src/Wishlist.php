@@ -4,7 +4,9 @@ namespace verbb\wishlist;
 use verbb\wishlist\base\PluginTrait;
 use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\elements\Item;
+use verbb\wishlist\helpers\ProjectConfigData;
 use verbb\wishlist\models\Settings;
+use verbb\wishlist\services\ListTypes;
 use verbb\wishlist\variables\WishlistVariable;
 
 use Craft;
@@ -14,6 +16,8 @@ use craft\events\RegisterUrlRulesEvent;
 use craft\events\RegisterUserPermissionsEvent;
 use craft\helpers\UrlHelper;
 use craft\services\Elements;
+use craft\services\Fields;
+use craft\services\ProjectConfig;
 use craft\services\UserPermissions;
 use craft\web\UrlManager;
 use craft\web\twig\variables\CraftVariable;
@@ -26,7 +30,7 @@ class Wishlist extends Plugin
     // Public Properties
     // =========================================================================
 
-    public $schemaVersion = '1.0.0';
+    public $schemaVersion = '1.0.1';
     public $hasCpSettings = true;
     public $hasCpSection = true;
 
@@ -52,6 +56,7 @@ class Wishlist extends Plugin
         $this->_registerPermissions();
         $this->_registerVariables();
         $this->_registerElementTypes();
+        $this->_registerProjectConfigEventListeners();
     }
 
     public function getPluginName()
@@ -84,7 +89,7 @@ class Wishlist extends Plugin
             ];
         }
 
-        if (Craft::$app->getUser()->getIsAdmin()) {
+        if (Craft::$app->getUser()->getIsAdmin() && Craft::$app->getConfig()->getGeneral()->allowAdminChanges) {
             $navItems['subnav']['settings'] = [
                 'label' => Craft::t('wishlist', 'Settings'),
                 'url' => 'wishlist/settings',
@@ -154,6 +159,22 @@ class Wishlist extends Plugin
         Event::on(Elements::class, Elements::EVENT_REGISTER_ELEMENT_TYPES, function(RegisterComponentTypesEvent $event) {
             $event->types[] = ListElement::class;
             $event->types[] = Item::class;
+        });
+    }
+
+    private function _registerProjectConfigEventListeners()
+    {
+        $projectConfigService = Craft::$app->getProjectConfig();
+
+        $listTypeService = $this->getListTypes();
+        $projectConfigService->onAdd(ListTypes::CONFIG_LISTTYPES_KEY . '.{uid}', [$listTypeService, 'handleChangedListType'])
+            ->onUpdate(ListTypes::CONFIG_LISTTYPES_KEY . '.{uid}', [$listTypeService, 'handleChangedListType'])
+            ->onRemove(ListTypes::CONFIG_LISTTYPES_KEY . '.{uid}', [$listTypeService, 'handleDeletedListType']);
+
+        Event::on(Fields::class, Fields::EVENT_AFTER_DELETE_FIELD, [$listTypeService, 'pruneDeletedField']);
+
+        Event::on(ProjectConfig::class, ProjectConfig::EVENT_REBUILD, function (RebuildConfigEvent $event) {
+            $event->config['wishlist'] = ProjectConfigData::rebuildProjectConfig();
         });
     }
 }

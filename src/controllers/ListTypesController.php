@@ -18,6 +18,13 @@ class ListTypesController extends Controller
     // Public Methods
     // =========================================================================
 
+    public function init()
+    {
+        $this->requirePermission('wishlist-manageListTypes');
+
+        parent::init();
+    }
+
     public function actionListTypeIndex(): Response
     {
         $listTypes = Wishlist::getInstance()->getListTypes()->getAllListTypes();
