@@ -13,6 +13,7 @@ use Craft;
 use craft\base\Plugin;
 use craft\elements\User as UserElement;
 use craft\events\RegisterComponentTypesEvent;
+use craft\events\RegisterEmailMessagesEvent;
 use craft\events\RegisterUrlRulesEvent;
 use craft\events\RegisterUserPermissionsEvent;
 use craft\helpers\UrlHelper;
@@ -20,6 +21,7 @@ use craft\services\Elements;
 use craft\services\Fields;
 use craft\services\Gc;
 use craft\services\ProjectConfig;
+use craft\services\SystemMessages;
 use craft\services\UserPermissions;
 use craft\web\UrlManager;
 use craft\web\twig\variables\CraftVariable;
@@ -57,6 +59,7 @@ class Wishlist extends Plugin
         $this->_registerCpRoutes();
         $this->_registerPermissions();
         $this->_registerSessionEventListeners();
+        $this->_registerEmailMessages();
         $this->_registerVariables();
         $this->_registerElementTypes();
         $this->_registerProjectConfigEventListeners();
@@ -129,6 +132,20 @@ class Wishlist extends Plugin
                 'wishlist/list-types/<listTypeId:\d+>' => 'wishlist/list-types/edit-list-type',
                 'wishlist/list-types/new' => 'wishlist/list-types/edit-list-type',
                 'wishlist/settings' => 'wishlist/default/settings',
+            ]);
+        });
+    }
+
+    private function _registerEmailMessages()
+    {
+        Event::on(SystemMessages::class, SystemMessages::EVENT_REGISTER_MESSAGES, function(RegisterEmailMessagesEvent $event) {
+            $event->messages = array_merge($event->messages, [
+                [
+                    'key' => 'wishlist_share_list',
+                    'heading' => Craft::t('wishlist', 'wishlist_share_list_heading'),
+                    'subject' => Craft::t('wishlist', 'wishlist_share_list_subject'),
+                    'body' => Craft::t('wishlist', 'wishlist_share_list_body'),
+                ]
             ]);
         });
     }

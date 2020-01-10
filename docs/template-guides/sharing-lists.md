@@ -39,3 +39,32 @@ Then, its just a matter of querying items based on the provided reference.
 ```
 
 Remember to use `craft.wishlist.lists(false)` to fetch lists that don't belong to the current user, which in this case will be the new user viewing the list. Be careful with this.
+
+## Emailing
+
+You can also email your lists directly via a form.
+
+```twig
+<form method="POST">
+    <input type="hidden" name="action" value="wishlist/lists/share-by-email">
+    {{ csrfInput() }}
+
+    <input type="text" name="listId" value="{{ list.id }}">
+
+    <input type="text" name="sender[firstName]" value="Sender">
+    <input type="text" name="sender[lastName]" value="Person">
+    <input type="text" name="sender[email]" value="sender@gmail.com">
+
+    <input type="text" name="recipient[firstName]" value="Recipient">
+    <input type="text" name="recipient[lastName]" value="Person">
+    <input type="text" name="recipient[email]" value="recipient@gmail.com">
+
+    <input type="submit" value="Send Email">
+</form>
+```
+
+Please note that the sender and recipient details are required, including a first name, last name and email. This is not only generally a good idea to provide for both the sender and the recipient for trust, but required to send an email. This will also help your emails look less 'spammy' if the recipient recognises the person sending the email.
+
+If the sender is a logged in user, you can of course set these inputs to hidden, and populate with the `currentUser` content from Craft.
+
+You can customise the content of this email via the CP - Utilities > System Messages.

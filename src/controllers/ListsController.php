@@ -6,6 +6,7 @@ use verbb\wishlist\elements\ListElement;
 
 use Craft;
 use craft\base\Element;
+use craft\elements\User;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Json;
 use craft\helpers\Localization;
@@ -345,6 +346,41 @@ class ListsController extends Controller
         }
 
         return $this->redirectToPostedUrl($list);
+    }
+
+    public function actionShareByEmail()
+    {
+        $request = Craft::$app->getRequest();
+        $listId = $request->getRequiredParam('listId');
+
+        $list = ListElement::findOne($listId);
+
+        if (!$list) {
+            throw new Exception(Craft::t('wishlist', 'No list exists with the ID “{id}”.', ['id' => $listId]));
+        }
+
+        $sender = $request->getRequiredParam('sender');
+        $recipient = $request->getRequiredParam('recipient');
+
+        if (!$sender || !$recipient) {
+            throw new Exception(Craft::t('wishlist', 'You must supply and sender and recipient'));
+        }
+
+        // Create user elements for sender/recipient
+        $sender = new User($sender);
+        $recipient = new User($recipient);
+
+        try {
+            $mail = Craft::$app->getMailer()
+                ->composeFromKey('wishlist_share_list', ['list' => $list, 'sender' => $sender, 'recipient' => $recipient])
+                ->setTo($recipient);
+
+            $mail->send();
+
+            Wishlist::log('Sent list share notification to ' . $recipient->email);
+        } catch (\Throwable $e) {
+            Wishlist::log('Failed to send list share to ' . $recipient->email . ' - ' . $e->getMessage());
+        }
     }
 
 
