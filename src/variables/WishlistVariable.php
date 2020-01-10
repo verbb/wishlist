@@ -23,9 +23,13 @@ class WishlistVariable
         return Wishlist::$plugin->getPluginName();
     }
 
-    public function lists($forUser = true): ListQuery
+    public function lists($forUser = true, $forceSave = false): ListQuery
     {
         if ($forUser) {
+            if ($forceSave) {
+                Wishlist::$plugin->getLists()->getList(null, true);
+            }
+
             return Wishlist::$plugin->getLists()->getListQueryForOwner();
         } else {
             return ListElement::find();

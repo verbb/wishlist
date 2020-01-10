@@ -2,9 +2,9 @@
 
 The following are common methods you will want to call in your front end templates:
 
-### `craft.wishlist.lists(forUser = true)`
+### `craft.wishlist.lists(forUser = true, forceSave = false)`
 
-See [List Queries](docs:getting-elements/list-queries). By default, `forUser` is set to true, ensuring only lists and items that are owned by the current user are shown. Setting this to false will fetch items for any user, so be careful.
+See [List Queries](docs:getting-elements/list-queries). By default, `forUser` is set to true, ensuring only lists and items that are owned by the current user are shown. Setting this to false will fetch items for any user, so be careful. You can also force a new list to be created in case one hasn't already been created.
 
 ### `craft.wishlist.items()`
 
