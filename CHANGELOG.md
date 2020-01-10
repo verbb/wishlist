@@ -3,7 +3,7 @@
 ## 1.1.0 - 2020-01-10
 
 ### Added
-= Add project config support.
+- Add project config support.
 - Add support for add/delete/toggle multiple items. See [docs](https://verbb.io/craft-plugins/wishlist/docs/template-guides/managing-items)
 - Add `purgeInactiveGuestListsDuration` to set times for guest lists to be purged, separate to user lists. This is default to 1 day.
 - Add purge lists to Craft's garbage collection.
