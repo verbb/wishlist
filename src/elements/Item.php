@@ -53,6 +53,69 @@ class Item extends Element
         return new ItemQuery(static::class);
     }
 
+    public static function defineSources(string $context = null): array
+    {
+        $sources = [[
+            'key' => '*',
+            'label' => Craft::t('wishlist', 'All items'),
+            'defaultSort' => ['dateCreated', 'desc'],
+        ]];
+
+        return $sources;
+    }
+
+    protected static function defineActions(string $source = null): array
+    {
+        $actions = [];
+
+        $actions[] = Craft::$app->getElements()->createAction([
+            'type' => Delete::class,
+            'confirmationMessage' => Craft::t('wishlist', 'Are you sure you want to delete the selected items?'),
+            'successMessage' => Craft::t('wishlist', 'Items deleted.'),
+        ]);
+
+        return $actions;
+    }
+
+    protected static function defineSearchableAttributes(): array
+    {
+        return ['ticketSku'];
+    }
+
+
+    // Element index methods
+    // -------------------------------------------------------------------------
+
+    protected static function defineSortOptions(): array
+    {
+        return [
+            'title' => Craft::t('app', 'Item'),
+            'elementDisplay' => Craft::t('app', 'Type'),
+            'dateCreated' => Craft::t('app', 'Date Created'),
+        ];
+    }
+
+    protected static function defineTableAttributes(): array
+    {
+        return [
+            'title' => ['label' => Craft::t('app', 'Item')],
+            'elementDisplay' => ['label' => Craft::t('app', 'Type')],
+            'dateCreated' => ['label' => Craft::t('app', 'Date Created')],
+        ];
+    }
+
+    protected static function defineDefaultTableAttributes(string $source): array
+    {
+        $attributes = [];
+
+        $attributes[] = 'title';
+        $attributes[] = 'elementDisplay';
+        $attributes[] = 'dateCreated';
+
+        return $attributes;
+    }
+
+
     // Properties
     // =========================================================================
 

@@ -23,6 +23,8 @@ class ItemQuery extends ElementQuery
     public $listId;
     public $enabled = true;
 
+    protected $defaultOrderBy = ['wishlist_items.dateCreated' => SORT_DESC];
+
 
     // Public Methods
     // =========================================================================
@@ -64,6 +66,7 @@ class ItemQuery extends ElementQuery
             'wishlist_items.elementSiteId',
             'wishlist_items.elementClass',
             'wishlist_items.listId',
+            'wishlist_items.dateCreated',
         ]);
 
         if ($this->id) {
@@ -84,6 +87,10 @@ class ItemQuery extends ElementQuery
 
         if ($this->listId) {
             $this->subQuery->andWhere(Db::parseParam('wishlist_items.listId', $this->listId));
+        }
+
+        if ($this->dateCreated) {
+            $this->subQuery->andWhere(Db::parseDateParam('wishlist_items.dateCreated', $this->dateCreated));
         }
 
         return parent::beforePrepare();

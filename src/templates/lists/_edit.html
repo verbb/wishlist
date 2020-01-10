@@ -88,21 +88,33 @@
         <h2>{{ 'List Items' | t('comments') }}</h2>
 
         {% if list.id and list.items.count() %}
-            {% set elementAttr = {
-                elementType: className(list),
-                disabledElementIds: null,
-                attributes: {
-                    id: ['id', { label: 'Item' | t('wishlist') }],
-                    type: ['elementDisplay', { label: 'Type' | t('wishlist') }],
-                    dateCreated: ['dateCreated', { label: 'Date Created' | t('wishlist') }],
-                },
-                elements: list.items.all(),
-                showCheckboxes: false,
-            } %}
+            <div id="elementindex-items" class="elementindex">
+                {% set elementType = 'verbb\\wishlist\\elements\\Item' %}
+                {% set elementInstance = craft.app.elements.createElement(elementType) %}
+                {% set context = 'index' %}
+                {% set sources = craft.app.elementIndexes.getSources(elementType, 'index') %}
 
-            <div class="elementindex">
-                {% include '_elements/tableview/container' with elementAttr %}
+                <div class="sidebar hidden">
+                    <nav>
+                        {% include "_elements/sources" %}
+                    </nav>
+                </div>
+
+                {% include "_elements/indexcontainer" with {
+                    showSiteMenu: false,
+                } %}
             </div>
+
+            {% js %}
+                Craft.elementIndex = Craft.createElementIndex('{{ elementType|e("js") }}', $('#elementindex-items'), {
+                    elementTypeName: '{{ elementInstance.displayName()|e("js") }}',
+                    elementTypePluralName: '{{ elementInstance.pluralDisplayName()|e("js") }}',
+                    context: '{{ context }}',
+                    storageKey: 'elementindex.{{ elementType|e("js") }}',
+                    criteria: { id: {{ list.items.ids() | json_encode | raw }} },
+                    toolbarFixed: false,
+                });
+            {% endjs %}
         {% else %}
             <p><em>{{ 'No items in this list.' | t('wishlist') }}</em></p>
         {% endif %}
