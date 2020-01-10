@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.1.0 - 2020-01-10
+
+### Added
+= Add project config support.
+- Add support for add/delete/toggle multiple items. See [docs](https://verbb.io/craft-plugins/wishlist/docs/template-guides/managing-items)
+- Add `purgeInactiveGuestListsDuration` to set times for guest lists to be purged, separate to user lists. This is default to 1 day.
+- Add purge lists to Craft's garbage collection.
+- Add guest list to user list when logging in.
+- Add email share action for lists. Users can directly and easily send their list via email.
+- Allow managing of list items in the CP, including add and delete.
+
+### Fixed
+- Fixed SQL error for PostgreSQL. (thanks @Tam).
+
 ## 1.0.6 - 2019-03-02
 
 ### Added
