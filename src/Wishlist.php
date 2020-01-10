@@ -17,6 +17,7 @@ use craft\events\RegisterUserPermissionsEvent;
 use craft\helpers\UrlHelper;
 use craft\services\Elements;
 use craft\services\Fields;
+use craft\services\Gc;
 use craft\services\ProjectConfig;
 use craft\services\UserPermissions;
 use craft\web\UrlManager;
@@ -57,6 +58,7 @@ class Wishlist extends Plugin
         $this->_registerVariables();
         $this->_registerElementTypes();
         $this->_registerProjectConfigEventListeners();
+        $this->_registerGarbageCollection();
     }
 
     public function getPluginName()
@@ -175,6 +177,14 @@ class Wishlist extends Plugin
 
         Event::on(ProjectConfig::class, ProjectConfig::EVENT_REBUILD, function (RebuildConfigEvent $event) {
             $event->config['wishlist'] = ProjectConfigData::rebuildProjectConfig();
+        });
+    }
+
+    private function _registerGarbageCollection()
+    {
+        Event::on(Gc::class, Gc::EVENT_RUN, function() {
+            // Deletes lists that meet the purge settings
+            Wishlist::$plugin->getLists()->purgeInactiveLists();
         });
     }
 }
