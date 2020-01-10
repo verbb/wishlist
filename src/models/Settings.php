@@ -12,5 +12,6 @@ class Settings extends Model
     public $allowDuplicates = false;
     public $purgeInactiveLists = false;
     public $purgeInactiveListsDuration = 'P3M';
+    public $purgeInactiveGuestListsDuration = 'P1D';
 
 }

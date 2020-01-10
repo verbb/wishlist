@@ -200,13 +200,30 @@ class Lists extends Component
         $interval->invert = 1;
         $edge->add($interval);
 
-        return (new Query())
+        $userIds = (new Query())
             ->select(['lists.id'])
             ->from(['{{%wishlist_lists}} lists'])
             ->join('LEFT OUTER JOIN', '{{%wishlist_items}} items', 'lists.id = [[items.listId]]')
             ->where('[[lists.dateUpdated]] <= :edge', ['edge' => $edge->format('Y-m-d H:i:s')])
             ->andWhere(['is', '[[items.listId]]', null])
             ->column();
+
+        $configInterval = Wishlist::getInstance()->getSettings()->purgeInactiveGuestListsDuration;
+        $edge = new \DateTime();
+        $interval = new \DateInterval($configInterval);
+        $interval->invert = 1;
+        $edge->add($interval);
+
+        $guestIds = (new Query())
+            ->select(['lists.id'])
+            ->from(['{{%wishlist_lists}} lists'])
+            ->join('LEFT OUTER JOIN', '{{%wishlist_items}} items', 'lists.id = [[items.listId]]')
+            ->where('[[lists.dateUpdated]] <= :edge', ['edge' => $edge->format('Y-m-d H:i:s')])
+            ->andWhere(['is', '[[items.listId]]', null])
+            ->andWhere(['is', '[[lists.userId]]', null])
+            ->column();
+
+        return array_merge($userIds, $guestIds);
     }
     
 }
