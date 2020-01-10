@@ -10,7 +10,8 @@ return [
         'pluginName' => 'Wishlist',
         'allowDuplicates' => false,
         'purgeInactiveLists' => false,
-        'purgeInactiveListsDuration' => 'P3M',
+        'purgeInactiveListsDuration' => 'P3M', // 3 months
+        'purgeInactiveGuestListsDuration' => 'P1D', // 1 day
     ]
 ];
 ```
@@ -21,6 +22,7 @@ return [
 - `allowDuplicates` - Whether to allow duplicates in lists.
 - `purgeInactiveLists` - Whether to purge inactive lists after a certain duration.
 - `purgeInactiveListsDuration` - If purging inactive lists is enabled, after this duration they will be purged.
+- `purgeInactiveGuestListsDuration` - If purging inactive lists is enabled, after this duration only guest lists will be purged.
 
 ## Control Panel
 
