@@ -45,9 +45,10 @@ class WishlistVariable
     {
         $item = null;
 
-        if (!$listId) {
-            $list = Wishlist::$plugin->getLists()->getList(null, true);
+        // Get the list, force it to be created
+        $list = Wishlist::$plugin->getLists()->getList($listId, true);
 
+        if ($list) {
             $item = Item::find()->elementId($elementId)->listId($list->id)->one();
         }
 
