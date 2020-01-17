@@ -1,4 +1,7 @@
 {% extends 'wishlist/_layouts' %}
+{% import '_includes/forms' as forms %}
+
+{% do view.registerAssetBundle('craft\\web\\assets\\admintable\\AdminTableAsset') -%}
 
 {% set title = 'List Types' | t('wishlist') %}
 {% set selectedSubnavItem = 'listTypes' %}
@@ -8,47 +11,45 @@
     { label: 'List Types' | t('wishlist'), url: url('wishlist/list-types') },
 ] %}
 
-{% block blockContent %}
-    <div id="noListTypes"{% if listTypes %} class="hidden"{% endif %}>
-        <p>{{ 'No list types exist yet.' | t('wishlist') }}</p>
-    </div>
-
-    {% if listTypes | length %}
-        <table id="listTypes" class="data fullwidth collapsible">
-            <thead>
-                <th scope="col">{{ 'Name' | t('wishlist') }}</th>
-                <th scope="col">{{ 'Handle' | t('wishlist') }}</th>
-                <th scope="col">{{ 'Default?' | t('wishlist') }}</th>
-                <td class="thin"></td>
-            </thead>
-            <tbody>
-                {% for listType in listTypes %}
-                    <tr data-id="{{ listType.id }}" data-name="{{ listType.name | t('wishlist') }}">
-                        <th scope="row" data-title="{{ 'Name' | t('wishlist') }}"><a href="{{ url('wishlist/list-types/' ~ listType.id) }}">{{ listType.name | t('wishlist') }}</a></th>
-                        <td data-title="{{ 'Handle' | t('wishlist') }}"><code>{{ listType.handle }}</code></td>
-                        <td data-title="{{ 'Default?' | t('wishlist') }}">
-                            {% if listType.default %}
-                                <span data-icon="check" title="{{ 'Yes' | t('wishlist') }}"></span>
-                            {% endif %}
-                        </td>
-                        <td class="thin"><a class="delete icon" title="{{ 'Delete' | t('wishlist') }}" role="button"></a></td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
-
-    <div id="newListType" class="buttons">
-        <a href="{{ url('wishlist/list-types/new') }}" class="btn submit add icon">{{ 'New list type' | t('wishlist') }}</a>
-    </div>
+{% block actionButton %}
+    <a href="{{ url('wishlist/list-types/new') }}" class="btn submit add icon">{{ 'New list type' | t('wishlist') }}</a>
 {% endblock %}
 
+{% block blockContent %}
+    <div id="types-vue-admin-table"></div>
+{% endblock %}
+
+{% set tableData = [] %}
+
+{% for type in listTypes %}
+    {% set tableData = tableData | merge([{
+        id: type.id,
+        title: type.name | t('site'),
+        url: type.cpEditUrl,
+        handle: type.handle | e,
+        default: type.default ? true : false,
+    }]) %}
+{% endfor %}
+
 {% js %}
-    var adminTable = new Craft.AdminTable({
-        tableSelector: '#listTypes',
-        noObjectsSelector: '#noListTypes',
-        newObjectBtnSelector: '#newListType',
+    var columns = [
+        { name: '__slot:title', title: Craft.t('app', 'Name') },
+        { name: '__slot:handle', title: Craft.t('app', 'Handle') },
+        { name: 'default', title: Craft.t('wishlist', 'Default?'),
+            callback: function(value) {
+                if (value) {
+                    return '<span data-icon="check" title="' + Craft.t('app', 'Yes') + '"></span>';
+                }
+            }
+        },
+    ];
+
+    new Craft.VueAdminTable({
+        columns: columns,
+        container: '#types-vue-admin-table',
         deleteAction: 'wishlist/list-types/delete-list-type',
-        confirmDeleteMessage: '{{ 'Are you sure you want to delete “{name}” and all its lists?' | t('wishlist') }}'
+        deleteConfirmationMessage: Craft.t('wishlist', "Are you sure you want to delete “{name}” and all its lists?"),
+        emptyMessage: Craft.t('wishlist', 'No list types exist yet.'),
+        tableData: {{ tableData | json_encode | raw }},
     });
 {% endjs %}
