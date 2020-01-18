@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.1 - 2020-01-18
+
+### Fixed
+- Fix list items having incorrect search attributes.
+
 ## 1.1.0 - 2020-01-10
 
 ### Added
