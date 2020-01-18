@@ -79,7 +79,7 @@ class Item extends Element
 
     protected static function defineSearchableAttributes(): array
     {
-        return ['ticketSku'];
+        return ['title', 'elementDisplay'];
     }
 
 
