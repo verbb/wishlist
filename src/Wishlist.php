@@ -12,6 +12,7 @@ use verbb\wishlist\variables\WishlistVariable;
 use Craft;
 use craft\base\Plugin;
 use craft\elements\User as UserElement;
+use craft\events\RebuildConfigEvent;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterEmailMessagesEvent;
 use craft\events\RegisterUrlRulesEvent;

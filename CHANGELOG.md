@@ -1,9 +1,9 @@
 # Changelog
 
-## 1.1.1 - 2020-01-18
+## 1.2.0 - 2020-01-29
 
-### Fixed
-- Fix list items having incorrect search attributes.
+### Added
+- Craft 3.4 compatibility.
 
 ## 1.1.0 - 2020-01-10
 

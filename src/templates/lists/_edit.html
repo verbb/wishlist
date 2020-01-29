@@ -100,9 +100,15 @@
                     </nav>
                 </div>
 
-                {% include "_elements/indexcontainer" with {
-                    showSiteMenu: false,
-                } %}
+                <div class="element-toolbar flex flex-nowrap">
+                    {% include '_elements/toolbar' with {
+                        showSiteMenu: false,
+                    } %}
+                </div>
+                
+                <div class="content-pane" style="margin-top: 24px; box-shadow: none; border: 1px #cdd8e4 solid;">
+                    <div class="elements"></div>
+                </div>
             </div>
 
             {% js %}
@@ -112,7 +118,7 @@
                     context: '{{ context }}',
                     storageKey: 'elementindex.{{ elementType|e("js") }}',
                     criteria: { id: {{ list.items.ids() | json_encode | raw }} },
-                    toolbarFixed: false,
+                    toolbarSelector: '.element-toolbar'
                 });
             {% endjs %}
         {% else %}

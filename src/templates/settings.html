@@ -1,32 +1,33 @@
 {% extends 'wishlist/_layouts' %}
 {% import '_includes/forms' as forms %}
-{% import 'wishlist/_macros' as macros %}
-
-{% set selectedSubnavItem = 'settings' %}
+{% import 'verbb-base/_macros' as macros %}
 
 {% set crumbs = [
     { label: craft.wishlist.getPluginName(), url: url('wishlist/settings') },
     { label: 'Settings' | t('app'), url: url('wishlist/settings') }
 ] %}
 
+{% set selectedSubnavItem = 'settings' %}
 {% set fullPageForm = true %}
 
-{% block content %}
+{% block blockContent %}
 
 <input type="hidden" name="action" value="plugins/save-plugin-settings">
 <input type="hidden" name="pluginHandle" value="wishlist">
 
 {% namespace 'settings' %}
-    {{ forms.textField({
-        id: 'pluginName',
-        name: 'pluginName',
-        label: 'Plugin Name' | t('app'),
-        instructions: 'Plugin name for the end user.' | t('wishlist'),
-        value: settings.pluginName,
-        first: true,
-        autofocus: true,
-        warning: macros.configWarning('pluginName', 'wishlist'),
-    }) }}
+
+{{ forms.textField({
+    first: true,
+    id: 'pluginName',
+    name: 'pluginName',
+    label: 'Plugin Name' | t('app'),
+    instructions: 'Plugin name for the end user.' | t('wishlist'),
+    value: settings.pluginName,
+    autofocus: true,
+    warning: macros.configWarning('pluginName', 'wishlist'),
+}) }}
+
 {% endnamespace %}
 
 {% endblock %}
