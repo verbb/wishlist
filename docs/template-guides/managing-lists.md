@@ -4,7 +4,8 @@ You can Add, Delete or Clear lists, and its recommended that these options shoul
 
 ### Add List
 
-```twig
+::: code
+```twig Form
 <form method="POST">
     <input type="hidden" name="action" value="wishlist/lists/create">
     {{ csrfInput() }}
@@ -16,9 +17,18 @@ You can Add, Delete or Clear lists, and its recommended that these options shoul
 </form>
 ```
 
+```twig URL
+<a href="{{ actionUrl('wishlist/lists/create', { title: 'Favourites', fields: { myField: 'My Value' } }) }}">
+    Create New List
+</a>
+```
+:::
+
+
 ### Delete List
 
-```twig
+::: code
+```twig Form
 {% for list in craft.wishlist.lists().all() %}
     <h3>{{ list.title }}</h3>
 
@@ -33,9 +43,18 @@ You can Add, Delete or Clear lists, and its recommended that these options shoul
 {% endfor %}
 ```
 
+```twig URL
+<a href="{{ actionUrl('wishlist/lists/delete', { listId: list.id }) }}">
+    Delete List
+</a>
+```
+:::
+
+
 ### Clear List
 
-```twig
+::: code
+```twig Form
 {% for list in craft.wishlist.lists().all() %}
     <h3>{{ list.title }}</h3>
 
@@ -49,3 +68,10 @@ You can Add, Delete or Clear lists, and its recommended that these options shoul
     </form>
 {% endfor %}
 ```
+
+```twig URL
+<a href="{{ actionUrl('wishlist/lists/clear', { listId: list.id }) }}">
+    Clear List
+</a>
+```
+:::

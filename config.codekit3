@@ -481,6 +481,14 @@
 		"oAP": "/src/errors/ItemError.php",
 		"oF": 0
 		},
+	"/src/errors/ListError.php": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/src/errors/ListError.php",
+		"oF": 0
+		},
 	"/src/events/ListTypeEvent.php": {
 		"cB": 0,
 		"ft": 8192,

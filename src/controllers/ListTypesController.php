@@ -96,10 +96,10 @@ class ListTypesController extends Controller
         $listType = new ListType();
 
         // Shared attributes
-        $listType->id = Craft::$app->getRequest()->getBodyParam('listTypeId');
-        $listType->name = Craft::$app->getRequest()->getBodyParam('name');
-        $listType->handle = Craft::$app->getRequest()->getBodyParam('handle');
-        $listType->default = (bool)Craft::$app->getRequest()->getBodyParam('default');
+        $listType->id = Craft::$app->getRequest()->getParam('listTypeId');
+        $listType->name = Craft::$app->getRequest()->getParam('name');
+        $listType->handle = Craft::$app->getRequest()->getParam('handle');
+        $listType->default = (bool)Craft::$app->getRequest()->getParam('default');
 
         // Set the list type field layout
         $fieldLayout = Craft::$app->getFields()->assembleLayoutFromPost();

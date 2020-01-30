@@ -3,6 +3,7 @@ namespace verbb\wishlist\controllers;
 
 use verbb\wishlist\Wishlist;
 use verbb\wishlist\elements\ListElement;
+use verbb\wishlist\errors\ListError;
 
 use Craft;
 use craft\base\Element;
@@ -24,7 +25,7 @@ use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\ServerErrorHttpException;
 
-class ListsController extends Controller
+class ListsController extends BaseController
 {
     // Properties
     // =========================================================================
@@ -184,37 +185,18 @@ class ListsController extends Controller
         $list->enabled = true;
 
         if (!Craft::$app->getElements()->saveElement($list)) {
-            if ($request->getAcceptsJson()) {
-                return $this->asJson([
-                    'success' => false,
-                    'errors' => $list->getErrors(),
-                ]);
-            }
+            $error = new ListError('Unable to save list.', ['list' => $list]);
 
-            Craft::$app->getSession()->setError(Craft::t('wishlist', 'Couldn’t save list.'));
-
-            // Send the category back to the template
-            Craft::$app->getUrlManager()->setRouteParams([
-                'list' => $list
-            ]);
-
-            return null;
+            return $this->returnError($error->message, $error->params);
         }
 
-        if ($request->getAcceptsJson()) {
-            return $this->asJson([
-                'success' => true,
-                'id' => $list->id,
-                'title' => $list->title,
-                'status' => $list->getStatus(),
-                'url' => $list->getUrl(),
-                'cpEditUrl' => $list->getCpEditUrl()
-            ]);
-        }
-
-        Craft::$app->getSession()->setNotice(Craft::t('app', 'List saved.'));
-
-        return $this->redirectToPostedUrl($list);
+        return $this->returnSuccess('List saved.', [
+            'id' => $list->id,
+            'title' => $list->title,
+            'status' => $list->getStatus(),
+            'url' => $list->getUrl(),
+            'cpEditUrl' => $list->getCpEditUrl()
+        ]);
     }
 
     public function actionDelete()
@@ -234,22 +216,12 @@ class ListsController extends Controller
         }
 
         if (!Craft::$app->getElements()->deleteElement($list)) {
-            if ($request->getAcceptsJson()) {
-                $this->asJson(['success' => false]);
-            }
+            $error = new ListError('Unable to delete list.', ['list' => $list]);
 
-            Craft::$app->getUrlManager()->setRouteParams([
-                'list' => $list
-            ]);
-
-            return null;
+            return $this->returnError($error->message, $error->params);
         }
 
-        if ($request->getAcceptsJson()) {
-            $this->asJson(['success' => true]);
-        }
-
-        return $this->redirectToPostedUrl($list);
+        return $this->returnSuccess('List deleted.');
     }
 
     public function actionClear()
@@ -260,7 +232,7 @@ class ListsController extends Controller
         $list = ListElement::findOne($listId);
 
         if (!$list) {
-            throw new Exception(Craft::t('wishlist', 'No list exists with the ID “{id}”.',['id' => $listId]));
+            throw new Exception(Craft::t('wishlist', 'No list exists with the ID “{id}”.', ['id' => $listId]));
         }
 
         // Only owners can clear their own lists
@@ -269,22 +241,12 @@ class ListsController extends Controller
         }
 
         if (!Wishlist::$plugin->getItems()->deleteItemsForList($listId)) {
-            if ($request->getAcceptsJson()) {
-                $this->asJson(['success' => false]);
-            }
+            $error = new ListError('Unable to clear list.', ['list' => $list]);
 
-            Craft::$app->getUrlManager()->setRouteParams([
-                'list' => $list
-            ]);
-
-            return null;
+            return $this->returnError($error->message, $error->params);
         }
 
-        if ($request->getAcceptsJson()) {
-            $this->asJson(['success' => true]);
-        }
-
-        return $this->redirectToPostedUrl($list);
+        return $this->returnSuccess('List cleared.');
     }
 
     public function actionAddToCart()
@@ -421,7 +383,7 @@ class ListsController extends Controller
     private function _setListFromPost(): ListElement
     {
         $request = Craft::$app->getRequest();
-        $listId = $request->getBodyParam('listId');
+        $listId = $request->getParam('listId');
 
         if ($listId) {
             $list = Wishlist::getInstance()->getLists()->getListById($listId);
@@ -433,9 +395,9 @@ class ListsController extends Controller
             $list = Wishlist::$plugin->getLists()->createList();
         }
 
-        $list->typeId = $request->getBodyParam('typeId', $list->typeId);
-        $list->enabled = (bool)$request->getBodyParam('enabled', $list->enabled);
-        $list->title = $request->getBodyParam('title', $list->title);
+        $list->typeId = $request->getParam('typeId', $list->typeId);
+        $list->enabled = (bool)$request->getParam('enabled', $list->enabled);
+        $list->title = $request->getParam('title', $list->title);
 
         $list->setFieldValuesFromRequest('fields');
 

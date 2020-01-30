@@ -9,12 +9,14 @@ class BaseController extends Controller
     // Protected Methods
     // =========================================================================
 
-    protected function returnSuccess($message)
+    protected function returnSuccess($message, $params = [])
     {
         $request = Craft::$app->getRequest();
 
         if ($request->getAcceptsJson()) {
-            return $this->asJson(['success' => true]);
+            $params['success'] = true;
+
+            return $this->asJson($params);
         }
 
         if ($request->getIsCpRequest()) {

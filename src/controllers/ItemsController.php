@@ -52,7 +52,7 @@ class ItemsController extends BaseController
         $this->requirePostRequest();
 
         $request = Craft::$app->getRequest();
-        $itemId = $request->getBodyParam('itemId');
+        $itemId = $request->getParam('itemId');
 
         if ($itemId) {
             $item = Wishlist::getInstance()->getItems()->getItemById($itemId);
@@ -64,8 +64,8 @@ class ItemsController extends BaseController
             $item = new Item();
         }
         
-        $item->listId = $request->getBodyParam('listId');
-        $item->elementId = $request->getBodyParam('elementId')[0];
+        $item->listId = $request->getParam('listId');
+        $item->elementId = $request->getParam('elementId')[0];
         $item->setFieldValuesFromRequest('fields');
 
         if (!Craft::$app->getElements()->saveElement($item)) {
@@ -107,7 +107,7 @@ class ItemsController extends BaseController
         $this->requirePostRequest();
 
         $request = Craft::$app->getRequest();
-        $itemId = $request->getBodyParam('itemId');
+        $itemId = $request->getParam('itemId');
         $item = Wishlist::getInstance()->getItems()->getItemById($itemId);
 
         if (!$item) {
