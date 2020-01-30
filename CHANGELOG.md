@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.2.1 - 2020-01-30
+
+### Added
+- Allow list actions to be callable via URL.
+- Add `manageDisabledLists` config setting to manage disabled lists and their items (default to true).
+
+### Fixed
+- Fix error when adding a new item to list in the CP.
+- Fix unable to update the element for an item through the CP.
+
 ## 1.2.0 - 2020-01-29
 
 ### Added
