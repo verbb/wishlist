@@ -1,13 +1,27 @@
 <?php
 namespace verbb\wishlist\controllers;
 
+use verbb\wishlist\Wishlist;
+
 use Craft;
 use craft\web\Controller;
+
+use yii\web\ForbiddenHttpException;
 
 class BaseController extends Controller
 {
     // Protected Methods
     // =========================================================================
+
+    protected function enforceEnabledList($list)
+    {
+        $settings = Wishlist::$plugin->getSettings();
+
+        // If its disabled, and should we check?
+        if ($list && !$list->enabled && !$settings->manageDisabledLists) {
+            throw new ForbiddenHttpException('User is not permitted to perform this action');
+        }
+    }
 
     protected function returnSuccess($message, $params = [])
     {

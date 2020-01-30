@@ -174,6 +174,9 @@ class ItemsController extends BaseController
 
             $item = $this->_setItemFromPost($elementId);
 
+             // Check if we're allowed to manage lists
+            $this->enforceEnabledList($item->list);
+
             // Check if this is in the list
             $existingItem = Item::find()->elementId($elementId)->listId($item->listId)->one();
             
@@ -221,6 +224,9 @@ class ItemsController extends BaseController
         }
         
         $list = Wishlist::$plugin->getLists()->getList($listId, true, $listTypeId);
+
+         // Check if we're allowed to manage lists
+        $this->enforceEnabledList($list);
 
         $errors = [];
 
@@ -285,6 +291,9 @@ class ItemsController extends BaseController
 
         $list = Wishlist::$plugin->getLists()->getList($listId, true, $listTypeId);
 
+         // Check if we're allowed to manage lists
+        $this->enforceEnabledList($list);
+
         $errors = [];
 
         // By default, handle multi-items, but if not - set them up as one
@@ -347,6 +356,9 @@ class ItemsController extends BaseController
         if (!$item) {
             return $this->returnError('Unable to find item.');
         }
+
+         // Check if we're allowed to manage lists
+        $this->enforceEnabledList($item->list);
 
         $item->setFieldValuesFromRequest('fields');
         

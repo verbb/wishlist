@@ -184,6 +184,10 @@ class ListsController extends BaseController
         $list = $this->_setListFromPost();
         $list->enabled = true;
 
+         // Check if we're allowed to manage lists
+        $this->enforceEnabledList($list);
+        $this->enforceListPermissions($list);
+
         if (!Craft::$app->getElements()->saveElement($list)) {
             $error = new ListError('Unable to save list.', ['list' => $list]);
 
@@ -210,6 +214,10 @@ class ListsController extends BaseController
             throw new Exception(Craft::t('wishlist', 'No list exists with the ID “{id}”.',['id' => $listId]));
         }
 
+         // Check if we're allowed to manage lists
+        $this->enforceEnabledList($list);
+        $this->enforceListPermissions($list);
+
         // Only owners can delete their own lists
         if (!WishList::$plugin->getLists()->isListOwner($list)) {
             throw new Exception(Craft::t('wishlist', 'You can only delete your own list.'));
@@ -234,6 +242,10 @@ class ListsController extends BaseController
         if (!$list) {
             throw new Exception(Craft::t('wishlist', 'No list exists with the ID “{id}”.', ['id' => $listId]));
         }
+
+         // Check if we're allowed to manage lists
+        $this->enforceEnabledList($list);
+        $this->enforceListPermissions($list);
 
         // Only owners can clear their own lists
         if (!WishList::$plugin->getLists()->isListOwner($list)) {
@@ -263,6 +275,10 @@ class ListsController extends BaseController
         if (!$list) {
             throw new Exception(Craft::t('wishlist', 'No list exists with the ID “{id}”.',['id' => $listId]));
         }
+
+         // Check if we're allowed to manage lists
+        $this->enforceEnabledList($list);
+        $this->enforceListPermissions($list);
 
         $cart = Commerce::getInstance()->getCarts()->getCart(true);
 
@@ -320,6 +336,10 @@ class ListsController extends BaseController
         if (!$list) {
             throw new Exception(Craft::t('wishlist', 'No list exists with the ID “{id}”.', ['id' => $listId]));
         }
+
+         // Check if we're allowed to manage lists
+        $this->enforceEnabledList($list);
+        $this->enforceListPermissions($list);
 
         $sender = $request->getRequiredParam('sender');
         $recipient = $request->getRequiredParam('recipient');

@@ -9,6 +9,7 @@ return [
     '*' => [
         'pluginName' => 'Wishlist',
         'allowDuplicates' => false,
+        'manageDisabledLists' => true,
         'purgeInactiveLists' => false,
         'purgeInactiveListsDuration' => 'P3M', // 3 months
         'purgeInactiveGuestListsDuration' => 'P1D', // 1 day
@@ -20,6 +21,7 @@ return [
 
 - `pluginName` - If you want to change the plugin name in the control panel.
 - `allowDuplicates` - Whether to allow duplicates in lists.
+- `manageDisabledLists` - Whether to allow front-end users to manage disabled lists and their items.
 - `purgeInactiveLists` - Whether to purge inactive lists after a certain duration.
 - `purgeInactiveListsDuration` - If purging inactive lists is enabled, after this duration they will be purged.
 - `purgeInactiveGuestListsDuration` - If purging inactive lists is enabled, after this duration only guest lists will be purged.
