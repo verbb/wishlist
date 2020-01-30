@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.2 - 2020-01-18
+
+### Fixed
+- Fix project config error.
+
 ## 1.1.1 - 2020-01-18
 
 ### Fixed
