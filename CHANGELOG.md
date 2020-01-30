@@ -5,6 +5,16 @@
 ### Added
 - Craft 3.4 compatibility.
 
+## 1.1.2 - 2020-01-18
+
+### Fixed
+- Fix project config error.
+
+## 1.1.1 - 2020-01-18
+
+### Fixed
+- Fix list items having incorrect search attributes.
+
 ## 1.1.0 - 2020-01-10
 
 ### Added
