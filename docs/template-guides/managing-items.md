@@ -128,6 +128,35 @@ Any of the above actions will by made on the users' default list. You can also t
 ```
 :::
 
+## List Types
+The above actions will all be actioned on the default list. Its common to specify another list type to manage items on. You might have a list type called 'Favourites', which you want to add/delete/toggle on.
+
+To make use of this, you need to supply either the `listTypeHandle` or `listTypeId` in your actions.
+
+::: code
+```twig Form
+{% for entry in craft.entries.section('news').all() %}
+    <form method="POST">
+        <input type="hidden" name="action" value="wishlist/items/add">
+        {{ csrfInput() }}
+
+        <input type="text" name="elementId" value="{{ entry.id }}">
+        <input type="text" name="listTypeHandle" value="favourites">
+
+        <input type="submit" value="Add to Favourites">
+    </form>
+{% endfor %}
+```
+
+```twig URL
+{% for entry in craft.entries.section('news').all() %}
+    {% set item = craft.wishlist.item(entry.id) %}
+
+    <a href="{{ item.addUrl() }}&listTypeHandle=favourites">Add to Favourites</a>
+{% endfor %}
+```
+:::
+
 ## Multiple Items
 You can also manage multiple items at a time, for example, adding multiple items:
 
@@ -162,4 +191,3 @@ You can also check to see if an item is already in the list, which is useful for
     {% endif %}
 {% endfor %}
 ```
-
