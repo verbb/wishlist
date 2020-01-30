@@ -53,6 +53,7 @@
 {% block content %}
     <input type="hidden" name="action" value="wishlist/items/save-item">
     {{ redirectInput(list.cpEditUrl) }}
+    <input type="hidden" name="listId" value="{{ list.id }}">
     {% if item.id %}<input type="hidden" name="itemId" value="{{ item.id }}">{% endif %}
 
     <div id="fields">

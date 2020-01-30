@@ -64,6 +64,7 @@ class ItemsController extends BaseController
             $item = new Item();
         }
         
+        $item->listId = $request->getBodyParam('listId');
         $item->setFieldValuesFromRequest('fields');
 
         if (!Craft::$app->getElements()->saveElement($item)) {
