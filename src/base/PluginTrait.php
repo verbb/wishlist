@@ -11,6 +11,8 @@ use craft\log\FileTarget;
 
 use yii\log\Logger;
 
+use verbb\base\BaseHelper;
+
 trait PluginTrait
 {
     // Static Properties
@@ -37,23 +39,6 @@ trait PluginTrait
         return $this->get('items');
     }
 
-    private function _setPluginComponents()
-    {
-        $this->setComponents([
-            'lists' => Lists::class,
-            'listTypes' => ListTypes::class,
-            'items' => Items::class,
-        ]);
-    }
-
-    private function _setLogging()
-    {
-        Craft::getLogger()->dispatcher->targets[] = new FileTarget([
-            'logFile' => Craft::getAlias('@storage/logs/wishlist.log'),
-            'categories' => ['wishlist'],
-        ]);
-    }
-
     public static function log($message)
     {
         Craft::getLogger()->log($message, Logger::LEVEL_INFO, 'wishlist');
@@ -62,6 +47,29 @@ trait PluginTrait
     public static function error($message)
     {
         Craft::getLogger()->log($message, Logger::LEVEL_ERROR, 'wishlist');
+    }
+
+
+    // Private Methods
+    // =========================================================================
+
+    private function _setPluginComponents()
+    {
+        $this->setComponents([
+            'lists' => Lists::class,
+            'listTypes' => ListTypes::class,
+            'items' => Items::class,
+        ]);
+
+        BaseHelper::registerModule();
+    }
+
+    private function _setLogging()
+    {
+        Craft::getLogger()->dispatcher->targets[] = new FileTarget([
+            'logFile' => Craft::getAlias('@storage/logs/wishlist.log'),
+            'categories' => ['wishlist'],
+        ]);
     }
 
 }

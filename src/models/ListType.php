@@ -49,12 +49,12 @@ class ListType extends Model
 
     public function getCpEditUrl(): string
     {
-        return UrlHelper::cpUrl('wishlist/settings/listtypes/' . $this->id);
+        return UrlHelper::cpUrl('wishlist/list-types/' . $this->id);
     }
 
     public function getCpEditItemUrl(): string
     {
-        return UrlHelper::cpUrl('wishlist/settings/listtypes/' . $this->id . '/item');
+        return UrlHelper::cpUrl('wishlist/list-types/' . $this->id . '/item');
     }
 
     public function getListFieldLayout(): FieldLayout
