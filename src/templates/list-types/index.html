@@ -11,8 +11,12 @@
     { label: 'List Types' | t('wishlist'), url: url('wishlist/list-types') },
 ] %}
 
+{% set editable = craft.app.config.general.allowAdminChanges %}
+
 {% block actionButton %}
-    <a href="{{ url('wishlist/list-types/new') }}" class="btn submit add icon">{{ 'New list type' | t('wishlist') }}</a>
+    {% if editable %}
+        <a href="{{ url('wishlist/list-types/new') }}" class="btn submit add icon">{{ 'New list type' | t('wishlist') }}</a>
+    {% endif %}
 {% endblock %}
 
 {% block blockContent %}
@@ -25,9 +29,10 @@
     {% set tableData = tableData | merge([{
         id: type.id,
         title: type.name | t('site'),
-        url: type.cpEditUrl,
+        url: editable ? type.cpEditUrl : '',
         handle: type.handle | e,
         default: type.default ? true : false,
+        _showDelete: editable,
     }]) %}
 {% endfor %}
 
