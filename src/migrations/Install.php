@@ -107,21 +107,27 @@ class Install extends Migration
 
     public function insertDefaultData()
     {
-        $this->insert(FieldLayout::tableName(), ['type' => ListElement::class]);
-        $this->_listFieldLayoutId = $this->db->getLastInsertID(FieldLayout::tableName());
-        $this->insert(FieldLayout::tableName(), ['type' => Item::class]);
-        $this->_itemFieldLayoutId = $this->db->getLastInsertID(FieldLayout::tableName());
+        // Don't make the same config changes twice
+        $installed = (Craft::$app->projectConfig->get('plugins.wishlist', true) !== null);
+        $configExists = (Craft::$app->projectConfig->get('wishlist', true) !== null);
 
-        $data = [
-            'name' => 'Wishlist',
-            'handle' => 'wishlist',
-            'default' => true,
-            'fieldLayoutId' => $this->_listFieldLayoutId,
-            'itemFieldLayoutId' => $this->_itemFieldLayoutId,
-        ];
+        if (!$installed && !$configExists) {
+            $this->insert(FieldLayout::tableName(), ['type' => ListElement::class]);
+            $this->_listFieldLayoutId = $this->db->getLastInsertID(FieldLayout::tableName());
+            $this->insert(FieldLayout::tableName(), ['type' => Item::class]);
+            $this->_itemFieldLayoutId = $this->db->getLastInsertID(FieldLayout::tableName());
 
-        $this->insert(ListType::tableName(), $data);
-        $listTypeId = $this->db->getLastInsertID(ListType::tableName());
+            $data = [
+                'name' => 'Wishlist',
+                'handle' => 'wishlist',
+                'default' => true,
+                'fieldLayoutId' => $this->_listFieldLayoutId,
+                'itemFieldLayoutId' => $this->_itemFieldLayoutId,
+            ];
+
+            $this->insert(ListType::tableName(), $data);
+            $listTypeId = $this->db->getLastInsertID(ListType::tableName());
+        }
     }
 
     public function dropForeignKeys()
