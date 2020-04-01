@@ -36,6 +36,7 @@ class Install extends Migration
     {
         $this->dropForeignKeys();
         $this->dropTables();
+        $this->dropProjectConfig();
 
         return true;
     }
@@ -142,5 +143,10 @@ class Install extends Migration
         $this->dropTable('{{%wishlist_lists}}');
         $this->dropTable('{{%wishlist_listtypes}}');
         $this->dropTable('{{%wishlist_items}}');
+    }
+
+    public function dropProjectConfig()
+    {
+        Craft::$app->projectConfig->remove('wishlist');
     }
 }
