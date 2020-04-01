@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.2 - 2020-04-01
+
+### Fixed
+- Only allow editing of list types if editable.
+- Fix default data when installing conflicting with project config.
+- Ensure plugin project config is removed when uninstalling.
+
 ## 1.2.1 - 2020-01-30
 
 ### Added
