@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.3 - 2020-04-07
+
+### Fixed
+- Fix managing lists on the front-end and requiring permissions.
+
 ## 1.2.2 - 2020-04-01
 
 ### Fixed
