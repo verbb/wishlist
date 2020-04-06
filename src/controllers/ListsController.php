@@ -376,6 +376,11 @@ class ListsController extends BaseController
             throw new HttpException(404);
         }
 
+        // We shouldn't be checking front-end requests for permissions
+        if (Craft::$app->getRequest()->getIsSiteRequest()) {
+            return;
+        }
+
         $this->requirePermission('wishlist-manageListType:' . $list->getType()->id);
     }
 
