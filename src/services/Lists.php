@@ -112,6 +112,7 @@ class Lists extends Component
             $query->userId($currentUser->id);
         } else {
             $query->sessionId($this->getSessionId());
+            $query->userId(':empty:');
         }
 
         return $query;
