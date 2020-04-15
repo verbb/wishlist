@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.5 - 2020-04-16
+
+### Added
+- Add `mergeLastListOnLogin`, on by default to merge guests’ lists when logging in with existing saved lists.
+
+### Fixed
+- Ensure saved lists for users aren’t overridden on next login.
+
 ## 1.2.4 - 2020-04-15
 
 ### Changed
