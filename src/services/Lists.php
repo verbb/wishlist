@@ -194,12 +194,50 @@ class Lists extends Component
 
     public function consolidateListsToUser(UserElement $user, array $lists = null): bool
     {
-        // Try and find the default list for the guest
-        $sessionId = $this->getSessionId();
+        try {
+            $settings = Wishlist::$plugin->getSettings();
 
-        Craft::$app->getDb()->createCommand()
-            ->update('{{%wishlist_lists}}', ['userId' => $user->id], ['sessionId' => $sessionId, 'default' => true, 'userId' => null])
-            ->execute();
+            // Try and find the default list for the guest
+            $sessionId = $this->getSessionId();
+
+            Craft::$app->getDb()->createCommand()
+                ->update('{{%wishlist_lists}}', ['userId' => $user->id], ['sessionId' => $sessionId, 'default' => true, 'userId' => null])
+                ->execute();
+
+            if ($settings->mergeLastListOnLogin) {
+                // Check if we've now got multiple lists for a logged-in user. We need to merge them
+                $listTypes = Wishlist::getInstance()->getListTypes()->getAllListTypes();
+
+                // We want to merge lists per list type
+                foreach ($listTypes as $listType) {
+                    $userListIds = ListElement::find()
+                        ->userId($user->id)
+                        ->typeId($listType->id)
+                        ->orderBy('dateCreated asc')
+                        ->ids();
+
+                    if ($userListIds) {
+                        $oldestListId = $userListIds[0];
+
+                        // Update all list items to belong to the oldest list
+                        foreach ($userListIds as $userListId) {
+                            if ($oldestListId != $userListId) {
+                                Craft::$app->getDb()->createCommand()
+                                    ->update('{{%wishlist_items}}', ['listId' => $oldestListId], ['listId' => $userListId])
+                                    ->execute();
+
+                                // Delete the newer list, now the items have been moved off
+                                Craft::$app->getDb()->createCommand()
+                                    ->delete('{{%elements}}', ['id' => $userListId])
+                                    ->execute();
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            Wishlist::error(Craft::t('app', '{e} - {f}: {l}.', ['e' => $e->getMessage(), 'f' => $e->getFile(), 'l' => $e->getLine()]));
+        }
 
         return true;
     }
