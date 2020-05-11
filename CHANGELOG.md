@@ -3,7 +3,7 @@
 ## 1.2.7 - 2020-05-12
 
 ### Added
-- Add `action` to all item and list controller actions
+- Add `action` param to all item and list controller actions
 
 ## 1.2.6 - 2020-04-16
 
