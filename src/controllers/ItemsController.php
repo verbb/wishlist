@@ -302,6 +302,8 @@ class ItemsController extends BaseController
             'fields' => $request->getParam('fields'),
         ]]);
 
+        $actions = [];
+
         foreach ($postItems as $key => $postItem) {
             $elementId = $postItem['elementId'] ?? '';
 
@@ -322,6 +324,8 @@ class ItemsController extends BaseController
                     
                     continue;
                 }
+
+                $actions[] = ['id' => $item->id, 'action' => 'removed'];
             } else {
                 $item = $this->_setItemFromPost($elementId);
 
@@ -330,6 +334,8 @@ class ItemsController extends BaseController
                     
                     continue;
                 }
+
+                $actions[] = ['id' => $item->id, 'action' => 'added'];
             }
         }
 
@@ -339,7 +345,12 @@ class ItemsController extends BaseController
             }
         }
 
-        return $this->returnSuccess('Item toggled in list.');
+        // Just clean up if only toggling one item
+        if (count($actions) == 1) {
+            $actions = $actions[0];
+        }
+
+        return $this->returnSuccess('Item toggled in list.', ['items' => $actions]);
     }
 
     public function actionUpdate()
