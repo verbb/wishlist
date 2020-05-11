@@ -4,6 +4,7 @@ namespace verbb\wishlist\controllers;
 use verbb\wishlist\Wishlist;
 
 use Craft;
+use craft\helpers\StringHelper;
 use craft\web\Controller;
 
 use yii\web\ForbiddenHttpException;
@@ -26,6 +27,15 @@ class BaseController extends Controller
     protected function returnSuccess($message, $params = [])
     {
         $request = Craft::$app->getRequest();
+
+        // Try and determine the action automatically
+        $action = debug_backtrace()[1]['function'] ?? '';
+        $action = str_replace('action', '', $action);
+        $action = StringHelper::toKebabCase($action);
+
+        if ($action) {
+            $params['action'] = $action;
+        }
 
         if ($request->getAcceptsJson()) {
             $params['success'] = true;
@@ -50,8 +60,19 @@ class BaseController extends Controller
 
         $error = Craft::t('wishlist', $message);
 
+        // Try and determine the action automatically
+        $action = debug_backtrace()[1]['function'] ?? '';
+        $action = str_replace('action', '', $action);
+        $action = StringHelper::toKebabCase($action);
+
+        if ($action) {
+            $params['action'] = $action;
+        }
+
         if ($request->getAcceptsJson()) {
-            return $this->asJson(['error' => $error]);
+            $params['error'] = $error;
+
+            return $this->asJson($params);
         }
 
         if ($request->getIsCpRequest()) {
