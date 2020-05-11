@@ -2,7 +2,7 @@
     "name": "verbb/wishlist",
     "description": "Allow users to create lists to store favourite entries, save products in a wishlist and more.",
     "type": "craft-plugin",
-    "version": "1.2.6",
+    "version": "1.2.7",
     "keywords": [
         "craft",
         "cms",
