@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.8 - 2020-05-12
+
+### Added
+- Return “items” when toggling an item. This will be the item ID and the action taken upon an item ('added' or 'removed').
+
 ## 1.2.7 - 2020-05-12
 
 ### Added
