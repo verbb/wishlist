@@ -163,13 +163,13 @@ class Item extends Element
     public function getList()
     {
         if ($this->listId === null) {
-            throw new InvalidConfigException('Item is missing its list ID');
+            return null;
         }
 
         $list = Wishlist::$plugin->getLists()->getListById($this->listId);
 
         if (!$list) {
-            throw new InvalidConfigException('Invalid list ID: ' . $this->listId);
+            return null;
         }
 
         return $list;
@@ -187,7 +187,7 @@ class Item extends Element
     
     public function getFieldLayout()
     {
-        if ($this->listId) {
+        if ($this->getList()) {
             return $this->getList()->getType()->getItemFieldLayout();
         }
 
@@ -196,7 +196,7 @@ class Item extends Element
 
     public function getInList()
     {
-        if ($this->id && $this->listId) {
+        if ($this->id && $this->getList()) {
             return in_array($this->id, $this->getList()->getItems()->ids());
         }
 
