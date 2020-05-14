@@ -11,7 +11,10 @@ use verbb\wishlist\variables\WishlistVariable;
 
 use Craft;
 use craft\base\Plugin;
+use craft\console\controllers\ResaveController;
+use craft\console\Controller as ConsoleController;
 use craft\elements\User as UserElement;
+use craft\events\DefineConsoleActionsEvent;
 use craft\events\RebuildConfigEvent;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterEmailMessagesEvent;
@@ -65,6 +68,7 @@ class Wishlist extends Plugin
         $this->_registerElementTypes();
         $this->_registerProjectConfigEventListeners();
         $this->_registerGarbageCollection();
+        $this->_defineResaveCommand();
     }
 
     public function getPluginName()
@@ -218,4 +222,26 @@ class Wishlist extends Plugin
             Event::on(User::class, User::EVENT_AFTER_LOGIN, [$this->getLists(), 'loginHandler']);
         }
     }
+
+    private function _defineResaveCommand()
+    {
+        if (!Craft::$app->getRequest()->getIsConsoleRequest()) {
+            return;
+        }
+
+        Event::on(ResaveController::class, ConsoleController::EVENT_DEFINE_ACTIONS, function(DefineConsoleActionsEvent $e) {
+            $e->actions['wishlist-items'] = [
+                'action' => function(): int {
+                    $controller = Craft::$app->controller;
+
+                    $query = Item::find();
+
+                    return $controller->saveElements($query);
+                },
+                'options' => ['type'],
+                'helpSummary' => 'Re-saves Wishlist items.',
+            ];
+        });
+    }
+
 }
