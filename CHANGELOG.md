@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.9 - 2020-05-14
+
+### Added
+- Add `resave/wishlist-items` console command.
+- Add `resave/wishlist-lists` console command.
+
+### Fixed
+- Fix potential error when fetching an items list, when it doesn’t exist.
+
 ## 1.2.8 - 2020-05-12
 
 ### Added
