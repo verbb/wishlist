@@ -10,7 +10,7 @@ return [
         'pluginName' => 'Wishlist',
         'allowDuplicates' => false,
         'manageDisabledLists' => true,
-        'mergeLastListOnLogin' => true,
+        'mergeLastListOnLogin' => false,
         'purgeInactiveLists' => false,
         'purgeInactiveListsDuration' => 'P3M', // 3 months
         'purgeInactiveGuestListsDuration' => 'P1D', // 1 day

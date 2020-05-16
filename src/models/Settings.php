@@ -11,7 +11,7 @@ class Settings extends Model
     public $pluginName = 'Wishlist';
     public $allowDuplicates = false;
     public $manageDisabledLists = true;
-    public $mergeLastListOnLogin = true;
+    public $mergeLastListOnLogin = false;
     public $purgeInactiveLists = false;
     public $purgeInactiveListsDuration = 'P3M';
     public $purgeInactiveGuestListsDuration = 'P1D';
