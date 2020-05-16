@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.10 - 2020-05-16
+
+> {warning} Please note the change in default behaviour for `mergeLastListOnLogin`.
+
+### Changed
+- Change `mergeLastListOnLogin` to be off by default. User lists won't be merged automatically, by default.
+
 ## 1.2.9 - 2020-05-14
 
 ### Added
