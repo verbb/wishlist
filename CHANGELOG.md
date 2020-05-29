@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.11 - 2020-05-29
+
+### Added
+- Add `item` model to add/remove ajax actions.
+- Implement GraphQL for items and lists. See [docs](https://verbb.io/craft-plugins/wishlist/docs/developers/graphql).
+
 ## 1.2.10 - 2020-05-16
 
 > {warning} Please note the change in default behaviour for `mergeLastListOnLogin`.
