@@ -203,7 +203,7 @@ class ItemsController extends BaseController
             }
         }
 
-        return $this->returnSuccess('Item' . ((count($postItems) > 1) ? 's' : '') . ' added to list.');
+        return $this->returnSuccess('Item' . ((count($postItems) > 1) ? 's' : '') . ' added to list.', ['item' => $item]);
     }
 
     public function actionRemove()
@@ -269,7 +269,7 @@ class ItemsController extends BaseController
             }
         }
 
-        return $this->returnSuccess('Item removed from list.');
+        return $this->returnSuccess('Item removed from list.', ['item' => $item]);
     }
 
     public function actionToggle()
