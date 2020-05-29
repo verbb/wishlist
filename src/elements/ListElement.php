@@ -228,6 +228,16 @@ class ListElement extends Element
         }
     }
 
+    public static function gqlTypeNameByContext($context): string
+    {
+        return 'List';
+    }
+
+    public function getGqlTypeName(): string
+    {
+        return static::gqlTypeNameByContext($this);
+    }
+
 
     // URLs
     // -------------------------------------------------------------------------

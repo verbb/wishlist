@@ -4,6 +4,10 @@ namespace verbb\wishlist;
 use verbb\wishlist\base\PluginTrait;
 use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\elements\Item;
+use verbb\wishlist\gql\interfaces\ListInterface;
+use verbb\wishlist\gql\interfaces\ItemInterface;
+use verbb\wishlist\gql\queries\ListQuery;
+use verbb\wishlist\gql\queries\ItemQuery;
 use verbb\wishlist\helpers\ProjectConfigData;
 use verbb\wishlist\models\Settings;
 use verbb\wishlist\services\ListTypes;
@@ -18,12 +22,15 @@ use craft\events\DefineConsoleActionsEvent;
 use craft\events\RebuildConfigEvent;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterEmailMessagesEvent;
+use craft\events\RegisterGqlQueriesEvent;
+use craft\events\RegisterGqlTypesEvent;
 use craft\events\RegisterUrlRulesEvent;
 use craft\events\RegisterUserPermissionsEvent;
 use craft\helpers\UrlHelper;
 use craft\services\Elements;
 use craft\services\Fields;
 use craft\services\Gc;
+use craft\services\Gql;
 use craft\services\ProjectConfig;
 use craft\services\SystemMessages;
 use craft\services\UserPermissions;
@@ -69,6 +76,7 @@ class Wishlist extends Plugin
         $this->_registerProjectConfigEventListeners();
         $this->_registerGarbageCollection();
         $this->_defineResaveCommand();
+        $this->_registerGraphQl();
     }
 
     public function getPluginName()
@@ -259,6 +267,24 @@ class Wishlist extends Plugin
                 },
                 'helpSummary' => 'Re-saves Wishlist lists.',
             ];
+        });
+    }
+
+    private function _registerGraphQl()
+    {
+        Event::on(Gql::class, Gql::EVENT_REGISTER_GQL_TYPES, function(RegisterGqlTypesEvent $event) {
+            $event->types[] = ListInterface::class;
+            $event->types[] = ItemInterface::class;
+        });
+
+        Event::on(Gql::class, Gql::EVENT_REGISTER_GQL_QUERIES, function(RegisterGqlQueriesEvent $event) {
+            foreach (ListQuery::getQueries() as $key => $value) {
+                $event->queries[$key] = $value;
+            }
+
+            foreach (ItemQuery::getQueries() as $key => $value) {
+                $event->queries[$key] = $value;
+            }
         });
     }
 

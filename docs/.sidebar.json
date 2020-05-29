@@ -42,7 +42,8 @@
         "children": [
             "developers/list",
             "developers/item",
-            "developers/events"
+            "developers/events",
+            "developers/graphql"
         ]
     },
     {

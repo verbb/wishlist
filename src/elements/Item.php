@@ -226,6 +226,16 @@ class Item extends Element
         }
     }
 
+    public static function gqlTypeNameByContext($context): string
+    {
+        return 'Item';
+    }
+
+    public function getGqlTypeName(): string
+    {
+        return static::gqlTypeNameByContext($this);
+    }
+
 
     // URLs
     // -------------------------------------------------------------------------
