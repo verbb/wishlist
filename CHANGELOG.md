@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.12 - 2020-05-31
+
+> {warning} Please note the change in default behaviour for `purgeInactiveLists`.
+
+### Changed
+- Change `purgeInactiveLists` to be on by default. This will prevent your wishlists from getting out of control.
+
 ## 1.2.11 - 2020-05-29
 
 ### Added

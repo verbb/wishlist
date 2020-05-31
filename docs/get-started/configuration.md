@@ -11,7 +11,7 @@ return [
         'allowDuplicates' => false,
         'manageDisabledLists' => true,
         'mergeLastListOnLogin' => false,
-        'purgeInactiveLists' => false,
+        'purgeInactiveLists' => true,
         'purgeInactiveListsDuration' => 'P3M', // 3 months
         'purgeInactiveGuestListsDuration' => 'P1D', // 1 day
     ]

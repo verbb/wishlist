@@ -12,7 +12,7 @@ class Settings extends Model
     public $allowDuplicates = false;
     public $manageDisabledLists = true;
     public $mergeLastListOnLogin = false;
-    public $purgeInactiveLists = false;
+    public $purgeInactiveLists = true;
     public $purgeInactiveListsDuration = 'P3M';
     public $purgeInactiveGuestListsDuration = 'P1D';
 
