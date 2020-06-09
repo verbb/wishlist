@@ -155,6 +155,10 @@ class ItemsController extends BaseController
             'fields' => $request->getParam('fields'),
         ]]);
 
+        $variables = [
+            'items' => [],
+        ];
+
         foreach ($postItems as $key => $postItem) {
             $elementId = $postItem['elementId'] ?? '';
             
@@ -195,6 +199,8 @@ class ItemsController extends BaseController
 
                 continue;
             }
+
+            $variables['items'][] = $item;
         }
 
         if ($errors) {
@@ -203,7 +209,11 @@ class ItemsController extends BaseController
             }
         }
 
-        return $this->returnSuccess('Item' . ((count($postItems) > 1) ? 's' : '') . ' added to list.', ['item' => $item]);
+        // TOOD: Remove this at the next major breakpoint
+        $variables['item'] = $item;
+        $variables['notice'] = '`item` is deprecated and will be removed in the next major release. Please use `items` instead.';
+
+        return $this->returnSuccess('Item' . ((count($postItems) > 1) ? 's' : '') . ' added to list.', $variables);
     }
 
     public function actionRemove()
@@ -229,6 +239,10 @@ class ItemsController extends BaseController
         $this->enforceEnabledList($list);
 
         $errors = [];
+
+        $variables = [
+            'items' => [],
+        ];
 
         // By default, handle multi-items, but if not - set them up as one
         $postItems = $request->getParam('items', [[
@@ -261,6 +275,8 @@ class ItemsController extends BaseController
             
                 continue;
             }
+
+            $variables['items'][] = $item;
         }
 
         if ($errors) {
@@ -269,7 +285,11 @@ class ItemsController extends BaseController
             }
         }
 
-        return $this->returnSuccess('Item removed from list.', ['item' => $item]);
+        // TOOD: Remove this at the next major breakpoint
+        $variables['item'] = $item;
+        $variables['notice'] = '`item` is deprecated and will be removed in the next major release. Please use `items` instead.';
+
+        return $this->returnSuccess('Items removed from list.', $variables);
     }
 
     public function actionToggle()
@@ -295,6 +315,10 @@ class ItemsController extends BaseController
         $this->enforceEnabledList($list);
 
         $errors = [];
+
+        $variables = [
+            'items' => [],
+        ];
 
         // By default, handle multi-items, but if not - set them up as one
         $postItems = $request->getParam('items', [[
@@ -325,7 +349,7 @@ class ItemsController extends BaseController
                     continue;
                 }
 
-                $actions[] = ['id' => $item->id, 'action' => 'removed'];
+                $variables['items'][] = array_merge(['action' => 'removed'], $item->toArray());
             } else {
                 $item = $this->_setItemFromPost($elementId);
 
@@ -335,7 +359,7 @@ class ItemsController extends BaseController
                     continue;
                 }
 
-                $actions[] = ['id' => $item->id, 'action' => 'added'];
+                $variables['items'][] = array_merge(['action' => 'added'], $item->toArray());
             }
         }
 
@@ -345,12 +369,11 @@ class ItemsController extends BaseController
             }
         }
 
-        // Just clean up if only toggling one item
-        if (count($actions) == 1) {
-            $actions = $actions[0];
-        }
+        // TOOD: Remove this at the next major breakpoint
+        $variables['item'] = $variables['items'][0] ?? [];
+        $variables['notice'] = '`item` is deprecated and will be removed in the next major release. Please use `items` instead.';
 
-        return $this->returnSuccess('Item toggled in list.', ['items' => $actions]);
+        return $this->returnSuccess('Items toggled in list.', $variables);
     }
 
     public function actionUpdate()
