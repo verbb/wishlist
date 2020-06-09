@@ -77,6 +77,25 @@
 		"rFN": 0,
 		"uCM": 0
 		},
+	"/docs/developers/graphql.md": {
+		"cB": 0,
+		"cS": 0,
+		"eF": 1,
+		"eL": 1,
+		"ema": 1,
+		"eSQ": 1,
+		"ft": 4096,
+		"hM": 0,
+		"oA": 1,
+		"oAP": "/docs/developers/graphql.html",
+		"oF": 0,
+		"oFM": 0,
+		"oS": 0,
+		"pHT": 0,
+		"pME": 1,
+		"rFN": 0,
+		"uCM": 0
+		},
 	"/docs/developers/item.md": {
 		"cB": 0,
 		"cS": 0,
@@ -495,6 +514,102 @@
 		"hM": 0,
 		"oA": 2,
 		"oAP": "/src/events/ListTypeEvent.php",
+		"oF": 0
+		},
+	"/src/gql/arguments/ItemArguments.php": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/src/gql/arguments/ItemArguments.php",
+		"oF": 0
+		},
+	"/src/gql/arguments/ListArguments.php": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/src/gql/arguments/ListArguments.php",
+		"oF": 0
+		},
+	"/src/gql/interfaces/ItemInterface.php": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/src/gql/interfaces/ItemInterface.php",
+		"oF": 0
+		},
+	"/src/gql/interfaces/ListInterface.php": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/src/gql/interfaces/ListInterface.php",
+		"oF": 0
+		},
+	"/src/gql/queries/ItemQuery.php": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/src/gql/queries/ItemQuery.php",
+		"oF": 0
+		},
+	"/src/gql/queries/ListQuery.php": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/src/gql/queries/ListQuery.php",
+		"oF": 0
+		},
+	"/src/gql/resolvers/ItemResolver.php": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/src/gql/resolvers/ItemResolver.php",
+		"oF": 0
+		},
+	"/src/gql/resolvers/ListResolver.php": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/src/gql/resolvers/ListResolver.php",
+		"oF": 0
+		},
+	"/src/gql/types/generators/ItemGenerator.php": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/src/gql/types/generators/ItemGenerator.php",
+		"oF": 0
+		},
+	"/src/gql/types/generators/ListGenerator.php": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/src/gql/types/generators/ListGenerator.php",
+		"oF": 0
+		},
+	"/src/gql/types/ItemType.php": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/src/gql/types/ItemType.php",
+		"oF": 0
+		},
+	"/src/gql/types/ListType.php": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/src/gql/types/ListType.php",
 		"oF": 0
 		},
 	"/src/helpers": {

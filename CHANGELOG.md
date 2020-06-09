@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.2.13 - 2020-06-09
+
+> {warning} Please note the deprecation of `item` for Ajax requests. If you're using Ajax to handle the response from add/delete/toggle, please adjust your Javascript code that handles this to use `items`.
+
+### Added
+- Full item model is now included in Ajax responses for `toggle` requests.
+
+### Fixed
+- Fix incorrect return values for add/delete/toggle for Ajax requests.
+
+### Deprecated
+- `item` is now deprecated in Ajax responses for add/delete/toggle actions, and will be removed in the next major release. Please adjust your code to instead rely on `items` which is an array of returned Wishlist items. This is because these actions can support multiple items, rather than just a single one.
+
 ## 1.2.12 - 2020-05-31
 
 > {warning} Please note the change in default behaviour for `purgeInactiveLists`.
