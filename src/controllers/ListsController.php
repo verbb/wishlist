@@ -203,6 +203,28 @@ class ListsController extends BaseController
         ]);
     }
 
+    public function actionUpdate()
+    {
+        $request = Craft::$app->getRequest();
+        $listId = $request->getParam('listId');
+
+        if (!$listId) {
+            return $this->returnError('List ID must be provided.');
+        }
+
+        $list = $this->_setListFromPost();
+
+         // Check if we're allowed to manage lists
+        $this->enforceEnabledList($list);
+        $this->enforceListPermissions($list);
+        
+        if (!Craft::$app->getElements()->saveElement($list)) {
+            return $this->returnError('Unable to update list.', ['list' => $list]);
+        }
+
+        return $this->returnSuccess('List updated.');
+    }
+
     public function actionDelete()
     {
         $request = Craft::$app->getRequest();

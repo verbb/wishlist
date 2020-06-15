@@ -24,6 +24,27 @@ You can Add, Delete or Clear lists, and its recommended that these options shoul
 ```
 :::
 
+### Update List
+
+::: code
+```twig Form
+<form method="POST">
+    <input type="hidden" name="action" value="wishlist/lists/update">
+    {{ csrfInput() }}
+
+    <input type="hidden" name="listId" value="234">
+    <input type="text" name="title" value="New Title">
+
+    <input type="submit" value="Update">
+</form>
+```
+
+```twig URL
+<a href="{{ actionUrl('wishlist/lists/update', { title: 'New Title' }) }}">
+    Update List
+</a>```
+:::
+
 
 ### Delete List
 
