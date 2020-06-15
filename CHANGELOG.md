@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.14 - 2020-06-15
+
+### Added
+- Add `wishlist/lists/update` action to enable list updating from the front-end.
+
 ## 1.2.13 - 2020-06-09
 
 > {warning} Please note the deprecation of `item` for Ajax requests. If you're using Ajax to handle the response from add/delete/toggle, please adjust your Javascript code that handles this to use `items`.
