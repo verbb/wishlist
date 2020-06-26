@@ -196,6 +196,7 @@ class ListsController extends BaseController
 
         return $this->returnSuccess('List saved.', [
             'id' => $list->id,
+            'reference' => $list->reference,
             'title' => $list->title,
             'status' => $list->getStatus(),
             'url' => $list->getUrl(),
