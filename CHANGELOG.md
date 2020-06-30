@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.15 - 2020-06-30
+
+### Fixed
+- Return list reference on `wishlist/lists/create`. (thanks @BrandonJamesBorders).
+
 ## 1.2.14 - 2020-06-15
 
 ### Added
