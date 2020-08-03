@@ -46,8 +46,12 @@ class Items extends Component
 
     public function createItem($elementId, $listId, $listTypeId = null)
     {
+        if (!$elementId || !$listId) {
+            return null;
+        }
+
         $list = Wishlist::$plugin->getLists()->getList($listId, true, $listTypeId);
-        $element = Craft::$app->getElements()->getElementById($elementId);
+        $element = Craft::$app->getElements()->getElementById((int)$elementId);
 
         if (!$element || !$list) {
             return null;
