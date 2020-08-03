@@ -39,7 +39,7 @@ Plugins can get notified before a list is deleted. Event handlers can prevent th
 use verbb\wishlist\elements\ListElement;
 use yii\base\Event;
 
-Event::on(ListElement::class, ListElement::EVENT_BEFORE_DELETED, function(Event $e) {
+Event::on(ListElement::class, ListElement::EVENT_BEFORE_DELETE, function(Event $e) {
     $list = $event->sender;
     $event->isValid = false;
 });
@@ -53,7 +53,7 @@ Plugins can get notified after a list has been deleted
 use verbb\wishlist\elements\ListElement;
 use yii\base\Event;
 
-Event::on(ListElement::class, ListElement::EVENT_AFTER_DELETED, function(Event $e) {
+Event::on(ListElement::class, ListElement::EVENT_AFTER_DELETE, function(Event $e) {
     $list = $event->sender;
 });
 ```
@@ -127,7 +127,7 @@ Plugins can get notified before a item is deleted. Event handlers can prevent th
 use verbb\wishlist\elements\Item;
 use yii\base\Event;
 
-Event::on(Item::class, Item::EVENT_BEFORE_DELETED, function(Event $e) {
+Event::on(Item::class, Item::EVENT_BEFORE_DELETE, function(Event $e) {
     $item = $event->sender;
     $event->isValid = false;
 });
@@ -141,7 +141,7 @@ Plugins can get notified after a item has been deleted
 use verbb\wishlist\elements\Item;
 use yii\base\Event;
 
-Event::on(Item::class, Item::EVENT_AFTER_DELETED, function(Event $e) {
+Event::on(Item::class, Item::EVENT_AFTER_DELETE, function(Event $e) {
     $item = $event->sender;
 });
 ```
