@@ -24,7 +24,7 @@ class BaseController extends Controller
         }
     }
 
-    protected function returnSuccess($message, $params = [])
+    protected function returnSuccess($message, $params = [], $object = null)
     {
         $request = Craft::$app->getRequest();
 
@@ -48,7 +48,8 @@ class BaseController extends Controller
         }
 
         if ($request->getIsPost()) {
-            return $this->redirectToPostedUrl();
+            //pass object to redirect for URL variables
+            return $this->redirectToPostedUrl($object);
         }
 
         return $this->redirect($request->referrer);
