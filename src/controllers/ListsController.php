@@ -201,7 +201,7 @@ class ListsController extends BaseController
             'status' => $list->getStatus(),
             'url' => $list->getUrl(),
             'cpEditUrl' => $list->getCpEditUrl()
-        ]);
+        ], $list);
     }
 
     public function actionUpdate()
@@ -223,7 +223,7 @@ class ListsController extends BaseController
             return $this->returnError('Unable to update list.', ['list' => $list]);
         }
 
-        return $this->returnSuccess('List updated.');
+        return $this->returnSuccess('List updated.', [], $list);
     }
 
     public function actionDelete()
@@ -252,7 +252,7 @@ class ListsController extends BaseController
             return $this->returnError($error->message, $error->params);
         }
 
-        return $this->returnSuccess('List deleted.');
+        return $this->returnSuccess('List deleted.', [], $list);
     }
 
     public function actionClear()
@@ -281,7 +281,7 @@ class ListsController extends BaseController
             return $this->returnError($error->message, $error->params);
         }
 
-        return $this->returnSuccess('List cleared.');
+        return $this->returnSuccess('List cleared.', [], $list);
     }
 
     public function actionAddToCart()
