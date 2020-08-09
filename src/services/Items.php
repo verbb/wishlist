@@ -46,7 +46,8 @@ class Items extends Component
 
     public function createItem($elementId, $listId, $listTypeId = null)
     {
-        if (!$elementId || !$listId) {
+        // null `listId` is okay - a new list will get created.
+        if (!$elementId) {
             return null;
         }
 
