@@ -15,5 +15,7 @@ class Settings extends Model
     public $purgeInactiveLists = true;
     public $purgeInactiveListsDuration = 'P3M';
     public $purgeInactiveGuestListsDuration = 'P1D';
+    public $purgeEmptyListsOnly = true;
+    public $purgeEmptyGuestListsOnly = true;
 
 }

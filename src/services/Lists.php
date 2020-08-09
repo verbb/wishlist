@@ -8,9 +8,12 @@ use Craft;
 use craft\base\Component;
 use craft\db\Query;
 use craft\elements\User as UserElement;
+use craft\helpers\ConfigHelper;
+use craft\helpers\DateTimeHelper;
 use craft\helpers\StringHelper;
 use craft\models\Structure;
 
+use DateTime;
 use yii\web\UserEvent;
 
 class Lists extends Component
@@ -261,34 +264,42 @@ class Lists extends Component
 
     private function _getListsIdsToPurge(): array
     {
-        $configInterval = Wishlist::getInstance()->getSettings()->purgeInactiveListsDuration;
-        $edge = new \DateTime();
-        $interval = new \DateInterval($configInterval);
-        $interval->invert = 1;
-        $edge->add($interval);
+        $settings = Wishlist::getInstance()->getSettings();
 
-        $userIds = (new Query())
+        $configInterval = ConfigHelper::durationInSeconds($settings->purgeInactiveListsDuration);
+        $edge = new DateTime();
+        $interval = DateTimeHelper::secondsToInterval($configInterval);
+        $edge->sub($interval);
+
+        $query = (new Query())
+            ->select(['lists.id'])
+            ->from(['{{%wishlist_lists}} lists'])
+            ->join('LEFT OUTER JOIN', '{{%wishlist_items}} items', 'lists.id = [[items.listId]]')
+            ->where('[[lists.dateUpdated]] <= :edge', ['edge' => $edge->format('Y-m-d H:i:s')]);
+
+        if ($settings->purgeEmptyListsOnly) {
+            $query->andWhere(['is', '[[items.listId]]', null]);
+        }
+
+        $userIds = $query->column();
+
+        $configInterval = ConfigHelper::durationInSeconds($settings->purgeInactiveGuestListsDuration);
+        $edge = new DateTime();
+        $interval = DateTimeHelper::secondsToInterval($configInterval);
+        $edge->sub($interval);
+
+        $query = (new Query())
             ->select(['lists.id'])
             ->from(['{{%wishlist_lists}} lists'])
             ->join('LEFT OUTER JOIN', '{{%wishlist_items}} items', 'lists.id = [[items.listId]]')
             ->where('[[lists.dateUpdated]] <= :edge', ['edge' => $edge->format('Y-m-d H:i:s')])
-            ->andWhere(['is', '[[items.listId]]', null])
-            ->column();
+            ->andWhere(['is', '[[lists.userId]]', null]);
 
-        $configInterval = Wishlist::getInstance()->getSettings()->purgeInactiveGuestListsDuration;
-        $edge = new \DateTime();
-        $interval = new \DateInterval($configInterval);
-        $interval->invert = 1;
-        $edge->add($interval);
+        if ($settings->purgeEmptyGuestListsOnly) {
+            $query->andWhere(['is', '[[items.listId]]', null]);
+        }
 
-        $guestIds = (new Query())
-            ->select(['lists.id'])
-            ->from(['{{%wishlist_lists}} lists'])
-            ->join('LEFT OUTER JOIN', '{{%wishlist_items}} items', 'lists.id = [[items.listId]]')
-            ->where('[[lists.dateUpdated]] <= :edge', ['edge' => $edge->format('Y-m-d H:i:s')])
-            ->andWhere(['is', '[[items.listId]]', null])
-            ->andWhere(['is', '[[lists.userId]]', null])
-            ->column();
+        $guestIds = $query->column();
 
         return array_merge($userIds, $guestIds);
     }
