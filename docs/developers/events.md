@@ -12,7 +12,7 @@ Plugins can get notified before a list is saved. Event handlers can prevent the 
 use verbb\wishlist\elements\ListElement;
 use yii\base\Event;
 
-Event::on(ListElement::class, ListElement::EVENT_BEFORE_SAVE, function(Event $e) {
+Event::on(ListElement::class, ListElement::EVENT_BEFORE_SAVE, function(Event $event) {
     $list = $event->sender;
     $event->isValid = false;
 });
@@ -26,7 +26,7 @@ Plugins can get notified after a list has been saved
 use verbb\wishlist\elements\ListElement;
 use yii\base\Event;
 
-Event::on(ListElement::class, ListElement::EVENT_AFTER_SAVE, function(Event $e) {
+Event::on(ListElement::class, ListElement::EVENT_AFTER_SAVE, function(Event $event) {
     $list = $event->sender;
 });
 ```
@@ -39,7 +39,7 @@ Plugins can get notified before a list is deleted. Event handlers can prevent th
 use verbb\wishlist\elements\ListElement;
 use yii\base\Event;
 
-Event::on(ListElement::class, ListElement::EVENT_BEFORE_DELETE, function(Event $e) {
+Event::on(ListElement::class, ListElement::EVENT_BEFORE_DELETE, function(Event $event) {
     $list = $event->sender;
     $event->isValid = false;
 });
@@ -53,7 +53,7 @@ Plugins can get notified after a list has been deleted
 use verbb\wishlist\elements\ListElement;
 use yii\base\Event;
 
-Event::on(ListElement::class, ListElement::EVENT_AFTER_DELETE, function(Event $e) {
+Event::on(ListElement::class, ListElement::EVENT_AFTER_DELETE, function(Event $event) {
     $list = $event->sender;
 });
 ```
@@ -70,7 +70,7 @@ use verbb\wishlist\events\ListTypeEvent;
 use verbb\wishlist\services\ListTypes;
 use yii\base\Event;
 
-Event::on(ListTypes::class, ListTypes::EVENT_BEFORE_SAVE_LISTTYPE, function(ListTypeEvent $e) {
+Event::on(ListTypes::class, ListTypes::EVENT_BEFORE_SAVE_LISTTYPE, function(ListTypeEvent $event) {
      // Maybe create an audit trail of this action.
 });
 ```
@@ -84,7 +84,7 @@ use verbb\wishlist\events\ListTypeEvent;
 use verbb\wishlist\services\ListTypes;
 use yii\base\Event;
 
-Event::on(ListTypes::class, ListTypes::EVENT_AFTER_SAVE_LISTTYPE, function(ListTypeEvent $e) {
+Event::on(ListTypes::class, ListTypes::EVENT_AFTER_SAVE_LISTTYPE, function(ListTypeEvent $event) {
      // Maybe prepare some third party system for a new list type
 });
 ```
@@ -100,7 +100,7 @@ Plugins can get notified before a item is saved. Event handlers can prevent the 
 use verbb\wishlist\elements\Item;
 use yii\base\Event;
 
-Event::on(Item::class, Item::EVENT_BEFORE_SAVE, function(Event $e) {
+Event::on(Item::class, Item::EVENT_BEFORE_SAVE, function(Event $event) {
     $item = $event->sender;
     $event->isValid = false;
 });
@@ -114,7 +114,7 @@ Plugins can get notified after a item has been saved
 use verbb\wishlist\elements\Item;
 use yii\base\Event;
 
-Event::on(Item::class, Item::EVENT_AFTER_SAVE, function(Event $e) {
+Event::on(Item::class, Item::EVENT_AFTER_SAVE, function(Event $event) {
     $item = $event->sender;
 });
 ```
@@ -127,7 +127,7 @@ Plugins can get notified before a item is deleted. Event handlers can prevent th
 use verbb\wishlist\elements\Item;
 use yii\base\Event;
 
-Event::on(Item::class, Item::EVENT_BEFORE_DELETE, function(Event $e) {
+Event::on(Item::class, Item::EVENT_BEFORE_DELETE, function(Event $event) {
     $item = $event->sender;
     $event->isValid = false;
 });
@@ -141,7 +141,7 @@ Plugins can get notified after a item has been deleted
 use verbb\wishlist\elements\Item;
 use yii\base\Event;
 
-Event::on(Item::class, Item::EVENT_AFTER_DELETE, function(Event $e) {
+Event::on(Item::class, Item::EVENT_AFTER_DELETE, function(Event $event) {
     $item = $event->sender;
 });
 ```
