@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.2.16 - 2020-08-10
+
+### Added
+- Add `wishlist/lists/purge-inactive-lists` console command.
+- Provide the `list` object to controller actions, to allow usage like `{{ redirectInput('lists/{id}') }}`. (thanks @brandonohara).
+- Add `purgeEmptyListsOnly` and `purgeEmptyGuestListsOnly` config settings.
+
+### Fixed
+- Improve error-handling for some template functions, to guard against errors.
+
 ## 1.2.15 - 2020-06-30
 
 ### Fixed
