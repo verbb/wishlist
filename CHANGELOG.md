@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.17 - 2020-08-21
+
+### Fixed
+- Fix type check error when trying to determine list owner.
+
 ## 1.2.16 - 2020-08-10
 
 ### Added
