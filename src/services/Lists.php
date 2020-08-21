@@ -132,7 +132,7 @@ class Lists extends Component
             $id = $this->getSessionId();
         }
 
-        return (bool)($list->getOwnerId() === $id);
+        return (bool)((int)$list->getOwnerId() === (int)$id);
     }
 
     public function createList(): ListElement
