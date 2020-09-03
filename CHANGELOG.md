@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.18 - 2020-09-03
+
+### Changed
+- The `update` list action can now be accessed anonymously. (thanks @BrandonJamesBorders).
+
 ## 1.2.17 - 2020-08-21
 
 ### Fixed
