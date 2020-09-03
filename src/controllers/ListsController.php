@@ -218,6 +218,11 @@ class ListsController extends BaseController
          // Check if we're allowed to manage lists
         $this->enforceEnabledList($list);
         $this->enforceListPermissions($list);
+
+        // Only owners can update their own lists
+        if (!WishList::$plugin->getLists()->isListOwner($list)) {
+            throw new Exception(Craft::t('wishlist', 'You can only update your own list.'));
+        }
         
         if (!Craft::$app->getElements()->saveElement($list)) {
             return $this->returnError('Unable to update list.', ['list' => $list]);
