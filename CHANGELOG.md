@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.19 - 2020-09-18
+
+### Added
+- Add ability to remove items from a list when adding to cart.
+
+### Changed
+- Allow `add-to-cart` and `share-by-email` endpoints for lists to be accessed anonymously.
+- Change add-to-cart behaviour so that it only adds supplied purchasables to the cart - if provided.
+
 ## 1.2.18 - 2020-09-03
 
 ### Changed
