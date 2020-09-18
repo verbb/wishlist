@@ -51,7 +51,7 @@ For even greater flexibility, you can include a few other useful bits of informa
 
     <input type="text" name="listId" value="{{ list.id }}">
 
-    {% for item in list.items %}
+    {% for item in list.items.all() %}
         <input type="text" name="purchasables[{{ item.id }}][qty]" value="10">
         <input type="text" name="purchasables[{{ item.id }}][options][test]" value="Some Value">
     {% endfor %}
@@ -59,3 +59,27 @@ For even greater flexibility, you can include a few other useful bits of informa
     <input type="submit" value="Add to Cart">
 </form>
 ```
+
+The above will add only the purchasables you supply to the cart. For example, you might want to allow adding individual items to your cart.
+
+```twig
+{% set list = craft.wishlist.lists().default(true).one() %}
+
+{% for item in list.items.all() %}
+    <form method="POST">
+        <input type="hidden" name="action" value="wishlist/lists/add-to-cart">
+        {{ csrfInput() }}
+        {{ redirectInput('/shop/cart') }}
+
+        <input type="text" name="listId" value="{{ list.id }}">
+
+        <input type="text" name="purchasables[{{ item.id }}][qty]" value="1">
+        <input type="text" name="purchasables[{{ item.id }}][options][test]" value="Some Value">
+
+        <input type="submit" value="Add to Cart">
+    </form>
+{% endfor %}
+```
+
+If you had 5 items in your list, you'll have 5 `<form>` elements outputted. Each would have their own "Add to Cart" button.
+

@@ -310,9 +310,22 @@ class ListsController extends BaseController
 
         $cart = Commerce::getInstance()->getCarts()->getCart(true);
 
+        // Check to see if we want to add all the items in the list, or just specific ones
+        $addingPurchasables = $request->getParam('purchasables');
+
         foreach ($list->getItems()->indexBy('id')->all() as $key => $item) {
             if (is_a($item->getElement(), Purchasable::class)) {
                 $purchasable = $item->getElement();
+
+                // Check if we're trying to add specific purchasables - default to adding all
+                if ($addingPurchasables) {
+                    // If there's no supplied data for this item, don't add it to the cart
+                    $itemData = $request->getParam("purchasables.{$key}", '');
+
+                    if (!$itemData) {
+                        continue;
+                    }
+                }
 
                 $note = $request->getParam("purchasables.{$key}.note", '');
                 $options = $request->getParam("purchasables.{$key}.options") ?: [];
