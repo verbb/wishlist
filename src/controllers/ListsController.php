@@ -344,6 +344,13 @@ class ListsController extends BaseController
 
                     $lineItem->note = $note;
                     $cart->addLineItem($lineItem);
+
+                    // Should we remove it from the list?
+                    $removeFromList = $request->getParam("purchasables.{$key}.removeFromList", false);
+
+                    if ($removeFromList) {
+                        Craft::$app->getElements()->deleteElementById($item->id);
+                    }
                 }
             }
         }
@@ -360,8 +367,15 @@ class ListsController extends BaseController
             return null;
         }
 
+        // Should we remove all items from the list after adding?
+        $clearList = $request->getParam('clearList');
+
+        if ($clearList) {
+            Wishlist::$plugin->getItems()->deleteItemsForList($listId);
+        }
+
         if ($request->getAcceptsJson()) {
-            $this->asJson(['success' => true]);
+            return $this->asJson(['success' => true]);
         }
 
         return $this->redirectToPostedUrl($list);

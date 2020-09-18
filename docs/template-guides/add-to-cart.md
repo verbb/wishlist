@@ -83,3 +83,46 @@ The above will add only the purchasables you supply to the cart. For example, yo
 
 If you had 5 items in your list, you'll have 5 `<form>` elements outputted. Each would have their own "Add to Cart" button.
 
+### Removing from list
+You can also set items to be removed from the list, once added to the cart. By default, items will remain in the users wishlist.
+
+When adding the entire list to the cart, you can clear all items from the list.
+
+```twig
+{% set list = craft.wishlist.lists().default(true).one() %}
+
+<form method="POST">
+    <input type="hidden" name="action" value="wishlist/lists/add-to-cart">
+    {{ csrfInput() }}
+    {{ redirectInput('/shop/cart') }}
+
+    <input type="text" name="listId" value="{{ list.id }}">
+    <input type="checkbox" name="clearList" value="true" checked>
+
+    <input type="submit" value="Add to Cart">
+</form>
+```
+
+We're using a checkbox field to allow the user to opt-in or out of this behaviour, but you could also make this a hidden input.
+
+Similarly, if you were adding items individually to the cart:
+
+```twig
+{% for item in list.items.all() %}
+    <form method="POST">
+        <input type="hidden" name="action" value="wishlist/lists/add-to-cart">
+        {{ csrfInput() }}
+        {{ redirectInput('/shop/cart') }}
+
+        <input type="text" name="listId" value="{{ list.id }}">
+
+        <input type="text" name="purchasables[{{ item.id }}][qty]" value="1">
+        <input type="text" name="purchasables[{{ item.id }}][options][test]" value="Some Value {{ item.id }}">
+        <input type="checkbox" name="purchasables[{{ item.id }}][removeFromList]" value="true" checked>
+
+        <input type="submit" value="Add to Cart">
+    </form>
+{% endfor %}
+```
+
+The above would only add the chosen item to the cart, and also remove only the chosen it from the list.
