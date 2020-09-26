@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.20 - 2020-09-26
+
+### Added
+- Add `fields` to share-lists controller action. Allowing additional content to be used in email notifications
+
 ## 1.2.19 - 2020-09-18
 
 ### Added

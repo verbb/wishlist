@@ -67,4 +67,22 @@ Please note that the sender and recipient details are required, including a firs
 
 If the sender is a logged in user, you can of course set these inputs to hidden, and populate with the `currentUser` content from Craft.
 
-You can customise the content of this email via the CP - Utilities > System Messages.
+```twig
+<input type="text" name="sender[firstName]" value="{{ currentUser.firstName }}">
+<input type="text" name="sender[lastName]" value="{{ currentUser.lastName }}">
+<input type="text" name="sender[email]" value="{{ currentUser.email }}">
+```
+
+You can customise the content of this email via the control panel by going to **Utilities** → **System Messages**.
+
+You can also provide any additional variables you want to access in your email templates using `fields`.
+
+```twig
+<input type="text" name="fields[personalMessage]" value="Check these out!">
+```
+
+And if your email templates, you could use:
+
+```twig
+{{ fields.personalMessage }}
+```
