@@ -191,3 +191,24 @@ You can also check to see if an item is already in the list, which is useful for
     {% endif %}
 {% endfor %}
 ```
+
+## Managing All List Items
+You can also manage the list items in a provided list. The example below shows a "cart-like" experience, where you can manage the entire list of items in one go. Here, we can remove each item individually, but update all items in the list with a single button.
+
+ ```twig
+<form method="POST">
+    <input type="hidden" name="action" value="wishlist/lists/update-items">
+    {{ csrfInput() }}
+
+    <input type="hidden" name="listId" value="{{ list.id }}">
+
+    {% for item in list.items.all() %}
+        <input type="checkbox" name="items[{{ item.id }}][remove]" value="1"> Remove Item
+
+        {# Optional: Pass content for custom fields #}
+        <input type="text" name="items[{{ item.id }}][fields][myField]" value="{{ item.myField }}">
+    {% endfor %}
+
+    <input type="submit" value="Update List">
+</form>
+```
