@@ -94,12 +94,6 @@
                 {% set context = 'index' %}
                 {% set sources = craft.app.elementIndexes.getSources(elementType, 'index') %}
 
-                <div class="sidebar hidden">
-                    <nav>
-                        {% include "_elements/sources" %}
-                    </nav>
-                </div>
-
                 <div class="element-toolbar flex flex-nowrap">
                     {% include '_elements/toolbar' with {
                         showSiteMenu: false,
@@ -108,6 +102,17 @@
                 
                 <div class="content-pane" style="margin-top: 24px; box-shadow: none; border: 1px #cdd8e4 solid;">
                     <div class="elements"></div>
+                </div>
+
+                <div class="sidebar">
+                    <nav class="hidden">
+                        {% include "_elements/sources" %}
+                    </nav>
+            
+                    <a class="customize-sources">
+                        <span class="settings icon"></span>
+                        <span class="label">{{ 'Customize'|t('app') }}</span>
+                    </a>
                 </div>
             </div>
 
@@ -196,3 +201,23 @@
         </div>
     {% endif %}
 {% endblock %}
+
+{% css %}
+
+#elementindex-items .sidebar {
+    padding: 0;
+    width: 100%;
+    background: transparent;
+}
+
+#elementindex-items .sidebar .customize-sources {
+    display: inline-block;
+    margin: 1rem 0 0;
+    padding: 0;
+}
+
+#elementindex-items .sidebar .customize-sources .label {
+    opacity: 1;
+}
+
+{% endcss %}
