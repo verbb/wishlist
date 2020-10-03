@@ -75,6 +75,7 @@ class Wishlist extends Plugin
         $this->_registerElementTypes();
         $this->_registerProjectConfigEventListeners();
         $this->_registerGarbageCollection();
+        $this->_registerTemplateHooks();
         $this->_defineResaveCommand();
         $this->_registerGraphQl();
     }
@@ -286,6 +287,14 @@ class Wishlist extends Plugin
                 $event->queries[$key] = $value;
             }
         });
+    }
+
+    private function _registerTemplateHooks()
+    {
+        if ($this->getSettings()->showListInfoTab) {
+            Craft::$app->getView()->hook('cp.users.edit', [$this->getLists(), 'addEditUserListInfoTab']);
+            Craft::$app->getView()->hook('cp.users.edit.content', [$this->getLists(), 'addEditUserListInfoTabContent']);
+        }
     }
 
 }

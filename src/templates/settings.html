@@ -19,13 +19,21 @@
 
 {{ forms.textField({
     first: true,
-    id: 'pluginName',
-    name: 'pluginName',
     label: 'Plugin Name' | t('app'),
     instructions: 'Plugin name for the end user.' | t('wishlist'),
+    id: 'pluginName',
+    name: 'pluginName',
     value: settings.pluginName,
     autofocus: true,
     warning: macros.configWarning('pluginName', 'wishlist'),
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Show ”Wishlists” Tab for Users' | t('app'),
+    instructions: 'Whether to add a tab for all users’ wishlists in their account in the control panel.' | t('wishlist'),
+    name: 'showListInfoTab',
+    on: settings.showListInfoTab,
+    warning: macros.configWarning('showListInfoTab', 'wishlist'),
 }) }}
 
 {% endnamespace %}

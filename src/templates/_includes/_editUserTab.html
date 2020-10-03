@@ -1,0 +1,47 @@
+<div id="wishlistInfo" class="hidden">
+    <h2>{{ currentUser.fullName() ~ ' Wishlist’s' | t('wishlist') }}</h2>
+
+    {% set lists = craft.wishlist.lists().userId(currentUser.id).all() %}
+
+    {% if lists %}
+        {% for list in lists %}
+            <h3>{{ list.name }}</h3>
+
+            {% set items = list.items.all() %}
+
+            {% if items %}
+                <div class="tableview">
+                    <table class="data fullwidth">
+                        <thead>
+                            <tr>
+                                <th>{{ 'Item' | t('wishlist') }}</th>
+                                <th>{{ 'Type' | t('app') }}</th>
+                                <th>{{ 'Date Created' | t('app') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ item.cpEditUrl }}" class="cell-bold">{{ item.title }}</a>
+                                    </td>
+
+                                    <td>{{ item.getElementDisplay() }}</td>
+                                    <td>{{ item.dateCreated | datetime('short') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="zilch">
+                    <p>{{ 'No items exist for this list yet.' | t('wishlist') }}</p>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <div class="zilch">
+            <p>{{ 'No lists exist for this user yet.' | t('wishlist') }}</p>
+        </div>
+    {% endif %}
+</div>

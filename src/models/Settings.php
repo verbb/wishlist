@@ -17,5 +17,6 @@ class Settings extends Model
     public $purgeInactiveGuestListsDuration = 'P1D';
     public $purgeEmptyListsOnly = true;
     public $purgeEmptyGuestListsOnly = true;
+    public $showListInfoTab = true;
 
 }
