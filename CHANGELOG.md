@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.21 - 2020-10-03
+
+### Added
+- Add `craft.wishlist.plugin` Twig variable, allowing access to plugin services.
+- Add `lists/update-items` controller action, to enable bulk-updating on list items, similar to a cart.
+- Add BCC and CC email options when sharing a list by email.
+
 ## 1.2.20 - 2020-09-26
 
 ### Added
