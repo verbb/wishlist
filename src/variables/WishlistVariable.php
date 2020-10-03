@@ -18,6 +18,11 @@ class WishlistVariable
     // Public Methods
     // =========================================================================
 
+    public function getPlugin(): Wishlist
+    {
+        return Wishlist::$plugin;
+    }
+
     public function getPluginName()
     {
         return Wishlist::$plugin->getPluginName();
