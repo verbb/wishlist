@@ -75,6 +75,15 @@ If the sender is a logged in user, you can of course set these inputs to hidden,
 
 You can customise the content of this email via the control panel by going to **Utilities** → **System Messages**.
 
+### Email Options
+You can also set the CC or BCC for the email to one or multiple emails. Multiple recipients can be provided as a comma-delimited value.
+
+```twig
+<input type="hidden" name="cc" value="another-recipient@gmail.com">
+<input type="hidden" name="bcc" value="another-recipient@gmail.com,manager-recipient@gmail.com">
+```
+
+### Additional Content
 You can also provide any additional variables you want to access in your email templates using `fields`.
 
 ```twig

@@ -419,6 +419,14 @@ class ListsController extends BaseController
                 ->composeFromKey('wishlist_share_list', $variables)
                 ->setTo($recipient);
 
+            if ($cc = $request->getParam('cc')) {
+                $mail->setCc(explode(',', $cc));
+            }
+
+            if ($bcc = $request->getParam('bcc')) {
+                $mail->setBcc(explode(',', $bcc));
+            }
+
             $mail->send();
 
             Wishlist::log('Sent list share notification to ' . $recipient->email);
