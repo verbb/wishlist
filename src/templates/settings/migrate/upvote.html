@@ -1,0 +1,67 @@
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{% extends 'wishlist/_layouts/settings' %}
+
+{% set bodyClass = 'wishlist-settings-migrate' %}
+{% set selectedTab = 'migrate/upvote' %}
+{% set fullPageForm = outputs is not defined %}
+
+{% set installed = craft.app.plugins.pluginInstalled('upvote') %}
+
+{% block actionButton %}
+    {% if outputs is not defined and installed %}
+        <input type="submit" class="btn submit" value="{{ 'Migrate Upvote' | t('wishlist') }}">
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {{ actionInput('wishlist/migrations/upvote') }}
+    {{ redirectInput('wishlist/settings/upvote') }}
+
+    <h2>{{ 'Migrate Upvote' | t('wishlist') }}</h2>
+
+    {% if installed %}
+        <p>{{ 'Click "Migrate Upvote" to migrate all Upvote votes into Wishlist lists.' | t('wishlist') }}</p>
+    {% else %}
+        <p>{{ 'No Upvote data found.' | t('wishlist') }}</p>
+    {% endif %}
+
+    <hr>
+
+    {% if outputs is defined %}
+        {% for output in outputs %}
+            {{ output | raw }}
+        {% endfor %}
+
+        <hr>
+
+        <a class="btn submit" href="{{ cpUrl('wishlist/settings/migrate/upvote') }}">{{ 'Done' | t('wishlist') }}</a>
+    {% endif %}
+{% endblock %}
+
+{% css %}
+
+.log-label {
+    white-space: pre-wrap;
+}
+
+.log-label code {
+    white-space: normal;
+    font-size: 11px !important;
+    line-height: 18px;
+}
+
+.log-label.color-32 {
+    color: #27AE60;
+}
+
+.log-label.color-31 {
+    color: #D0021B;
+}
+
+.log-label.color-33 {
+    color: #F2842D;
+}
+
+{% endcss %}

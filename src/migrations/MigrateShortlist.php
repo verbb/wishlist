@@ -45,7 +45,10 @@ class MigrateShortlist extends Migration
 
     private function _migrateList()
     {
-        $shortlist = (new Query())->from('{{%shortlist_list}}')->one();
+        $shortlist = (new Query())
+            ->from('{{%shortlist_list}}')
+            ->where(['id' => $this->shortlistId])
+            ->one();
 
         if (!$shortlist) {
             return false;

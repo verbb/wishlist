@@ -2,6 +2,7 @@
 namespace verbb\wishlist\controllers;
 
 use verbb\wishlist\migrations\MigrateShortlist;
+use verbb\wishlist\migrations\MigrateUpvote;
 
 use Craft;
 use craft\db\Query;
@@ -46,6 +47,39 @@ class MigrationsController extends Controller
         ]);
 
         Craft::$app->getSession()->setNotice(Craft::t('wishlist', 'Shortlist lists migrated.'));
+
+        return null;
+    }
+
+    public function actionUpvote()
+    {
+        App::maxPowerCaptain();
+
+        // Backup!
+        Craft::$app->getDb()->backup();
+
+        $upvotes = (new Query())->from('{{%upvote_userhistories}}')->all();
+
+        foreach ($upvotes as $upvote) {
+            $migration = new MigrateUpvote(['id' => $upvote['id']]);
+
+            try {
+                ob_start();
+                $migration->up();
+                $output = ob_get_contents();
+                ob_end_clean();
+
+                $outputs[$upvote['id']] = nl2br($output);
+            } catch (\Throwable $e) {
+                $outputs[$upvote['id']] = 'Failed to migrate: ' . $e->getMessage();
+            }
+        }
+
+        Craft::$app->getUrlManager()->setRouteParams([
+            'outputs' => $outputs,
+        ]);
+
+        Craft::$app->getSession()->setNotice(Craft::t('wishlist', 'Upvote lists migrated.'));
 
         return null;
     }
