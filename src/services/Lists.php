@@ -14,6 +14,8 @@ use craft\helpers\StringHelper;
 use craft\models\Structure;
 
 use DateTime;
+
+use yii\web\Cookie;
 use yii\web\UserEvent;
 
 class Lists extends Component
@@ -270,12 +272,36 @@ class Lists extends Component
 
     private function getSessionId()
     {
+        $settings = Wishlist::getInstance()->getSettings();
+
         $session = Craft::$app->getSession();
         $sessionId = $session[$this->listName];
 
+        $cookieName = 'Wishlist:sessionId';
+
+        // If no session, check for a saved cookie, allowing us to retain lists after sessions have ended
+        if (!$sessionId) {
+            $sessionId = Craft::$app->getRequest()->getRawCookies()->getValue($cookieName);
+        }
+
+        // If still no session, we better generate a new one.
         if (!$sessionId) {
             $sessionId = $this->generateSessionId();
             $session->set($this->listName, $sessionId);
+
+            $configInterval = ConfigHelper::durationInSeconds($settings->cookieExpiry);
+            $expiry = (new DateTime())->add(DateTimeHelper::secondsToInterval($configInterval));
+
+            // Save this as a cookie for better persistency
+            $cookie = Craft::createObject(Craft::cookieConfig([
+                'class' => Cookie::class,
+                'name' => $cookieName,
+                'value' => $sessionId,
+                'httpOnly' => false,
+                'expire' => $expiry->getTimestamp(),
+            ]));
+
+            Craft::$app->getResponse()->getRawCookies()->add($cookie);
         }
 
         return $sessionId;

@@ -20,6 +20,7 @@ class Settings extends Model
     public $purgeInactiveGuestListsDuration = 'P1D';
     public $purgeEmptyListsOnly = true;
     public $purgeEmptyGuestListsOnly = true;
+    public $cookieExpiry = false;
 
     // PDF
     public $pdfFilenameFormat = 'Wishlist-{id}';
