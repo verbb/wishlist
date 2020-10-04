@@ -9,6 +9,9 @@ class Settings extends Model
     // =========================================================================
 
     public $pluginName = 'Wishlist';
+    public $showListInfoTab = true;
+
+    // Lists
     public $allowDuplicates = false;
     public $manageDisabledLists = true;
     public $mergeLastListOnLogin = false;
@@ -17,6 +20,12 @@ class Settings extends Model
     public $purgeInactiveGuestListsDuration = 'P1D';
     public $purgeEmptyListsOnly = true;
     public $purgeEmptyGuestListsOnly = true;
-    public $showListInfoTab = true;
+
+    // PDF
+    public $pdfFilenameFormat = 'Wishlist-{id}';
+    public $pdfPath = '_pdf/wishlist';
+    public $pdfAllowRemoteImages = false;
+    public $pdfPaperSize = 'letter';
+    public $pdfPaperOrientation = 'portrait';
 
 }

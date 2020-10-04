@@ -5,6 +5,7 @@ use verbb\wishlist\Wishlist;
 use verbb\wishlist\services\Lists;
 use verbb\wishlist\services\ListTypes;
 use verbb\wishlist\services\Items;
+use verbb\wishlist\services\Pdf;
 
 use Craft;
 use craft\log\FileTarget;
@@ -39,6 +40,11 @@ trait PluginTrait
         return $this->get('items');
     }
 
+    public function getPdf()
+    {
+        return $this->get('pdf');
+    }
+
     public static function log($message)
     {
         Craft::getLogger()->log($message, Logger::LEVEL_INFO, 'wishlist');
@@ -59,6 +65,7 @@ trait PluginTrait
             'lists' => Lists::class,
             'listTypes' => ListTypes::class,
             'items' => Items::class,
+            'pdf' => Pdf::class,
         ]);
 
         BaseHelper::registerModule();

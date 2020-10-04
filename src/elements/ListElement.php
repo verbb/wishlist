@@ -228,6 +228,11 @@ class ListElement extends Element
         }
     }
 
+    public function getPdfUrl()
+    {
+        return UrlHelper::actionUrl("wishlist/pdf?listId={$this->id}");
+    }
+
     public static function gqlTypeNameByContext($context): string
     {
         return 'List';

@@ -26,6 +26,7 @@
     ],
     "require": {
         "craftcms/cms": "^3.5.0",
+        "dompdf/dompdf": "~0.8.3",
         "verbb/base": "^1.0.2"
     },
     "autoload": {

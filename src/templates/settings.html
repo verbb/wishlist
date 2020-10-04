@@ -89,6 +89,36 @@
     warning: macros.configWarning('purgeEmptyGuestListsOnly', 'wishlist'),
 }) }}
 
+<hr>
+
+<h3>{{ 'PDF' | t('wishlist') }}</h3>
+
+{{ forms.textField({
+    label: 'PDF Template' | t('wishlist'),
+    instructions: 'The path to the template used for generating list PDFs.' | t('wishlist'),
+    id: 'pdfPath',
+    name: 'pdfPath',
+    value: settings.pdfPath,
+    errors: settings.getErrors('pdfPath'),
+    required: true,
+    warning: macros.configWarning('pdfPath', 'wishlist'),
+}) }}
+
+{{ forms.textField({
+    label: 'PDF Filename Format' | t('wishlist'),
+    instructions: 'What the generated PDF filename should look like (without extension). You can include tags that output list properties, such as {ex1} or {ex2}.' | t('wishlist', {
+        ex1: '<code>{id}</code>',
+        ex2: '<code>{mylistCustomField}</code>'
+    }),
+    id: 'pdfFilenameFormat',
+    name: 'pdfFilenameFormat',
+    value: settings.pdfFilenameFormat,
+    class: 'code ltr',
+    errors: settings.getErrors('pdfFilenameFormat'),
+    required: true,
+    warning: macros.configWarning('pdfFilenameFormat', 'wishlist'),
+}) }}
+
 {% endnamespace %}
 
 {% endblock %}
