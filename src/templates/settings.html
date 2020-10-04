@@ -25,15 +25,68 @@
     name: 'pluginName',
     value: settings.pluginName,
     autofocus: true,
+    required: true,
     warning: macros.configWarning('pluginName', 'wishlist'),
 }) }}
 
 {{ forms.lightswitchField({
-    label: 'Show ”Wishlists” Tab for Users' | t('app'),
+    label: 'Show ”Wishlists” Tab for Users' | t('wishlist'),
     instructions: 'Whether to add a tab for all users’ wishlists in their account in the control panel.' | t('wishlist'),
     name: 'showListInfoTab',
     on: settings.showListInfoTab,
     warning: macros.configWarning('showListInfoTab', 'wishlist'),
+}) }}
+
+<hr>
+
+<h3>{{ 'Lists' | t('wishlist') }}</h3>
+
+{{ forms.lightswitchField({
+    label: 'Allow Duplicates' | t('wishlist'),
+    instructions: 'Whether to allow duplicate items to be added to lists.' | t('wishlist'),
+    name: 'allowDuplicates',
+    on: settings.allowDuplicates,
+    warning: macros.configWarning('allowDuplicates', 'wishlist'),
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Manage Disabled Lists' | t('wishlist'),
+    instructions: 'Whether users should be allowed to manage lists when lists are disabled.' | t('wishlist'),
+    name: 'manageDisabledLists',
+    on: settings.manageDisabledLists,
+    warning: macros.configWarning('manageDisabledLists', 'wishlist'),
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Merge List on Login' | t('wishlist'),
+    instructions: 'Whether to merge the current list when the user logs into their account. If a guest list is created, it will merge this into the list for the user.' | t('wishlist'),
+    name: 'mergeLastListOnLogin',
+    on: settings.mergeLastListOnLogin,
+    warning: macros.configWarning('mergeLastListOnLogin', 'wishlist'),
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Purge Inactive Lists' | t('wishlist'),
+    instructions: 'Whether to delete a list after a certain period of time.' | t('wishlist'),
+    name: 'purgeInactiveLists',
+    on: settings.purgeInactiveLists,
+    warning: macros.configWarning('purgeInactiveLists', 'wishlist'),
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Purge Empty Lists Only' | t('wishlist'),
+    instructions: 'Whether to delete a list after a certain period of time, only if the list is empty.' | t('wishlist'),
+    name: 'purgeEmptyListsOnly',
+    on: settings.purgeEmptyListsOnly,
+    warning: macros.configWarning('purgeEmptyListsOnly', 'wishlist'),
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Purge Empty Guest Lists Only' | t('wishlist'),
+    instructions: 'Whether to delete a list after a certain period of time, only if the list is empty, and only for guests.' | t('wishlist'),
+    name: 'purgeEmptyGuestListsOnly',
+    on: settings.purgeEmptyGuestListsOnly,
+    warning: macros.configWarning('purgeEmptyGuestListsOnly', 'wishlist'),
 }) }}
 
 {% endnamespace %}
