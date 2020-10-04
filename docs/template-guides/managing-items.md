@@ -177,7 +177,6 @@ You can also manage multiple items at a time, for example, adding multiple items
 ```
 
 ## Check if in List
-
 You can also check to see if an item is already in the list, which is useful for changing the layout based on that fact.
 
 ```twig
@@ -211,4 +210,26 @@ You can also manage the list items in a provided list. The example below shows a
 
     <input type="submit" value="Update List">
 </form>
+```
+
+## Item Options
+You can also store additional, arbitrary content alongside a Wishlist item in the form of item options. This content won't be visisble to users, unless you decide to output it. It will be visible in the control panel, when editing an item.
+
+ ```twig
+{% for entry in craft.entries.section('news').all() %}
+    <form method="POST">
+        <input type="hidden" name="action" value="wishlist/items/add">
+        {{ csrfInput() }}
+
+        <input type="text" name="elementId" value="{{ entry.id }}">
+
+        {# Store a custom field from the entry into our item #}
+        <input type="text" name="options[myCustomField]" value="{{ entry.myCustomField }}">
+
+        {# Store an arbitrary value #}
+        <input type="text" name="options[someOption]" value="Some Value">
+
+        <input type="submit" value="Add to List">
+    </form>
+{% endfor %}
 ```

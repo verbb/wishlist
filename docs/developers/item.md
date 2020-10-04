@@ -15,6 +15,8 @@ Attribute | Description
 `listId` | ID of the list this item belongs to.
 `list` | The list this item belongs to.
 `inList` | Whether this item is in the list (default list or otherwise).
+`options` | Any additional options to store with an item.
+`optionsSignature` | An MD5 hash of the options, used for comparing items uniqueness.
 
 ## Methods
 

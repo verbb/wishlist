@@ -74,6 +74,8 @@ class Install extends Migration
             'elementId' => $this->integer(),
             'elementSiteId' => $this->integer(),
             'elementClass' => $this->string(255),
+            'options' => $this->text(),
+            'optionsSignature' => $this->string()->notNull(),
             'dateCreated' => $this->dateTime()->notNull(),
             'dateUpdated' => $this->dateTime()->notNull(),
             'uid' => $this->uid(),

@@ -153,6 +153,7 @@ class ItemsController extends BaseController
         $postItems = $request->getParam('items', [[
             'elementId' => $request->getParam('elementId'),
             'fields' => $request->getParam('fields'),
+            'options' => $request->getParam('options'),
         ]]);
 
         $variables = [
@@ -181,8 +182,20 @@ class ItemsController extends BaseController
              // Check if we're allowed to manage lists
             $this->enforceEnabledList($item->list);
 
+            // Set any additional options on the item
+            $options = $postItem['options'] ?? [];
+            
+            // Clear any empty options
+            $options = array_filter($options);
+
+            $item->setOptions($options);
+
             // Check if this is in the list
-            $existingItem = Item::find()->elementId($elementId)->listId($item->listId)->one();
+            $existingItem = Item::find()
+                ->elementId($elementId)
+                ->listId($item->listId)
+                ->optionsSignature($item->getOptionsSignature())
+                ->one();
             
             if ($existingItem && !$settings->allowDuplicates) {
                 $errors[$key] = new ItemError('Item already in list.');

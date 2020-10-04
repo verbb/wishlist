@@ -17,11 +17,14 @@ use craft\elements\actions\View;
 use craft\elements\db\ElementQueryInterface;
 use Craft\helpers\ArrayHelper;
 use craft\helpers\Html;
+use craft\helpers\Json;
 use craft\helpers\Template;
 use craft\helpers\UrlHelper;
 
 use yii\base\Exception;
 use yii\base\InvalidConfigException;
+
+use LitEmoji\LitEmoji;
 
 class Item extends Element
 {
@@ -126,6 +129,7 @@ class Item extends Element
     public $listId;
 
     private $_element;
+    private $_options = [];
 
 
     // Public Methods
@@ -203,6 +207,53 @@ class Item extends Element
         return false;
     }
 
+    public function getOptions(): array
+    {
+        return $this->_options;
+    }
+
+    public function setOptions($options)
+    {
+        $options = Json::decodeIfJson($options);
+
+        if (!is_array($options)) {
+            $options = [];
+        }
+
+        $cleanEmojiValues = static function(&$options) use (&$cleanEmojiValues) {
+            foreach ($options as $key => $value) {
+                if (is_array($value)) {
+                    $cleanEmojiValues($options[$key]);
+                } else {
+                    if (is_string($value)) {
+                        $options[$key] = LitEmoji::unicodeToShortcode($value);
+                    }
+                }
+            }
+
+            return $options;
+        };
+
+        // TODO make this consistent no matter what the DB driver is. Will be a "breaking" change.
+        if (Craft::$app->getDb()->getSupportsMb4()) {
+            $this->_options = $options;
+        } else {
+            $this->_options = $cleanEmojiValues($options);
+        }
+    }
+
+    public function getOptionsSignature()
+    {
+        ksort($this->_options);
+
+        return md5(Json::encode($this->_options));
+    }
+
+    public function setOptionsSignature($value)
+    {
+        // Read-only value, but method exists to prevent query errors
+    }
+
     public function setFieldValuesFromRequest(string $paramNamespace = '')
     {
         $this->setFieldParamNamespace($paramNamespace);
@@ -277,6 +328,9 @@ class Item extends Element
         $record->elementSiteId = $this->elementSiteId;
         $record->elementClass = $this->elementClass;
         $record->listId = $this->listId;
+
+        $record->options = $this->getOptions();
+        $record->optionsSignature = $this->getOptionsSignature();
 
         $record->save(false);
 

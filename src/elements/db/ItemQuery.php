@@ -21,6 +21,8 @@ class ItemQuery extends ElementQuery
     public $elementSiteId;
     public $elementClass;
     public $listId;
+    public $options;
+    public $optionsSignature;
     public $enabled = true;
 
     protected $defaultOrderBy = ['wishlist_items.dateCreated' => SORT_DESC];
@@ -53,6 +55,18 @@ class ItemQuery extends ElementQuery
         return $this;
     }
 
+    public function options($value)
+    {
+        $this->options = $value;
+        return $this;
+    }
+
+    public function optionsSignature($value)
+    {
+        $this->optionsSignature = $value;
+        return $this;
+    }
+
     // Protected Methods
     // =========================================================================
 
@@ -66,6 +80,8 @@ class ItemQuery extends ElementQuery
             'wishlist_items.elementSiteId',
             'wishlist_items.elementClass',
             'wishlist_items.listId',
+            'wishlist_items.options',
+            'wishlist_items.optionsSignature',
             'wishlist_items.dateCreated',
         ]);
 
@@ -87,6 +103,14 @@ class ItemQuery extends ElementQuery
 
         if ($this->listId) {
             $this->subQuery->andWhere(Db::parseParam('wishlist_items.listId', $this->listId));
+        }
+
+        if ($this->options) {
+            $this->subQuery->andWhere(Db::parseParam('wishlist_items.options', $this->options));
+        }
+
+        if ($this->optionsSignature) {
+            $this->subQuery->andWhere(Db::parseParam('wishlist_items.optionsSignature', $this->optionsSignature));
         }
 
         if ($this->dateCreated) {
