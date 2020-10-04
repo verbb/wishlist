@@ -1,0 +1,124 @@
+{% extends 'wishlist/_layouts/settings' %}
+
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{% block content %}
+
+<h2>{{ 'General Settings' | t('wishlist') }}</h2>
+
+<form action="" method="post" accept-charset="UTF-8" data-saveshortcut>
+    <input type="hidden" name="action" value="wishlist/settings/save-settings">
+    {{ redirectInput('wishlist/settings/general') }}
+    {{ csrfInput() }}
+
+    {% namespace 'settings' %}
+        {{ forms.textField({
+            first: true,
+            label: 'Plugin Name' | t('app'),
+            instructions: 'Plugin name for the end user.' | t('wishlist'),
+            id: 'pluginName',
+            name: 'pluginName',
+            value: settings.pluginName,
+            autofocus: true,
+            required: true,
+            warning: macros.configWarning('pluginName', 'wishlist'),
+        }) }}
+
+        {{ forms.lightswitchField({
+            label: 'Show ”Wishlists” Tab for Users' | t('wishlist'),
+            instructions: 'Whether to add a tab for all users’ wishlists in their account in the control panel.' | t('wishlist'),
+            name: 'showListInfoTab',
+            on: settings.showListInfoTab,
+            warning: macros.configWarning('showListInfoTab', 'wishlist'),
+        }) }}
+
+        <hr>
+
+        <h3>{{ 'Lists' | t('wishlist') }}</h3>
+
+        {{ forms.lightswitchField({
+            label: 'Allow Duplicates' | t('wishlist'),
+            instructions: 'Whether to allow duplicate items to be added to lists.' | t('wishlist'),
+            name: 'allowDuplicates',
+            on: settings.allowDuplicates,
+            warning: macros.configWarning('allowDuplicates', 'wishlist'),
+        }) }}
+
+        {{ forms.lightswitchField({
+            label: 'Manage Disabled Lists' | t('wishlist'),
+            instructions: 'Whether users should be allowed to manage lists when lists are disabled.' | t('wishlist'),
+            name: 'manageDisabledLists',
+            on: settings.manageDisabledLists,
+            warning: macros.configWarning('manageDisabledLists', 'wishlist'),
+        }) }}
+
+        {{ forms.lightswitchField({
+            label: 'Merge List on Login' | t('wishlist'),
+            instructions: 'Whether to merge the current list when the user logs into their account. If a guest list is created, it will merge this into the list for the user.' | t('wishlist'),
+            name: 'mergeLastListOnLogin',
+            on: settings.mergeLastListOnLogin,
+            warning: macros.configWarning('mergeLastListOnLogin', 'wishlist'),
+        }) }}
+
+        {{ forms.lightswitchField({
+            label: 'Purge Inactive Lists' | t('wishlist'),
+            instructions: 'Whether to delete a list after a certain period of time.' | t('wishlist'),
+            name: 'purgeInactiveLists',
+            on: settings.purgeInactiveLists,
+            warning: macros.configWarning('purgeInactiveLists', 'wishlist'),
+        }) }}
+
+        {{ forms.lightswitchField({
+            label: 'Purge Empty Lists Only' | t('wishlist'),
+            instructions: 'Whether to delete a list after a certain period of time, only if the list is empty.' | t('wishlist'),
+            name: 'purgeEmptyListsOnly',
+            on: settings.purgeEmptyListsOnly,
+            warning: macros.configWarning('purgeEmptyListsOnly', 'wishlist'),
+        }) }}
+
+        {{ forms.lightswitchField({
+            label: 'Purge Empty Guest Lists Only' | t('wishlist'),
+            instructions: 'Whether to delete a list after a certain period of time, only if the list is empty, and only for guests.' | t('wishlist'),
+            name: 'purgeEmptyGuestListsOnly',
+            on: settings.purgeEmptyGuestListsOnly,
+            warning: macros.configWarning('purgeEmptyGuestListsOnly', 'wishlist'),
+        }) }}
+
+        <hr>
+
+        <h3>{{ 'PDF' | t('wishlist') }}</h3>
+
+        {{ forms.textField({
+            label: 'PDF Template' | t('wishlist'),
+            instructions: 'The path to the template used for generating list PDFs.' | t('wishlist'),
+            id: 'pdfPath',
+            name: 'pdfPath',
+            value: settings.pdfPath,
+            errors: settings.getErrors('pdfPath'),
+            required: true,
+            warning: macros.configWarning('pdfPath', 'wishlist'),
+        }) }}
+
+        {{ forms.textField({
+            label: 'PDF Filename Format' | t('wishlist'),
+            instructions: 'What the generated PDF filename should look like (without extension). You can include tags that output list properties, such as {ex1} or {ex2}.' | t('wishlist', {
+                ex1: '<code>{id}</code>',
+                ex2: '<code>{mylistCustomField}</code>'
+            }),
+            id: 'pdfFilenameFormat',
+            name: 'pdfFilenameFormat',
+            value: settings.pdfFilenameFormat,
+            class: 'code ltr',
+            errors: settings.getErrors('pdfFilenameFormat'),
+            required: true,
+            warning: macros.configWarning('pdfFilenameFormat', 'wishlist'),
+        }) }}
+    {% endnamespace %}
+
+    <hr>
+
+    <input type="submit" class="btn submit" value="{{ 'Save' | t('wishlist') }}">
+</form>
+
+{% endblock %}

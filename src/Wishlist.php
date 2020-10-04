@@ -153,7 +153,8 @@ class Wishlist extends Plugin
                 'wishlist/list-types/<listTypeId:\d+>' => 'wishlist/list-types/edit-list-type',
                 'wishlist/list-types/new' => 'wishlist/list-types/edit-list-type',
                 
-                'wishlist/settings' => 'wishlist/default/settings',
+                'wishlist/settings' => 'wishlist/settings/index',
+                'wishlist/settings/general' => 'wishlist/settings/index',
             ]);
         });
     }

@@ -1,0 +1,67 @@
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{% extends 'wishlist/_layouts/settings' %}
+
+{% set bodyClass = 'wishlist-settings-migrate' %}
+{% set selectedTab = 'migrate/shortlist' %}
+{% set fullPageForm = outputs is not defined %}
+
+{% set shortlistData = craft.app.db.tableExists('{{%shortlist_list}}') %}
+
+{% block actionButton %}
+    {% if outputs is not defined and shortlistData %}
+        <input type="submit" class="btn submit" value="{{ 'Migrate Shortlist' | t('wishlist') }}">
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {{ actionInput('wishlist/migrations/shortlist') }}
+    {{ redirectInput('wishlist/settings/shortlist') }}
+
+    <h2>{{ 'Migrate Shortlist (for Craft 2)' | t('wishlist') }}</h2>
+
+    {% if shortlistData %}
+        <p>{{ 'Click "Migrate Shortlist" to migrate all Shortlist lists and their items to Wishlist.' | t('wishlist') }}</p>
+    {% else %}
+        <p>{{ 'No Shortlist data found.' | t('wishlist') }}</p>
+    {% endif %}
+
+    <hr>
+
+    {% if outputs is defined %}
+        {% for output in outputs %}
+            {{ output | raw }}
+        {% endfor %}
+
+        <hr>
+
+        <a class="btn submit" href="{{ cpUrl('wishlist/settings/migrate/shortlist') }}">{{ 'Done' | t('wishlist') }}</a>
+    {% endif %}
+{% endblock %}
+
+{% css %}
+
+.log-label {
+    white-space: pre-wrap;
+}
+
+.log-label code {
+    white-space: normal;
+    font-size: 11px !important;
+    line-height: 18px;
+}
+
+.log-label.color-32 {
+    color: #27AE60;
+}
+
+.log-label.color-31 {
+    color: #D0021B;
+}
+
+.log-label.color-33 {
+    color: #F2842D;
+}
+
+{% endcss %}
