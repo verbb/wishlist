@@ -1,5 +1,5 @@
 <div id="wishlistInfo" class="hidden">
-    <h2>{{ currentUser.fullName() ~ ' Wishlist’s' | t('wishlist') }}</h2>
+    <h2>{{ '{name} Wishlist’s' | t('wishlist', { name: currentUser.fullName() }) }}</h2>
 
     {% set lists = craft.wishlist.lists().userId(currentUser.id).all() %}
 

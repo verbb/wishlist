@@ -4,6 +4,7 @@ namespace verbb\wishlist;
 use verbb\wishlist\base\PluginTrait;
 use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\elements\Item;
+use verbb\wishlist\fieldlayoutelements\OptionsField;
 use verbb\wishlist\gql\interfaces\ListInterface;
 use verbb\wishlist\gql\interfaces\ItemInterface;
 use verbb\wishlist\gql\queries\ListQuery;
@@ -19,6 +20,7 @@ use craft\console\controllers\ResaveController;
 use craft\console\Controller as ConsoleController;
 use craft\elements\User as UserElement;
 use craft\events\DefineConsoleActionsEvent;
+use craft\events\DefineFieldLayoutFieldsEvent;
 use craft\events\RebuildConfigEvent;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterEmailMessagesEvent;
@@ -27,6 +29,7 @@ use craft\events\RegisterGqlTypesEvent;
 use craft\events\RegisterUrlRulesEvent;
 use craft\events\RegisterUserPermissionsEvent;
 use craft\helpers\UrlHelper;
+use craft\models\FieldLayout;
 use craft\services\Elements;
 use craft\services\Fields;
 use craft\services\Gc;
@@ -77,6 +80,7 @@ class Wishlist extends Plugin
         $this->_registerGarbageCollection();
         $this->_registerTemplateHooks();
         $this->_defineResaveCommand();
+        $this->_defineFieldLayoutElements();
         $this->_registerGraphQl();
     }
 
@@ -295,6 +299,19 @@ class Wishlist extends Plugin
             Craft::$app->getView()->hook('cp.users.edit', [$this->getLists(), 'addEditUserListInfoTab']);
             Craft::$app->getView()->hook('cp.users.edit.content', [$this->getLists(), 'addEditUserListInfoTabContent']);
         }
+    }
+
+    private function _defineFieldLayoutElements()
+    {
+        Event::on(FieldLayout::class, FieldLayout::EVENT_DEFINE_STANDARD_FIELDS, function(DefineFieldLayoutFieldsEvent $e) {
+            $fieldLayout = $e->sender;
+
+            switch ($fieldLayout->type) {
+                case Item::class:
+                    $e->fields[] = OptionsField::class;
+                    break;
+            }
+        });
     }
 
 }

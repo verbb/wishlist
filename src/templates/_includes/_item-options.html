@@ -1,0 +1,5 @@
+{% if element.options | length %}
+    <pre class="pane"><code>{{ element.options | json_encode(constant('JSON_PRETTY_PRINT')) }}</code></pre>
+{% else %}
+    <pre class="pane"><code>{{ 'No item options.' | t('wishlist') }}</code></pre>
+{% endif %}
