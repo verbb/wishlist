@@ -528,6 +528,19 @@ class ListsController extends BaseController
                 $variables['list']->typeId = $variables['listType']->id;
             }
         }
+
+        if (!empty($variables['listTypeHandle'])) {
+            $variables['listType'] = Wishlist::$plugin->getListTypes()->getListTypeByHandle($variables['listTypeHandle']);
+        } else if (!empty($variables['listTypeHandleId'])) {
+            $variables['listType'] = Wishlist::$plugin->getListTypes()->getListTypeById($variables['listTypeId']);
+        }
+
+        $listType = $variables['listType'];
+        $list = $variables['list'];
+
+        $form = $listType->getFieldLayout()->createForm($list);
+        $variables['tabs'] = $form->getTabMenu();
+        $variables['fieldsHtml'] = $form->render();
     }
 
     private function _setListFromPost(): ListElement

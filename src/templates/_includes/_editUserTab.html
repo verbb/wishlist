@@ -27,7 +27,7 @@
                                     </td>
 
                                     <td>{{ item.getElementDisplay() }}</td>
-                                    <td>{{ item.dateCreated | datetime('short') }}</td>
+                                    <td>{{ item.dateCreated | date('short') }} {{ item.dateCreated | time('short') }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>

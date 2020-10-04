@@ -57,18 +57,7 @@
     {% if item.id %}<input type="hidden" name="itemId" value="{{ item.id }}">{% endif %}
 
     <div id="fields">
-        <div>
-            {% set tabs = item.getFieldLayout().getTabs() %}
-
-            {% for tab in tabs %}
-                <div id="tab{{ loop.index }}" {% if not loop.first %} class="hidden" {% endif %}>
-                    {% include "_includes/fields" with {
-                        fields: tab.getFields(),
-                        element: item,
-                    } only %}
-                </div>
-            {% endfor %}
-        </div>
+        {{ fieldsHtml | raw }}
     </div>
 {% endblock %}
 
@@ -96,8 +85,6 @@
             errors: item ? item.getErrors('elementId'),
         }) }}
     </div>
-
-    <hr>
 
     {% if item.id %}
         <hr>

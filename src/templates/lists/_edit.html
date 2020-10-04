@@ -54,32 +54,7 @@
     {% if list.id %}<input type="hidden" name="listId" value="{{ list.id }}">{% endif %}
 
     <div id="fields">
-        {{ forms.textField({
-            label: 'Title' | t('wishlist'),
-            site: list.site,
-            id: 'title',
-            name: 'title',
-            value: list.title,
-            placeholder: 'Enter title' | t('wishlist'),
-            errors: list.getErrors('title'),
-            first: true,
-            autofocus: true,
-            required: true,
-            maxlength: 255
-        }) }}
-
-        <div>
-            {% set tabs = listType.getListFieldLayout().getTabs() %}
-
-            {% for tab in tabs %}
-                <div id="tab{{ loop.index }}" {% if not loop.first %} class="hidden" {% endif %}>
-                    {% include "_includes/fields" with {
-                        fields: tab.getFields(),
-                        element: list,
-                    } only %}
-                </div>
-            {% endfor %}
-        </div>
+        {{ fieldsHtml | raw }}
     </div>
 
     <hr>
@@ -182,8 +157,6 @@
             {% endif %}
         </div>
     </div>
-
-    <hr>
 
     {% if list.id %}
         <hr>

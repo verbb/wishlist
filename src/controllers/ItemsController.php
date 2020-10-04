@@ -436,6 +436,19 @@ class ItemsController extends BaseController
         }
 
         $variables['list'] = Craft::$app->getElements()->getElementById($variables['listId'], ListElement::class);
+
+        if (!empty($variables['listTypeHandle'])) {
+            $variables['listType'] = Wishlist::$plugin->getListTypes()->getListTypeByHandle($variables['listTypeHandle']);
+        } else if (!empty($variables['listTypeHandleId'])) {
+            $variables['listType'] = Wishlist::$plugin->getListTypes()->getListTypeById($variables['listTypeId']);
+        }
+
+        $listType = $variables['listType'];
+        $item = $variables['item'];
+
+        $form = $listType->getItemFieldLayout()->createForm($item);
+        $variables['tabs'] = $form->getTabMenu();
+        $variables['fieldsHtml'] = $form->render();
     }
 
     private function _setItemFromPost($elementId = null): Item
