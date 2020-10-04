@@ -1,5 +1,30 @@
 # Changelog
 
+## 1.3.0 - 2020-10-04
+
+### Added
+- Guest lists are now (finally) persistent! Using cookies, even when the user closes their browser, their lists are retained for their next visit.
+- Add migration for [Shortlist](https://github.com/TopShelfCraft/Shortlist) plugin for Craft 2.
+- Add migration for [Upvote](https://plugins.craftcms.com/upvote) plugin.
+- Add PDF template handling, to provide an easy way to generate PDF's of your lists and their content. See [docs](https://verbb.io/craft-plugins/wishlist/docs/template-guides/pdf-template).
+- Add Item Options, allowing you to save additional, arbitrary content on items. See [docs](https://verbb.io/craft-plugins/wishlist/docs/template-guides/managing-items#item-options).
+- Add all available config settings to be able to be managed in the control panel.
+- Add support for Craft 3.5+ field layouts.
+- Add support for multiple tabs for lists.
+- Add support for multiple tabs for list items.
+- Add support to customise the item element table columns when editing a list.
+- Add new tab to user’s account, for all wishlists and items they may own.
+- Add `cookieExpiry` config setting.
+- Add `showListInfoTab` config setting.
+- Add `pdfFilenameFormat` config setting.
+- Add `pdfPath` config setting.
+- Add `pdfAllowRemoteImages` config setting.
+- Add `pdfPaperSize` config setting.
+- Add `pdfPaperOrientation` config setting.
+
+### Changed
+- Now requires Craft 3.5+.
+
 ## 1.2.21 - 2020-10-03
 
 ### Added
