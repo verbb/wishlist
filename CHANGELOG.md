@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.1 - 2020-10-06
+
+### Fixed
+- Fix `optionsSignature` error when updating.
+
 ## 1.3.0 - 2020-10-04
 
 ### Added
