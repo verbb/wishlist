@@ -59,11 +59,11 @@ class WishlistVariable
             $listTypeId = $listType->id;
         }
 
-        // Get the list, force it to be created
-        $list = Wishlist::$plugin->getLists()->getList($listId, true, $listTypeId);
+        // Get the list, don't force it to be created yet
+        $list = Wishlist::$plugin->getLists()->getList($listId, false, $listTypeId);
 
         if ($list) {
-            $item = Item::find()->elementId($elementId)->listId($list->id)->one();
+            $item = Item::find()->elementId($elementId)->listId($list->id)->listTypeId($listTypeId)->one();
         }
 
         if (!$item) {

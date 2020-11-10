@@ -28,7 +28,13 @@ You can Add, Remove, Update or Toggle items in any list. You have the option of 
 {% for entry in craft.entries.section('news').all() %}
     {% set item = craft.wishlist.item(entry.id) %}
 
+    <a href="{{ item.addUrl() }}">Add to List</a>
+
+    {# Optional: Pass content for custom fields #}
     <a href="{{ item.addUrl({ fields: { myField: 'My Value' } }) }}">Add to List</a>
+
+    {# Optional: Pass specific list type handle #}
+    <a href="{{ item.addUrl({ listTypeHandle: 'favourites' }) }}">Add to List</a>
 {% endfor %}
 ```
 :::
@@ -182,6 +188,20 @@ You can also check to see if an item is already in the list, which is useful for
 ```twig
 {% for entry in craft.entries.section('news').all() %}
     {% set item = craft.wishlist.item(entry.id) %}
+
+    {% if item.inList %}
+        <a href="{{ item.removeUrl() }}">Remove from List</a>
+    {% else %}
+        <a href="{{ item.addUrl() }}">Add to List</a>
+    {% endif %}
+{% endfor %}
+```
+
+You can also check if an item is in a list that isn't the default one. For instance, checking if the item is in your `Favourites` list.
+
+```twig
+{% for entry in craft.entries.section('news').all() %}
+    {% set item = craft.wishlist.item(entry.id, null, 'favourites') %}
 
     {% if item.inList %}
         <a href="{{ item.removeUrl() }}">Remove from List</a>

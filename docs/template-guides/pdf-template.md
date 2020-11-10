@@ -8,7 +8,9 @@ Then, you'll want to fetch the list you want to generate the PDF for.
 ```twig
 {% set list = craft.wishlist.lists().default(true).one() %}
 
-<a href="{{ list.getPdfUrl() }}">Download your wishlist</a>
+{% if list %}
+    <a href="{{ list.getPdfUrl() }}">Download your wishlist</a>
+{% endif %}
 ```
 
 Here, we're generating a link for the user to click on to download their PDF. When clicked, their PDF will be downloaded. The URL will look look something similar to:

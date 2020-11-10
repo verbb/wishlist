@@ -10,6 +10,6 @@ See [List Queries](docs:getting-elements/list-queries). By default, `forUser` is
 
 See [Item Queries](docs:getting-elements/item-queries).
 
-### `craft.wishlist.item(elementId, listId)`
+### `craft.wishlist.item(elementId, listId = null, listType = null)`
 
-Fetches the [Item](docs:developers/item) for a provided `elementId`, and if provided, the `listId`. If not provided, will look at the default list.
+Fetches the [Item](docs:developers/item) for a provided `elementId`, and if provided, the `listId`. If not provided, will look at the default list. You can also provide the handle of your `listType` to check against lists that may not be created yet.
