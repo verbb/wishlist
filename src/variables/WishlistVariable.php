@@ -46,23 +46,28 @@ class WishlistVariable
         return Item::find();
     }
 
-    public function item($elementId, $listId = null)
+    public function item($elementId, $listId = null, $listType = null)
     {
         $item = null;
+        $listTypeId = null;
 
         if (!$elementId) {
             return null;
         }
 
+        if ($listType && $listType = Wishlist::$plugin->getListTypes()->getListTypeByHandle($listType)) {
+            $listTypeId = $listType->id;
+        }
+
         // Get the list, force it to be created
-        $list = Wishlist::$plugin->getLists()->getList($listId, true);
+        $list = Wishlist::$plugin->getLists()->getList($listId, true, $listTypeId);
 
         if ($list) {
             $item = Item::find()->elementId($elementId)->listId($list->id)->one();
         }
 
         if (!$item) {
-            $item = WishList::$plugin->getItems()->createItem($elementId, $listId);
+            $item = WishList::$plugin->getItems()->createItem($elementId, $listId, $listTypeId);
         }
 
         return $item;
