@@ -371,14 +371,45 @@ Possible values include:
 ```twig
 {# Fetch the item by its ID #}
 {% set item = craft.wishlist.items()
-    .id(1)
+    .listId(1)
     .one() %}
 ```
 
 ```php
 // Fetch the item by its ID
 $item = \verbb\wishlist\elements\Item::find()
-    ->id(1)
+    ->listId(1)
+    ->one();
+```
+:::
+
+
+
+### `listTypeId`
+
+Narrows the query results based on the items’ List Type IDs.
+
+Possible values include:
+
+| Value | Fetches items…
+| - | -
+| `1` | with a list type ID of 1.
+| `'not 1'` | not with a list type ID of 1.
+| `[1, 2]` | with a list type ID of 1 or 2.
+| `['not', 1, 2]` | not with a list type ID of 1 or 2.
+
+::: code
+```twig
+{# Fetch the item by its ID #}
+{% set item = craft.wishlist.items()
+    .listTypeId(1)
+    .one() %}
+```
+
+```php
+// Fetch the item by its ID
+$item = \verbb\wishlist\elements\Item::find()
+    ->listTypeId(1)
     ->one();
 ```
 :::

@@ -21,6 +21,7 @@ class ItemQuery extends ElementQuery
     public $elementSiteId;
     public $elementClass;
     public $listId;
+    public $listTypeId;
     public $options;
     public $optionsSignature;
     public $enabled = true;
@@ -55,6 +56,12 @@ class ItemQuery extends ElementQuery
         return $this;
     }
 
+    public function listTypeId($value)
+    {
+        $this->listTypeId = $value;
+        return $this;
+    }
+
     public function options($value)
     {
         $this->options = $value;
@@ -74,6 +81,8 @@ class ItemQuery extends ElementQuery
     {
         $this->joinElementTable('wishlist_items');
             
+        $this->subQuery->innerJoin('{{%wishlist_lists}} wishlist_lists', '[[wishlist_items.listId]] = [[wishlist_lists.id]]');
+
         $this->query->select([
             'wishlist_items.id',
             'wishlist_items.elementId',
@@ -115,6 +124,10 @@ class ItemQuery extends ElementQuery
 
         if ($this->dateCreated) {
             $this->subQuery->andWhere(Db::parseDateParam('wishlist_items.dateCreated', $this->dateCreated));
+        }
+
+        if ($this->listTypeId) {
+            $this->subQuery->andWhere(Db::parseParam('wishlist_lists.typeId', $this->listTypeId));
         }
 
         return parent::beforePrepare();
