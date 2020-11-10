@@ -291,19 +291,25 @@ class Item extends Element
     // URLs
     // -------------------------------------------------------------------------
 
-    public function getAddUrl()
+    public function getAddUrl($params = [])
     {
-        return UrlHelper::actionUrl('wishlist/items/add', [ 'elementId' => $this->elementId, 'listId' => $this->listId ]);
+        $params = array_merge([ 'elementId' => $this->elementId, 'listId' => $this->listId ], $params);
+
+        return UrlHelper::actionUrl('wishlist/items/add', $params);
     }
 
-    public function getRemoveUrl()
+    public function getRemoveUrl($params = [])
     {
-        return UrlHelper::actionUrl('wishlist/items/remove', [ 'elementId' => $this->elementId, 'listId' => $this->listId ]);
+        $params = array_merge([ 'elementId' => $this->elementId, 'listId' => $this->listId ], $params);
+
+        return UrlHelper::actionUrl('wishlist/items/remove', $params);
     }
 
-    public function getToggleUrl()
+    public function getToggleUrl($params = [])
     {
-        return UrlHelper::actionUrl('wishlist/items/toggle', [ 'elementId' => $this->elementId, 'listId' => $this->listId ]);
+        $params = array_merge([ 'elementId' => $this->elementId, 'listId' => $this->listId ], $params);
+        
+        return UrlHelper::actionUrl('wishlist/items/toggle', $params);
     }
 
 

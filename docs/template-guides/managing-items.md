@@ -28,7 +28,7 @@ You can Add, Remove, Update or Toggle items in any list. You have the option of 
 {% for entry in craft.entries.section('news').all() %}
     {% set item = craft.wishlist.item(entry.id) %}
 
-    <a href="{{ item.addUrl() }}&fields[myField]=My Value">Add to List</a>
+    <a href="{{ item.addUrl({ fields: { myField: 'My Value' } }) }}">Add to List</a>
 {% endfor %}
 ```
 :::
@@ -124,7 +124,7 @@ Any of the above actions will by made on the users' default list. You can also t
 ```
 
 ```twig URL
-<a href="{{ item.addUrl(entry.id) }}&listId=1234">Add to List</a>
+<a href="{{ item.addUrl({ listId: 1234 }) }}">Add to List</a>
 ```
 :::
 
@@ -152,7 +152,7 @@ To make use of this, you need to supply either the `listTypeHandle` or `listType
 {% for entry in craft.entries.section('news').all() %}
     {% set item = craft.wishlist.item(entry.id) %}
 
-    <a href="{{ item.addUrl() }}&listTypeHandle=favourites">Add to Favourites</a>
+    <a href="{{ item.addUrl({ listTypeHandle: 'favourites' }) }}">Add to Favourites</a>
 {% endfor %}
 ```
 :::
