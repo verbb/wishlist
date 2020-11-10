@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.4.0 - 2020-11-10
+
+> {warning} Please note the change in behaviour for `craft.wishlist.item()` has meant that you cannot rely on lists being auto-created anymore on page-load. Ensure anywhere you call `{% set list = craft.wishlist.lists().one() %}` you check `{% if list %}` before doing anything on the list. Ensure your templates work correctly.
+
+### Added
+- Add params to `addUrl()`, `removeUrl()` and `toggleUrl()` to make it easier to create URLs.
+- Add listType handle to `craft.wishlist.item()`.
+- Add `listTypeId` query param to Item queries.
+
+### Changed
+- `craft.wishlist.item()` no longer automatically creates new lists when the page is loaded, preventing lots of lists being created for guests. Previously as soon as the page loaded with this call, a list would be created for users, meaning lists could get out of control easily. Be sure to double check your templates.
+
 ## 1.3.1 - 2020-10-06
 
 ### Fixed
