@@ -4,6 +4,7 @@ namespace verbb\wishlist\gql\queries;
 use verbb\wishlist\gql\arguments\ItemArguments;
 use verbb\wishlist\gql\interfaces\ItemInterface;
 use verbb\wishlist\gql\resolvers\ItemResolver;
+use verbb\wishlist\helpers\Gql as GqlHelper;
 
 use craft\gql\base\Query;
 
@@ -16,6 +17,10 @@ class ItemQuery extends Query
 
     public static function getQueries($checkToken = true): array
     {
+        if ($checkToken && !GqlHelper::canQueryWishlistItems()) {
+            return [];
+        }
+
         return [
             'wishlistItems' => [
                 'type' => Type::listOf(ItemInterface::getType()),

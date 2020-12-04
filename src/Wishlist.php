@@ -24,6 +24,7 @@ use craft\events\DefineFieldLayoutFieldsEvent;
 use craft\events\RebuildConfigEvent;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterEmailMessagesEvent;
+use craft\events\RegisterGqlPermissionsEvent;
 use craft\events\RegisterGqlQueriesEvent;
 use craft\events\RegisterGqlTypesEvent;
 use craft\events\RegisterUrlRulesEvent;
@@ -291,6 +292,27 @@ class Wishlist extends Plugin
             foreach (ItemQuery::getQueries() as $key => $value) {
                 $event->queries[$key] = $value;
             }
+        });
+
+        Event::on(Gql::class, Gql::EVENT_REGISTER_GQL_PERMISSIONS, function(RegisterGqlPermissionsEvent $event) {
+            $permissions = [];
+
+            $listTypes = Wishlist::getInstance()->getListTypes()->getAllListTypes();
+
+            if (!empty($listTypes)) {
+                $label = Craft::t('wishlist', 'Wishlist');
+                $wishlistPermissions = [];
+
+                foreach ($listTypes as $listType) {
+                    $suffix = 'wishlistListTypes.' . $listType->uid;
+                    
+                    $wishlistPermissions[$suffix . ':read'] = ['label' => Craft::t('wishlist', 'View wishlist type - {listType}', ['listType' => Craft::t('site', $listType->name)])];
+                }
+
+                $permissions[$label] = $wishlistPermissions;
+            }
+
+            $event->permissions = array_merge($event->permissions, $permissions);
         });
     }
 
