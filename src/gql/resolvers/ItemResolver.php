@@ -36,8 +36,10 @@ class ItemResolver extends ElementResolver
             return [];
         }
 
-        $query->andWhere(['in', 'typeId', array_values(Db::idsByUids('{{%wishlist_listtypes}}', $pairs['wishlistListTypes']))]);
-
+        if (!GqlHelper::canSchema('wishlistListTypes.all')) {
+            $query->andWhere(['in', 'typeId', array_values(Db::idsByUids('{{%wishlist_listtypes}}', $pairs['wishlistListTypes']))]);
+        }
+    
         return $query;
     }
 }

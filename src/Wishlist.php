@@ -24,8 +24,8 @@ use craft\events\DefineFieldLayoutFieldsEvent;
 use craft\events\RebuildConfigEvent;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterEmailMessagesEvent;
-use craft\events\RegisterGqlPermissionsEvent;
 use craft\events\RegisterGqlQueriesEvent;
+use craft\events\RegisterGqlSchemaComponentsEvent;
 use craft\events\RegisterGqlTypesEvent;
 use craft\events\RegisterUrlRulesEvent;
 use craft\events\RegisterUserPermissionsEvent;
@@ -294,25 +294,21 @@ class Wishlist extends Plugin
             }
         });
 
-        Event::on(Gql::class, Gql::EVENT_REGISTER_GQL_PERMISSIONS, function(RegisterGqlPermissionsEvent $event) {
-            $permissions = [];
-
+        Event::on(Gql::class, Gql::EVENT_REGISTER_GQL_SCHEMA_COMPONENTS, function(RegisterGqlSchemaComponentsEvent $event) {
             $listTypes = Wishlist::getInstance()->getListTypes()->getAllListTypes();
 
             if (!empty($listTypes)) {
                 $label = Craft::t('wishlist', 'Wishlist');
-                $wishlistPermissions = [];
+                $event->queries[$label]['wishlistListTypes.all:read'] = ['label' => Craft::t('wishlist', 'View all wishlists')];
 
                 foreach ($listTypes as $listType) {
                     $suffix = 'wishlistListTypes.' . $listType->uid;
                     
-                    $wishlistPermissions[$suffix . ':read'] = ['label' => Craft::t('wishlist', 'View wishlist type - {listType}', ['listType' => Craft::t('site', $listType->name)])];
+                    $event->queries[$label][$suffix . ':read'] = [
+                        'label' => Craft::t('wishlist', 'View wishlist type - {listType}', ['listType' => Craft::t('site', $listType->name)]),
+                    ];
                 }
-
-                $permissions[$label] = $wishlistPermissions;
             }
-
-            $event->permissions = array_merge($event->permissions, $permissions);
         });
     }
 
