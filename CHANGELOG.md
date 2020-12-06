@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.1 - 2020-12-07
+
+### Changed
+- Wishlist queries via GraphQL are now no longer automatically included in the public schema.
+
 ## 1.4.0 - 2020-11-10
 
 > {warning} Please note the change in behaviour for `craft.wishlist.item()` has meant that you cannot rely on lists being auto-created anymore on page-load. Ensure anywhere you call `{% set list = craft.wishlist.lists().one() %}` you check `{% if list %}` before doing anything on the list. Ensure your templates work correctly.
