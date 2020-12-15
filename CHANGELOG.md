@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.2 - 2020-12-16
+
+### Added
+- When performing any list or item actions from the front end, a flash error/notice is now available with the result. Use `craft.app.session.getFlash('notice')` to output this message when using the `url()` methods or using a `<form>` POST submit.
+- When submitting a form for managing items, you can see a `successMessage` or `failMessage` to modify the flash message returned. This is not available when using the `url()` methods. Be sure to hash the message: `<input type="hidden" name="successMessage" value="{{ 'Override Message' | hash }}">`.
+
 ## 1.4.1 - 2020-12-07
 
 ### Changed
