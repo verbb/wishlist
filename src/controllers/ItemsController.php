@@ -224,7 +224,7 @@ class ItemsController extends BaseController
 
         // TOOD: Remove this at the next major breakpoint
         $variables['item'] = $item;
-        $variables['notice'] = '`item` in the reesponse is deprecated and will be removed in the next major release. Please use `items` instead.';
+        $variables['notice'] = '`item` in the response is deprecated and will be removed in the next major release. Please use `items` instead.';
 
         return $this->returnSuccess('Item' . ((count($postItems) > 1) ? 's' : '') . ' added to list.', $variables);
     }
@@ -300,7 +300,7 @@ class ItemsController extends BaseController
 
         // TOOD: Remove this at the next major breakpoint
         $variables['item'] = $item;
-        $variables['notice'] = '`item` in the reesponse is deprecated and will be removed in the next major release. Please use `items` instead.';
+        $variables['notice'] = '`item` in the response is deprecated and will be removed in the next major release. Please use `items` instead.';
 
         return $this->returnSuccess('Items removed from list.', $variables);
     }
@@ -384,7 +384,7 @@ class ItemsController extends BaseController
 
         // TOOD: Remove this at the next major breakpoint
         $variables['item'] = $variables['items'][0] ?? [];
-        $variables['notice'] = '`item` in the reesponse is deprecated and will be removed in the next major release. Please use `items` instead.';
+        $variables['notice'] = '`item` in the response is deprecated and will be removed in the next major release. Please use `items` instead.';
 
         return $this->returnSuccess('Items toggled in list.', $variables);
     }
