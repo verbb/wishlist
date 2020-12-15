@@ -43,12 +43,11 @@ class BaseController extends Controller
             return $this->asJson($params);
         }
 
-        if ($request->getIsCpRequest()) {
-            Craft::$app->getSession()->setNotice(Craft::t('wishlist', $message));
-        }
-
+        $this->setSuccessFlash(Craft::t('wishlist', $message));
+        
         if ($request->getIsPost()) {
-            //pass object to redirect for URL variables
+
+            // Pass object to redirect for URL variables
             return $this->redirectToPostedUrl($object);
         }
 
@@ -76,13 +75,9 @@ class BaseController extends Controller
             return $this->asJson($params);
         }
 
-        if ($request->getIsCpRequest()) {
-            Craft::$app->getSession()->setError($error);
-        }
+        $this->setFailFlash($error);
 
         if ($request->getIsPost()) {
-            Craft::$app->getSession()->setError($error);
-
             if ($params) {
                 Craft::$app->getUrlManager()->setRouteParams($params);
             }
