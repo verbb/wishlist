@@ -434,7 +434,11 @@ class ListsController extends BaseController
         $list = ListElement::findOne($listId);
 
         if (!$list) {
-            throw new Exception(Craft::t('wishlist', 'No list exists with the ID “{id}”.', ['id' => $listId]));
+            $message = Craft::t('wishlist', 'No list exists with the ID “{id}”.', ['id' => $listId]);
+
+            Wishlist::error($message);
+            
+            return $this->returnError($message);
         }
 
          // Check if we're allowed to manage lists
@@ -445,7 +449,11 @@ class ListsController extends BaseController
         $recipient = $request->getRequiredParam('recipient');
 
         if (!$sender || !$recipient) {
-            throw new Exception(Craft::t('wishlist', 'You must supply and sender and recipient'));
+            $message = Craft::t('wishlist', 'You must supply and sender and recipient');
+
+            Wishlist::error($message);
+            
+            return $this->returnError($message);
         }
 
         // Create user elements for sender/recipient
@@ -474,9 +482,20 @@ class ListsController extends BaseController
 
             $mail->send();
 
-            Wishlist::log('Sent list share notification to ' . $recipient->email);
+            $message = Craft::t('wishlist', 'Sent list share notification to {email}.', ['email' => $recipient->email]);
+
+            Wishlist::log($message);
+
+            return $this->returnSuccess($message);
         } catch (\Throwable $e) {
-            Wishlist::log('Failed to send list share to ' . $recipient->email . ' - ' . $e->getMessage());
+            $message = Craft::t('wishlist', 'Failed to send list share to {email} - {error}.', [
+                'email' => $recipient->email,
+                'error' => $e->getMessage(),
+            ]);
+
+            Wishlist::error($message);
+            
+            return $this->returnError($message);
         }
     }
 
