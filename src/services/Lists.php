@@ -263,7 +263,7 @@ class Lists extends Component
             return '';
         }
 
-        return Craft::$app->getView()->renderTemplate('wishlist/_includes/_editUserTab');
+        return Craft::$app->getView()->renderTemplate('wishlist/_includes/_editUserTab', $context);
     }
 
 
