@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.4.3 - 2020-12-22
+
+### Fixed
+- Fix `lists/add-to-cart` not supporting custom error/success messages.
+- Fix `lists/share-by-email` not supporting custom error/success messages.
+- Fix user wishlist’s always showing the currently logged-in user, when editing a user in the control panel.
+
 ## 1.4.2 - 2020-12-16
 
 ### Added
