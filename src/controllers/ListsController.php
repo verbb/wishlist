@@ -411,15 +411,9 @@ class ListsController extends BaseController
         }
 
         if (!Craft::$app->getElements()->saveElement($cart, false)) {
-            if ($request->getAcceptsJson()) {
-                $this->asJson(['success' => false]);
-            }
-
-            Craft::$app->getUrlManager()->setRouteParams([
-                'list' => $list
+            return $this->returnError('Unable to add items to cart.', [
+                'list' => $list,
             ]);
-
-            return null;
         }
 
         // Should we remove all items from the list after adding?
@@ -429,11 +423,7 @@ class ListsController extends BaseController
             Wishlist::$plugin->getItems()->deleteItemsForList($listId);
         }
 
-        if ($request->getAcceptsJson()) {
-            return $this->asJson(['success' => true]);
-        }
-
-        return $this->redirectToPostedUrl($list);
+        return $this->returnSuccess('Items added to cart.', [], $list);
     }
 
     public function actionShareByEmail()
