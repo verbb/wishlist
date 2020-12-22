@@ -106,7 +106,7 @@ Event::on(Item::class, Item::EVENT_BEFORE_SAVE, function(Event $event) {
 });
 ```
 
-### The `afterSaveList` event
+### The `afterSaveItem` event
 
 Plugins can get notified after a item has been saved
 
