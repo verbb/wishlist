@@ -129,6 +129,9 @@ class Item extends Element
     public $listId;
 
     private $_element;
+    private $_list;
+    private $_fieldLayout;
+    private $_listItemIds = [];
     private $_options = [];
 
 
@@ -139,9 +142,7 @@ class Item extends Element
     {
         parent::init();
 
-        $element = $this->getElement();
-
-        if ($element) {
+        if ($element = $this->getElement()) {
             $this->title = $element->title;
         }
     }
@@ -166,6 +167,10 @@ class Item extends Element
 
     public function getList()
     {
+        if ($this->_list !== null) {
+            return $this->_list;
+        }
+
         if ($this->listId === null) {
             return null;
         }
@@ -176,7 +181,7 @@ class Item extends Element
             return null;
         }
 
-        return $list;
+        return $this->_list = $list;
     }
 
     public function getElementDisplay()
@@ -186,22 +191,30 @@ class Item extends Element
 
     public function getCpEditUrl()
     {
-        return UrlHelper::cpUrl('wishlist/lists/' . $this->list->type->handle . '/' . $this->listId . '/items/' . $this->id);
+        return UrlHelper::cpUrl('wishlist/lists/' . $this->getList()->type->handle . '/' . $this->listId . '/items/' . $this->id);
     }
     
     public function getFieldLayout()
     {
-        if ($this->getList()) {
-            return $this->getList()->getType()->getItemFieldLayout();
+        if ($this->_fieldLayout !== null) {
+            return $this->_fieldLayout;
         }
 
-        return parent::getFieldLayout();
+        if ($list = $this->getList()) {
+            return $this->_fieldLayout = $list->getType()->getItemFieldLayout();
+        }
+
+        return $this->_fieldLayout = parent::getFieldLayout();
     }
 
     public function getInList()
     {
-        if ($this->id && $this->getList()) {
-            return in_array($this->id, $this->getList()->getItems()->ids());
+        if ($this->id && $list = $this->getList()) {
+            if (!$this->_listItemIds) {
+                $this->_listItemIds = $list->getItems()->ids();
+            }
+
+            return in_array($this->id, $this->_listItemIds);
         }
 
         return false;

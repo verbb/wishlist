@@ -189,7 +189,7 @@ You can also check to see if an item is already in the list, which is useful for
 {% for entry in craft.entries.section('news').all() %}
     {% set item = craft.wishlist.item(entry.id) %}
 
-    {% if item.inList %}
+    {% if item.getInList() %}
         <a href="{{ item.removeUrl() }}">Remove from List</a>
     {% else %}
         <a href="{{ item.addUrl() }}">Add to List</a>
@@ -203,7 +203,7 @@ You can also check if an item is in a list that isn't the default one. For insta
 {% for entry in craft.entries.section('news').all() %}
     {% set item = craft.wishlist.item(entry.id, null, 'favourites') %}
 
-    {% if item.inList %}
+    {% if item.getInList() %}
         <a href="{{ item.removeUrl() }}">Remove from List</a>
     {% else %}
         <a href="{{ item.addUrl() }}">Add to List</a>

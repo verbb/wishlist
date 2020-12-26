@@ -33,6 +33,9 @@ class ListElement extends Element
     public $default;
 
     private $_listType;
+    private $_owner;
+    private $_user;
+    private $_fieldLayout;
 
 
     // Public Methods
@@ -145,10 +148,8 @@ class ListElement extends Element
 
     public function getIsEditable(): bool
     {
-        if ($this->getType()) {
-            $id = $this->getType()->id;
-
-            return Craft::$app->getUser()->checkPermission('wishlist-manageListType:'.$id);
+        if ($type = $this->getType()) {
+            return Craft::$app->getUser()->checkPermission('wishlist-manageListType:' . $type->id);
         }
 
         return false;
@@ -156,9 +157,7 @@ class ListElement extends Element
 
     public function getCpEditUrl()
     {
-        $listType = $this->getType();
-
-        if ($listType) {
+        if ($listType = $this->getType()) {
             return UrlHelper::cpUrl('wishlist/lists/' . $listType->handle . '/' . $this->id);
         }
 
@@ -167,18 +166,30 @@ class ListElement extends Element
 
     public function getFieldLayout()
     {
+        if ($this->_fieldLayout !== null) {
+            return $this->_fieldLayout;
+        }
+
         $listType = $this->getType();
 
-        return $listType ? $listType->getListFieldLayout() : null;
+        if (!$listType) {
+            return null;
+        }
+
+        return $this->_fieldLayout = $listType->getListFieldLayout();
     }
 
     public function getType()
     {
-        if ($this->_listType) {
+        if ($this->_listType !== null) {
             return $this->_listType;
         }
 
-        return $this->typeId ? $this->_listType = Wishlist::$plugin->getListTypes()->getListTypeById($this->typeId) : null;
+        if ($this->typeId === null) {
+            return null;
+        }
+
+        return $this->_listType = Wishlist::$plugin->getListTypes()->getListTypeById($this->typeId);
     }
 
     public function getItems()
@@ -188,7 +199,15 @@ class ListElement extends Element
 
     public function getUser()
     {
-        return $this->userId ? User::find()->id($this->userId)->one() : null;
+        if ($this->_user !== null) {
+            return $this->_user;
+        }
+
+        if ($this->userId === null) {
+            return null;
+        }
+
+        return $this->_user = User::find()->id($this->userId)->one();
     }
 
     public function getOwnerId()
@@ -198,11 +217,15 @@ class ListElement extends Element
 
     public function getOwner()
     {
-        if ($this->userId) {
-            return $this->getUser();
+        if ($this->_owner !== null) {
+            return $this->_owner;
         }
 
-        return null;
+        if ($this->userId === null) {
+            return null;
+        }
+
+        return $this->_owner = $this->getUser();
     }
 
     public function setFieldValuesFromRequest(string $paramNamespace = '')
@@ -315,25 +338,21 @@ class ListElement extends Element
 
     protected function tableAttributeHtml(string $attribute): string
     {
-        /* @var $listType ListType */
-        $listType = $this->getType();
-
         switch ($attribute) {
             case 'owner':
-                $owner = $this->getOwner();
-
-                if ($owner) {
+                if ($owner = $this->getOwner()) {
                     return '<a href="' . $owner->getCpEditUrl() . '">' . $owner . '</a>';
                 }
 
                 return Craft::t('wishlist', 'Guest');
-
             case 'type':
-                return ($listType ? Craft::t('site', $listType->name) : '');
+                if ($listType = $this->getType()) {
+                    return Craft::t('site', $listType->name);
+                }
 
+                return '';
             case 'items':
                 return $this->items->count();
-
             default:
                 return parent::tableAttributeHtml($attribute);
         }

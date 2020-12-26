@@ -14,7 +14,6 @@ Attribute | Description
 `title` | The Title of the linked element.
 `listId` | ID of the list this item belongs to.
 `list` | The list this item belongs to.
-`inList` | Whether this item is in the list (default list or otherwise).
 `options` | Any additional options to store with an item.
 `optionsSignature` | An MD5 hash of the options, used for comparing items uniqueness.
 
@@ -25,3 +24,4 @@ Method | Description
 `getAddUrl()` | Returns the URL to add an item to a list.
 `getRemoveUrl()` | Returns the URL to remove an item from a list.
 `getToggleUrl()` | Returns the URL to toggle an item in a list.
+`getInList()` | Whether this item is in the list (default list or otherwise).
