@@ -469,7 +469,8 @@ class ItemsController extends BaseController
             }
         }
 
-        $item = WishList::$plugin->getItems()->createItem($elementId, $listId, $listTypeId);
+        // Create the item, and force the item's list to also be created if not already
+        $item = WishList::$plugin->getItems()->createItem($elementId, $listId, $listTypeId, true);
 
         return $item;
     }
