@@ -268,7 +268,7 @@ class ListsController extends BaseController
                         $errors[$itemId] = new ItemError('Unable to delete item from list.', ['item' => $item]);
                     }
                 } else {
-                    if (!Craft::$app->getElements()->saveElement($item)) {
+                    if (!Wishlist::$plugin->getItems()->saveElement($item)) {
                         $errors[$itemId] = new ItemError('Unable to update item in list.', ['item' => $item]);
                     }
                 }

@@ -6,6 +6,7 @@ use verbb\wishlist\elements\Item;
 
 use Craft;
 use craft\base\Component;
+use craft\base\ElementInterface;
 use craft\events\ElementEvent;
 use craft\events\SiteEvent;
 use craft\queue\jobs\ResaveElements;
@@ -67,5 +68,12 @@ class Items extends Component
         $item->setFieldValuesFromRequest('fields');
 
         return $item;
+    }
+
+    public function saveElement(ElementInterface $element, bool $runValidation = true, bool $propagate = true)
+    {
+        $updateItemSearchIndexes = Wishlist::$plugin->getSettings()->updateItemSearchIndexes;
+
+        return Craft::$app->getElements()->saveElement($element, $runValidation, $propagate, $updateItemSearchIndexes);
     }
 }

@@ -68,7 +68,7 @@ class ItemsController extends BaseController
         $item->elementId = $request->getParam('elementId')[0];
         $item->setFieldValuesFromRequest('fields');
 
-        if (!Craft::$app->getElements()->saveElement($item)) {
+        if (!Wishlist::$plugin->getItems()->saveElement($item)) {
             if ($request->getAcceptsJson()) {
                 return $this->asJson([
                     'success' => false,
@@ -207,7 +207,7 @@ class ItemsController extends BaseController
             $fields = $postItem['fields'] ?? [];
             $item->setFieldValues($fields);
 
-            if (!Craft::$app->getElements()->saveElement($item)) {
+            if (!Wishlist::$plugin->getItems()->saveElement($item)) {
                 $errors[$key] = new ItemError('Unable to save item to list.', ['item' => $item]);
 
                 continue;
@@ -366,7 +366,7 @@ class ItemsController extends BaseController
             } else {
                 $item = $this->_setItemFromPost($elementId);
 
-                if (!Craft::$app->getElements()->saveElement($item)) {
+                if (!Wishlist::$plugin->getItems()->saveElement($item)) {
                     $errors[$key] = new ItemError('Unable to save item to list.', ['item' => $item]);
                     
                     continue;
@@ -409,7 +409,7 @@ class ItemsController extends BaseController
 
         $item->setFieldValuesFromRequest('fields');
         
-        if (!Craft::$app->getElements()->saveElement($item)) {
+        if (!Wishlist::$plugin->getItems()->saveElement($item)) {
             return $this->returnError('Unable to update item in list.', ['item' => $item]);
         }
 

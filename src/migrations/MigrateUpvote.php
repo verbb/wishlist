@@ -78,7 +78,7 @@ class MigrateUpvote extends Migration
             $item->options = Json::encode([]);
             $item->optionsSignature = md5(Json::encode([]));
 
-            if (!Craft::$app->getElements()->saveElement($item)) {
+            if (!Wishlist::$plugin->getItems()->saveElement($item)) {
                 foreach ($item->getErrors() as $attr => $errors) {
                     foreach ($errors as $error) {
                         $this->stdout("    > $attr: $error", Console::FG_RED);
