@@ -21,6 +21,7 @@ class Settings extends Model
     public $purgeEmptyListsOnly = true;
     public $purgeEmptyGuestListsOnly = true;
     public $cookieExpiry = false;
+    public $updateListSearchIndexes = true;
     public $updateItemSearchIndexes = true;
 
     // PDF

@@ -6,6 +6,7 @@ use verbb\wishlist\elements\ListElement;
 
 use Craft;
 use craft\base\Component;
+use craft\base\ElementInterface;
 use craft\db\Query;
 use craft\elements\User as UserElement;
 use craft\helpers\ConfigHelper;
@@ -33,6 +34,13 @@ class Lists extends Component
     public function getListById(int $id, $siteId = null)
     {
         return Craft::$app->getElements()->getElementById($id, ListElement::class, $siteId);
+    }
+
+    public function saveElement(ElementInterface $element, bool $runValidation = true, bool $propagate = true)
+    {
+        $updateListSearchIndexes = Wishlist::$plugin->getSettings()->updateListSearchIndexes;
+
+        return Craft::$app->getElements()->saveElement($element, $runValidation, $propagate, $updateListSearchIndexes);
     }
 
     public function getList($id = null, $forceSave = false, $listTypeId = null): ListElement
@@ -96,11 +104,11 @@ class Lists extends Component
 
         if ($this->_lists[$cacheKey]->id) {
             if ($changedIp || $changedUserId) {
-                Craft::$app->getElements()->saveElement($this->_lists[$cacheKey], false);
+                Wishlist::$plugin->getLists()->saveElement($this->_lists[$cacheKey], false);
             }
         } else {
             if ($forceSave) {
-                Craft::$app->getElements()->saveElement($this->_lists[$cacheKey], false);
+                Wishlist::$plugin->getLists()->saveElement($this->_lists[$cacheKey], false);
             }
         }
 

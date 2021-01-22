@@ -140,7 +140,7 @@ class ListsController extends BaseController
 
         $this->enforceListPermissions($list);
 
-        if (!Craft::$app->getElements()->saveElement($list)) {
+        if (!Wishlist::$plugin->getLists()->saveElement($list)) {
             if ($request->getAcceptsJson()) {
                 return $this->asJson([
                     'success' => false,
@@ -189,7 +189,7 @@ class ListsController extends BaseController
         $this->enforceEnabledList($list);
         $this->enforceListPermissions($list);
 
-        if (!Craft::$app->getElements()->saveElement($list)) {
+        if (!Wishlist::$plugin->getLists()->saveElement($list)) {
             $error = new ListError('Unable to save list.', ['list' => $list]);
 
             return $this->returnError($error->message, $error->params);
@@ -225,7 +225,7 @@ class ListsController extends BaseController
             throw new Exception(Craft::t('wishlist', 'You can only update your own list.'));
         }
         
-        if (!Craft::$app->getElements()->saveElement($list)) {
+        if (!Wishlist::$plugin->getLists()->saveElement($list)) {
             return $this->returnError('Unable to update list.', ['list' => $list]);
         }
 

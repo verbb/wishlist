@@ -47,7 +47,7 @@ class MigrateUpvote extends Migration
         $list->typeId = $listType->id;
         $list->title = $listType->name;
 
-        if (!Craft::$app->getElements()->saveElement($list)) {
+        if (!Wishlist::$plugin->getLists()->saveElement($list)) {
             foreach ($list->getErrors() as $attr => $errors) {
                 foreach ($errors as $error) {
                     $this->stdout("    > $attr: $error", Console::FG_RED);
