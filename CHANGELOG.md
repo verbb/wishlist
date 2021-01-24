@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.4.4 - 2021-01-24
+
+### Added
+- Add `updateItemSearchIndexes` config setting to control updating search indexes for Wishlist items.
+- Add `updateListSearchIndexes` config setting to control updating search indexes for Wishlist Lists.
+
+### Changed
+- Improve item and list database query performance.
+
+### Fixed
+- Fix `craft.wishlist.item` forcing the creation of a new list, when it shouldn’t.
+- Fix incorrectly showing list items in other users’ lists.
+
 ## 1.4.3 - 2020-12-22
 
 ### Fixed
