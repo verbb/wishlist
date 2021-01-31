@@ -253,3 +253,44 @@ You can also store additional, arbitrary content alongside a Wishlist item in th
     </form>
 {% endfor %}
 ```
+
+## Submit with JavaScript (Ajax)
+You can also trigger any of the above actions through JavaScript.
+
+:::code
+```js
+let $form = document.querySelector('#my-wishlist-form');
+let data = new FormData($form);
+
+fetch('/', {
+    method: 'post',
+    body: data,
+    headers: {
+        'Accept': 'application/json',
+    },
+}).then(function(response) {
+    response.json().then(function(data) {
+        console.log(data);
+    });
+});
+```
+
+```jQuery
+let data = $('#my-wishlist-form').serialize();
+
+$.ajax({
+    type: 'POST',
+    url: '/',
+    data: data,
+    cache: false,
+    dataType: 'json',
+    error: function(jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR)
+    },
+    success: function(response) {
+        console.log(response);
+    }
+});
+```
+:::
+
