@@ -223,18 +223,20 @@ class Lists extends Component
 
                 // We want to merge lists per list type
                 foreach ($listTypes as $listType) {
-                    $userListIds = ListElement::find()
+                    $userLists = ListElement::find()
                         ->userId($user->id)
                         ->typeId($listType->id)
                         ->orderBy('dateCreated asc')
-                        ->ids();
+                        ->all();
 
-                    if ($userListIds) {
-                        $oldestListId = $userListIds[0];
+                    if ($userLists) {
+                        $oldestList = $userLists[0];
 
                         // Update all list items to belong to the oldest list
-                        foreach ($userListIds as $userListId) {
-                            if ($oldestListId != $userListId) {
+                        foreach ($userLists as $userList) {
+
+                            // Ensure that we check against the title - they should be the same to merge
+                            if ($oldestList->id != $userList->id && $oldestList->title == $userList->title) {
                                 Craft::$app->getDb()->createCommand()
                                     ->update('{{%wishlist_items}}', ['listId' => $oldestListId], ['listId' => $userListId])
                                     ->execute();
