@@ -38,7 +38,7 @@ return [
 #### Lists
 - `allowDuplicates` - Whether to allow duplicates in lists.
 - `manageDisabledLists` - Whether to allow front-end users to manage disabled lists and their items.
-- `mergeLastListOnLogin` - Whether to merge a guest user’s lists with all existing lists for the user, when they log in.
+- `mergeLastListOnLogin` - Whether to merge a user’s lists with all existing lists for the user, when they log in. This can be useful when lists are modified when logged out, but a user logs in. Any existing lists will be merged.
 - `purgeInactiveLists` - Whether to purge inactive lists after a certain duration.
 - `purgeInactiveListsDuration` - If purging inactive lists is enabled, after this duration they will be purged.
 - `purgeInactiveGuestListsDuration` - If purging inactive lists is enabled, after this duration only guest lists will be purged.
