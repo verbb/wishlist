@@ -17,7 +17,7 @@ You can Add, Delete or Clear lists, and its recommended that these options shoul
     <input type="text" name="fields[myField]" value="My Value">
 
     {# Optional: Pass a specific list type ID #}
-    <input type="text" name="listTypeId" value="2">
+    <input type="text" name="typeId" value="2">
 
     <input type="submit" value="Create New List">
 </form>
@@ -44,7 +44,7 @@ You can Add, Delete or Clear lists, and its recommended that these options shoul
     <input type="text" name="title" value="New Title">
 
     {# Optional: Pass a specific list type ID #}
-    <input type="text" name="listTypeId" value="2">
+    <input type="text" name="typeId" value="2">
 
     <input type="submit" value="Update">
 </form>
@@ -71,7 +71,7 @@ You can Add, Delete or Clear lists, and its recommended that these options shoul
         <input type="text" name="listId" value="{{ list.id }}">
 
         {# Optional: Pass a specific list type ID #}
-        <input type="text" name="listTypeId" value="2">
+        <input type="text" name="typeId" value="2">
 
         <input type="submit" value="Delete List">
     </form>
@@ -100,7 +100,7 @@ You can Add, Delete or Clear lists, and its recommended that these options shoul
         <input type="text" name="listId" value="{{ list.id }}">
 
         {# Optional: Pass a specific list type ID #}
-        <input type="text" name="listTypeId" value="2">
+        <input type="text" name="typeId" value="2">
 
         <input type="submit" value="Clear List">
     </form>
