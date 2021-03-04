@@ -1,9 +1,10 @@
 <?php
 namespace verbb\wishlist\migrations;
 
+use verbb\wishlist\Wishlist;
 use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\elements\Item;
-use verbb\wishlist\records\ListType;
+use verbb\wishlist\models\ListType;
 
 use Craft;
 use craft\db\Migration;
@@ -128,8 +129,8 @@ class Install extends Migration
                 'itemFieldLayoutId' => $this->_itemFieldLayoutId,
             ];
 
-            $this->insert(ListType::tableName(), $data);
-            $listTypeId = $this->db->getLastInsertID(ListType::tableName());
+            $listType = new ListType($data);
+            Wishlist::$plugin->getListTypes()->saveListType($listType);
         }
     }
 
