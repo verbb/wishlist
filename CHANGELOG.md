@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.4.5 - 2021-03-04
+
+### Changed
+- Update `mergeLastListOnLogin` to only merge lists of the same type if they have the same title.
+
+### Fixed
+- Fix default list type not saving to project config when first installing the plugin.
+
 ## 1.4.4 - 2021-01-24
 
 ### Added
