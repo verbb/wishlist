@@ -234,17 +234,19 @@ class Lists extends Component
 
                         // Update all list items to belong to the oldest list
                         foreach ($userLists as $userList) {
-
                             // Ensure that we check against the title - they should be the same to merge
                             if ($oldestList->id != $userList->id && $oldestList->title == $userList->title) {
                                 Craft::$app->getDb()->createCommand()
-                                    ->update('{{%wishlist_items}}', ['listId' => $oldestListId], ['listId' => $userListId])
+                                    ->update('{{%wishlist_items}}', ['listId' => $oldestList->id], ['listId' => $userList->id])
                                     ->execute();
-
+                            
                                 // Delete the newer list, now the items have been moved off
                                 Craft::$app->getDb()->createCommand()
-                                    ->delete('{{%elements}}', ['id' => $userListId])
+                                    ->delete('{{%elements}}', ['id' => $userList->id])
                                     ->execute();
+                            } else {
+
+
                             }
                         }
                     }
