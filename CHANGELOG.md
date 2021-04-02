@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.6 - 2021-04-02
+
+### Fixed
+- Fix `mergeLastListOnLogin` not correctly merging lists when logging in a user.
+
 ## 1.4.5 - 2021-03-04
 
 ### Changed
