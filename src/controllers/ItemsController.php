@@ -9,6 +9,7 @@ use verbb\wishlist\errors\ItemError;
 use Craft;
 use craft\web\Controller;
 
+use yii\base\Exception;
 use yii\web\Response;
 
 class ItemsController extends BaseController
@@ -445,6 +446,11 @@ class ItemsController extends BaseController
 
         $listType = $variables['listType'];
         $item = $variables['item'];
+
+        // For new items, they should have an associated listId
+        if (!$item->listId) {
+            $item->listId = $variables['list']->id;
+        }
 
         $form = $listType->getItemFieldLayout()->createForm($item);
         $variables['tabs'] = $form->getTabMenu();
