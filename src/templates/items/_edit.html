@@ -57,7 +57,11 @@
     {% if item.id %}<input type="hidden" name="itemId" value="{{ item.id }}">{% endif %}
 
     <div id="fields">
-        {{ fieldsHtml | raw }}
+        {% if fieldsHtml | length %}
+            {{ fieldsHtml | raw }}
+        {% else %}
+            <em>{{ 'No custom fields defined for this item type.' | t('wishlist') }}</em>
+        {% endif %}
     </div>
 {% endblock %}
 
