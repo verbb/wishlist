@@ -260,23 +260,38 @@ class ItemsController extends BaseController
 
         // By default, handle multi-items, but if not - set them up as one
         $postItems = $request->getParam('items', [[
+            'itemId' => $request->getParam('itemId'),
             'elementId' => $request->getParam('elementId'),
+            'options' => $request->getParam('options'),
             'fields' => $request->getParam('fields'),
         ]]);
 
         foreach ($postItems as $key => $postItem) {
-            $elementId = $postItem['elementId'] ?? '';
+            $itemId = $postItem['itemId'] ?? null;
+            $elementId = $postItem['elementId'] ?? null;
+            $options = $postItem['options'] ?? [];
             
-            if (!$elementId) {
-                $errors[$key] = new ItemError('Element ID must be provided.');
+            if (!$elementId && !$itemId) {
+                $errors[$key] = new ItemError('Element ID or Item ID must be provided.');
 
                 continue;
             }
 
-            $item = Item::find()
-                ->elementId($elementId)
-                ->listId($list->id)
-                ->one();
+            $query = Item::find()->listId($list->id);
+
+            if ($itemId) {
+                $query->id($itemId);
+            }
+
+            if ($options) {
+                $query->options($options);
+            }
+
+            if ($elementId) {
+                $query->elementId($elementId);
+            }
+
+            $item = $query->one();
 
             if (!$item) {
                 $errors[$key] = new ItemError('Unable to find item in list.');
@@ -336,25 +351,40 @@ class ItemsController extends BaseController
 
         // By default, handle multi-items, but if not - set them up as one
         $postItems = $request->getParam('items', [[
+            'itemId' => $request->getParam('itemId'),
             'elementId' => $request->getParam('elementId'),
+            'options' => $request->getParam('options'),
             'fields' => $request->getParam('fields'),
         ]]);
 
         $actions = [];
 
         foreach ($postItems as $key => $postItem) {
-            $elementId = $postItem['elementId'] ?? '';
-
-            if (!$elementId) {
-                $errors[$key] = new ItemError('Element ID must be provided.');
+            $itemId = $postItem['itemId'] ?? null;
+            $elementId = $postItem['elementId'] ?? null;
+            $options = $postItem['options'] ?? [];
+            
+            if (!$elementId && !$itemId) {
+                $errors[$key] = new ItemError('Element ID or Item ID must be provided.');
 
                 continue;
             }
 
-            $item = Item::find()
-                ->elementId($elementId)
-                ->listId($list->id)
-                ->one();
+            $query = Item::find()->listId($list->id);
+
+            if ($itemId) {
+                $query->id($itemId);
+            }
+
+            if ($options) {
+                $query->options($options);
+            }
+
+            if ($elementId) {
+                $query->elementId($elementId);
+            }
+
+            $item = $query->one();
 
             if ($item) {
                 if (!Craft::$app->getElements()->deleteElement($item)) {
