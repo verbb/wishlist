@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.7 - 2021-04-21
+
+### Fixed
+- Fix an error with Commerce 3.3+ and DomPDF version collision.
+
 ## 1.4.6 - 2021-04-02
 
 ### Fixed
