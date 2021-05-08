@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.8 - 2021-05-08
+
+### Added
+- Add the ability to match existing wishlist items by `itemId` and `options` when trying to remove or toggle a wishlist item in a list.
+- Allow custom fields and options to be added when toggling a wishlist item.
+
 ## 1.4.7 - 2021-04-21
 
 ### Fixed
