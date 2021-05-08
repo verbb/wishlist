@@ -362,8 +362,12 @@ class ItemsController extends BaseController
         foreach ($postItems as $key => $postItem) {
             $itemId = $postItem['itemId'] ?? null;
             $elementId = $postItem['elementId'] ?? null;
+            $fields = $postItem['fields'] ?? [];
             $options = $postItem['options'] ?? [];
             
+            // Clear any empty options
+            $options = array_filter($options);
+
             if (!$elementId && !$itemId) {
                 $errors[$key] = new ItemError('Element ID or Item ID must be provided.');
 
@@ -396,6 +400,10 @@ class ItemsController extends BaseController
                 $variables['items'][] = array_merge(['action' => 'removed'], $item->toArray());
             } else {
                 $item = $this->_setItemFromPost($elementId);
+                
+                // Set any additional options and fields on the item
+                $item->setOptions($options);
+                $item->setFieldValues($fields);
 
                 if (!Wishlist::$plugin->getItems()->saveElement($item)) {
                     $errors[$key] = new ItemError('Unable to save item to list.', ['item' => $item]);
