@@ -8,8 +8,12 @@
 
 ## 1.4.7 - 2021-04-21
 
+### Added
+- Add notes for list/items when they have no custom fields in the control panel.
+
 ### Fixed
 - Fix an error with Commerce 3.3+ and DomPDF version collision.
+- Fix an error when creating a new list item in the control panel.
 
 ## 1.4.6 - 2021-04-02
 
