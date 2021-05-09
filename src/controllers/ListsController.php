@@ -10,7 +10,6 @@ use Craft;
 use craft\base\Element;
 use craft\elements\User;
 use craft\helpers\DateTimeHelper;
-use craft\helpers\Json;
 use craft\helpers\Localization;
 use craft\helpers\UrlHelper;
 use craft\models\Site;

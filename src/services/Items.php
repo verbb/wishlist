@@ -10,6 +10,7 @@ use craft\base\ElementInterface;
 use craft\events\ElementEvent;
 use craft\events\SiteEvent;
 use craft\queue\jobs\ResaveElements;
+use craft\helpers\Json;
 
 use yii\web\UserEvent;
 
@@ -75,5 +76,12 @@ class Items extends Component
         $updateItemSearchIndexes = Wishlist::$plugin->getSettings()->updateItemSearchIndexes;
 
         return Craft::$app->getElements()->saveElement($element, $runValidation, $propagate, $updateItemSearchIndexes);
+    }
+
+    public function getOptionsSignature($options)
+    {
+        ksort($options);
+
+        return md5(Json::encode($options));
     }
 }

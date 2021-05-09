@@ -284,7 +284,8 @@ class ItemsController extends BaseController
             }
 
             if ($options) {
-                $query->options($options);
+                $optionsSignature = Wishlist::getInstance()->getItems()->getOptionsSignature($options);
+                $query->optionsSignature($optionsSignature);
             }
 
             if ($elementId) {
@@ -381,7 +382,8 @@ class ItemsController extends BaseController
             }
 
             if ($options) {
-                $query->options($options);
+                $optionsSignature = Wishlist::getInstance()->getItems()->getOptionsSignature($options);
+                $query->optionsSignature($optionsSignature);
             }
 
             if ($elementId) {

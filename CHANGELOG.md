@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fix issue where trying to remove or toggle a wishlist item with the `options` param could have no effect
+
 ## 1.4.8 - 2021-05-08
 
 ### Added

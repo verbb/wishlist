@@ -3,7 +3,6 @@ namespace verbb\wishlist\helpers;
 
 use Craft;
 use craft\db\Query;
-use craft\helpers\Json;
 
 class ProjectConfigData
 {
