@@ -1,9 +1,11 @@
 # Changelog
 
-## Unreleased
+## 1.4.9 - 2021-06-04
 
 ### Fixed
-- Fix issue where trying to remove or toggle a wishlist item with the `options` param could have no effect
+- Fix issue where trying to remove or toggle a wishlist item with the `options` param could have no effect. (thanks @benface).
+- Fix `mergeLastListOnLogin` not respecting `allowDuplicates` by allowing duplicates during merging of guest and user lists.
+- Add `craft.wishlist.getInUserLists()`.
 
 ## 1.4.8 - 2021-05-08
 
