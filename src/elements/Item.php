@@ -257,9 +257,7 @@ class Item extends Element
 
     public function getOptionsSignature()
     {
-        ksort($this->_options);
-
-        return md5(Json::encode($this->_options));
+        return Wishlist::getInstance()->getItems()->getOptionsSignature($this->_options);
     }
 
     public function setOptionsSignature($value)
