@@ -73,4 +73,17 @@ class WishlistVariable
         return $item;
     }
 
+    public function getInUserLists($elementId)
+    {
+        if ($forUser) {
+            if ($forceSave) {
+                Wishlist::$plugin->getLists()->getList(null, true);
+            }
+
+            return Wishlist::$plugin->getLists()->getListQueryForOwner();
+        } else {
+            return ListElement::find();
+        }
+    }
+
 }
