@@ -2,6 +2,7 @@
 namespace verbb\wishlist\services;
 
 use verbb\wishlist\Wishlist;
+use verbb\wishlist\elements\Item;
 use verbb\wishlist\elements\ListElement;
 
 use Craft;
@@ -209,11 +210,12 @@ class Lists extends Component
     {
         try {
             $settings = Wishlist::$plugin->getSettings();
+            $db = Craft::$app->getDb();
 
             // Try and find the default list for the guest
             $sessionId = $this->getSessionId();
 
-            Craft::$app->getDb()->createCommand()
+            $db->createCommand()
                 ->update('{{%wishlist_lists}}', ['userId' => $user->id], ['sessionId' => $sessionId, 'default' => true, 'userId' => null])
                 ->execute();
 
@@ -236,17 +238,56 @@ class Lists extends Component
                         foreach ($userLists as $userList) {
                             // Ensure that we check against the title - they should be the same to merge
                             if ($oldestList->id != $userList->id && $oldestList->title == $userList->title) {
-                                Craft::$app->getDb()->createCommand()
+                                $db->createCommand()
                                     ->update('{{%wishlist_items}}', ['listId' => $oldestList->id], ['listId' => $userList->id])
                                     ->execute();
                             
                                 // Delete the newer list, now the items have been moved off
-                                Craft::$app->getDb()->createCommand()
+                                $db->createCommand()
                                     ->delete('{{%elements}}', ['id' => $userList->id])
                                     ->execute();
-                            } else {
+                            }
 
+                            // Now, check if there are any duplicates and we should check. We ditch the oldest item(s).
+                            if (!$settings->allowDuplicates) {
+                                $db->getSchema()->refresh();
 
+                                $duplicateItems = $db->createCommand("
+                                    SELECT wishlist_items.*
+                                    FROM wishlist_items
+                                    JOIN (SELECT listId, elementId, optionsSignature, COUNT(*)
+                                        FROM wishlist_items
+                                        JOIN elements ON elements.id = wishlist_items.id
+                                        WHERE elements.dateDeleted IS NULL 
+                                        AND listId = :list_id
+                                        GROUP BY listId, elementId, optionsSignature
+                                        HAVING count(*) > 1 ) temp
+                                    ON wishlist_items.listId = temp.listId
+                                    AND wishlist_items.elementId = temp.elementId
+                                    AND wishlist_items.optionsSignature = temp.optionsSignature
+                                    JOIN elements ON elements.id = wishlist_items.id
+                                    WHERE elements.dateDeleted IS NULL 
+                                    ORDER BY wishlist_items.dateUpdated DESC
+                                    ", [':list_id' => $oldestList->id])->queryAll();
+
+                                // Save the first occurence (newest updated) for each item
+                                $processedItems = [];
+
+                                foreach ($duplicateItems as $duplicateItem) {
+                                    $key = implode('_', [$duplicateItem['listId'], $duplicateItem['elementId'], $duplicateItem['optionsSignature']]);
+                                    
+                                    // If first occurence, save and delete all other instances
+                                    if (!isset($processedItems[$key])) {
+                                        $processedItems[$key] = $duplicateItem;
+
+                                        continue;
+                                    }
+
+                                    // Soft-delete the element, just for safety
+                                    $db->createCommand()
+                                        ->update('{{%elements}}', ['dateDeleted' => date('Y-m-d H:i:s')], ['id' => $duplicateItem['id']])
+                                        ->execute();
+                                }
                             }
                         }
                     }
