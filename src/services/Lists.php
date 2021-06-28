@@ -216,7 +216,7 @@ class Lists extends Component
             $sessionId = $this->getSessionId();
 
             $db->createCommand()
-                ->update('{{%wishlist_lists}}', ['userId' => $user->id], ['sessionId' => $sessionId, 'default' => true, 'userId' => null])
+                ->update('{{%wishlist_lists}}', ['userId' => $user->id], ['sessionId' => $sessionId, 'userId' => null])
                 ->execute();
 
             if ($settings->mergeLastListOnLogin) {
