@@ -254,20 +254,20 @@ class Lists extends Component
 
                                 $duplicateItems = $db->createCommand("
                                     SELECT wishlist_items.*
-                                    FROM wishlist_items
-                                    JOIN (SELECT listId, elementId, optionsSignature, COUNT(*)
-                                        FROM wishlist_items
-                                        JOIN elements ON elements.id = wishlist_items.id
-                                        WHERE elements.dateDeleted IS NULL 
-                                        AND listId = :list_id
-                                        GROUP BY listId, elementId, optionsSignature
+                                    FROM {{%wishlist_items}} [[wishlist_items]]
+                                    JOIN (SELECT [[listId]], [[elementId]], [[optionsSignature]], COUNT(*)
+                                        FROM {{%wishlist_items}} [[wishlist_items]]
+                                        JOIN {{%elements}} [[elements]] ON [[elements.id]] = [[wishlist_items.id]]
+                                        WHERE [[elements.dateDeleted]] IS NULL 
+                                        AND [[listId]] = :list_id
+                                        GROUP BY [[listId]], [[elementId]], [[optionsSignature]]
                                         HAVING count(*) > 1 ) temp
-                                    ON wishlist_items.listId = temp.listId
-                                    AND wishlist_items.elementId = temp.elementId
-                                    AND wishlist_items.optionsSignature = temp.optionsSignature
-                                    JOIN elements ON elements.id = wishlist_items.id
-                                    WHERE elements.dateDeleted IS NULL 
-                                    ORDER BY wishlist_items.dateUpdated DESC
+                                    ON [[wishlist_items.listId]] = [[temp.listId]]
+                                    AND [[wishlist_items.elementId]] = [[temp.elementId]]
+                                    AND [[wishlist_items.optionsSignature]] = [[temp.optionsSignature]]
+                                    JOIN {{%elements}} [[elements]] ON [[elements.id]] = [[wishlist_items.id]]
+                                    WHERE [[elements.dateDeleted]] IS NULL 
+                                    ORDER BY [[wishlist_items.dateUpdated]] DESC
                                     ", [':list_id' => $oldestList->id])->queryAll();
 
                                 // Save the first occurence (newest updated) for each item
