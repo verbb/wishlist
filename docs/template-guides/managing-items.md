@@ -122,7 +122,7 @@ You can Add, Remove, Update or Toggle items in any list. You have the option of 
 ```
 :::
 
-Any of the above actions will by made on the users' default list. You can also target a specific list, by using its ID.
+Any of the above actions will be made on the users' default list. You can also target a specific list, by using its ID.
 
 ::: code
 ```twig Form
