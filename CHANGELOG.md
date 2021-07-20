@@ -2,6 +2,7 @@
 
 ## 1.4.10 - 2021-07-20
 
+### Fixed
 - Fix `consolidateListsToUser` only working for default list types.
 - Fix lack of table prefix for `mergeLastListOnLogin` handling.
 
