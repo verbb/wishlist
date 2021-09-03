@@ -219,6 +219,8 @@ class Lists extends Component
                 ->update('{{%wishlist_lists}}', ['userId' => $user->id], ['sessionId' => $sessionId, 'userId' => null])
                 ->execute();
 
+            Wishlist::log('Moving guest lists for session "' . $sessionId . '" to user "' . $user->id . '"');
+
             if ($settings->mergeLastListOnLogin) {
                 // Check if we've now got multiple lists for a logged-in user. We need to merge them
                 $listTypes = Wishlist::getInstance()->getListTypes()->getAllListTypes();
@@ -357,7 +359,7 @@ class Lists extends Component
             Craft::$app->getResponse()->getRawCookies()->add($cookie);
         }
 
-        return $sessionId;
+        return $sessionId; 
     }
 
     private function _getListsIdsToPurge(): array
