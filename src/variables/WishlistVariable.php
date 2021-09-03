@@ -75,15 +75,17 @@ class WishlistVariable
 
     public function getInUserLists($elementId)
     {
-        if ($forUser) {
-            if ($forceSave) {
-                Wishlist::$plugin->getLists()->getList(null, true);
-            }
+        // Get all lists for the current user (session).
+        $userListIds = Wishlist::$plugin->getLists()->getListQueryForOwner()->ids();
 
-            return Wishlist::$plugin->getLists()->getListQueryForOwner();
-        } else {
-            return ListElement::find();
+        if (!$userListIds) {
+            return false;
         }
+
+        return Item::find()
+            ->elementId($elementId)
+            ->listId($userListIds)
+            ->exists();
     }
 
 }
