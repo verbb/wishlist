@@ -142,6 +142,11 @@ class Item extends Element
     {
         parent::init();
 
+        $this->updateTitle();
+    }
+
+    public function updateTitle()
+    {
         if ($element = $this->getElement()) {
             $this->title = $element->title;
         }
@@ -352,6 +357,9 @@ class Item extends Element
         $record->save(false);
 
         $this->id = $record->id;
+
+        // Refresh the title on-save
+        $this->updateTitle();
 
         parent::afterSave($isNew);
     }
