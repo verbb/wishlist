@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.11 - 2021-09-07
+
+### Fixed
+- Fix wishlist item title not being set when saving items through ajax requests.
+- Fix `craft.wishlist.getInUserLists()` not implemented properly.
+
 ## 1.4.10 - 2021-07-20
 
 ### Fixed
