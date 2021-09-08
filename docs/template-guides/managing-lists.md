@@ -113,3 +113,23 @@ You can Add, Delete or Clear lists, and its recommended that these options shoul
 </a>
 ```
 :::
+
+```
+
+## Message Flash
+When performing any of the above actions a "Flash message" will appear based on whether the task you complete was successful or failed. You can modify these messages for your own needs by providing extra params in your request.
+
+```twig
+<form method="POST">
+    <input type="hidden" name="action" value="wishlist/lists/update">
+    <input type="hidden" name="successMessage" value="Successfully updated!">
+    <input type="hidden" name="failMessage" value="Unable to update your list">
+    {{ csrfInput() }}
+
+    <input type="hidden" name="listId" value="234">
+
+    <input type="submit" value="Update List">
+</form>
+```
+
+The above shows by providing a `successMessage` or `failMessage` param in your request, you can set the flash message that appears when this form is submitted.
