@@ -323,8 +323,8 @@ When performing any of the above actions a "Flash message" will appear based on 
 ```twig
 <form method="POST">
     <input type="hidden" name="action" value="wishlist/items/add">
-    <input type="hidden" name="successMessage" value="Successfully added!">
-    <input type="hidden" name="failMessage" value="Unable to add to your list">
+    <input type="hidden" name="successMessage" value="{{ 'Successfully added!' | hash }}">
+    <input type="hidden" name="failMessage" value="{{ 'Unable to add to your list' | hash }}">
     {{ csrfInput() }}
 
     <input type="text" name="elementId" value="{{ entry.id }}">

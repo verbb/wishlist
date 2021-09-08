@@ -122,8 +122,8 @@ When performing any of the above actions a "Flash message" will appear based on 
 ```twig
 <form method="POST">
     <input type="hidden" name="action" value="wishlist/lists/update">
-    <input type="hidden" name="successMessage" value="Successfully updated!">
-    <input type="hidden" name="failMessage" value="Unable to update your list">
+    <input type="hidden" name="successMessage" value="{{ 'Successfully updated!' | hash }}">
+    <input type="hidden" name="failMessage" value="{{ 'Unable to update your list' | hash }}">
     {{ csrfInput() }}
 
     <input type="hidden" name="listId" value="234">
