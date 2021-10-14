@@ -12,6 +12,7 @@ use craft\db\Query;
 use craft\elements\User as UserElement;
 use craft\helpers\ConfigHelper;
 use craft\helpers\DateTimeHelper;
+use craft\helpers\Db;
 use craft\helpers\StringHelper;
 use craft\models\Structure;
 
@@ -286,8 +287,10 @@ class Lists extends Component
                                     }
 
                                     // Soft-delete the element, just for safety
+                                    $now = new DateTime();
+
                                     $db->createCommand()
-                                        ->update('{{%elements}}', ['dateDeleted' => date('Y-m-d H:i:s')], ['id' => $duplicateItem['id']])
+                                        ->update('{{%elements}}', ['dateDeleted' => Db::prepareDateForDb($now)], ['id' => $duplicateItem['id']])
                                         ->execute();
                                 }
                             }
@@ -375,7 +378,7 @@ class Lists extends Component
             ->select(['lists.id'])
             ->from(['{{%wishlist_lists}} lists'])
             ->join('LEFT OUTER JOIN', '{{%wishlist_items}} items', 'lists.id = [[items.listId]]')
-            ->where('[[lists.dateUpdated]] <= :edge', ['edge' => $edge->format('Y-m-d H:i:s')]);
+            ->where('[[lists.dateUpdated]] <= :edge', ['edge' => Db::prepareDateForDb($edge)]);
 
         if ($settings->purgeEmptyListsOnly) {
             $query->andWhere(['is', '[[items.listId]]', null]);
@@ -392,7 +395,7 @@ class Lists extends Component
             ->select(['lists.id'])
             ->from(['{{%wishlist_lists}} lists'])
             ->join('LEFT OUTER JOIN', '{{%wishlist_items}} items', 'lists.id = [[items.listId]]')
-            ->where('[[lists.dateUpdated]] <= :edge', ['edge' => $edge->format('Y-m-d H:i:s')])
+            ->where('[[lists.dateUpdated]] <= :edge', ['edge' => Db::prepareDateForDb($edge)])
             ->andWhere(['is', '[[lists.userId]]', null]);
 
         if ($settings->purgeEmptyGuestListsOnly) {
