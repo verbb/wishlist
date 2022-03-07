@@ -52,22 +52,22 @@ class ItemInterface extends Element
             'listId' => [
                 'name' => 'listId',
                 'type' => Type::int(),
-                'description' => 'The ID of the list the item belongs to.'
+                'description' => 'The ID of the list the item belongs to.',
             ],
             'elementId' => [
                 'name' => 'elementId',
                 'type' => Type::int(),
-                'description' => 'The ID of the element that the item relates to.'
+                'description' => 'The ID of the element that the item relates to.',
             ],
             'elementClass' => [
                 'name' => 'elementClass',
                 'type' => Type::string(),
-                'description' => 'The class of the element that the item relates to.'
+                'description' => 'The class of the element that the item relates to.',
             ],
             'element' => [
                 'name' => 'element',
                 'type' => Element::getType(),
-                'description' => 'The element the node links to.'
+                'description' => 'The element the node links to.',
             ],
         ]), self::getName());
     }

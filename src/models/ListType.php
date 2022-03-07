@@ -31,7 +31,7 @@ class ListType extends Model
 
     public function __toString(): string
     {
-        return (string) $this->handle;
+        return (string)$this->handle;
     }
 
     public function rules(): array
@@ -71,12 +71,12 @@ class ListType extends Model
             'listFieldLayout' => [
                 'class' => FieldLayoutBehavior::class,
                 'elementType' => ListElement::class,
-                'idAttribute' => 'fieldLayoutId'
+                'idAttribute' => 'fieldLayoutId',
             ],
             'itemFieldLayout' => [
                 'class' => FieldLayoutBehavior::class,
                 'elementType' => Item::class,
-                'idAttribute' => 'itemFieldLayoutId'
+                'idAttribute' => 'itemFieldLayoutId',
             ],
         ];
     }

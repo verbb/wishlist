@@ -17,27 +17,27 @@ class ListArguments extends ElementArguments
             'typeId' => [
                 'name' => 'typeId',
                 'type' => Type::listOf(QueryArgument::getType()),
-                'description' => 'Narrows the query results based on the list type ID.'
+                'description' => 'Narrows the query results based on the list type ID.',
             ],
             'userId' => [
                 'name' => 'userId',
                 'type' => Type::listOf(QueryArgument::getType()),
-                'description' => 'Narrows the query results based on the list’s owner.'
+                'description' => 'Narrows the query results based on the list’s owner.',
             ],
             'sessionId' => [
                 'name' => 'sessionId',
                 'type' => Type::listOf(Type::string()),
-                'description' => 'Narrows the query results based on the list’s session ID.'
+                'description' => 'Narrows the query results based on the list’s session ID.',
             ],
             'reference' => [
                 'name' => 'reference',
                 'type' => Type::listOf(Type::string()),
-                'description' => 'Narrows the query results based on the list’s reference.'
+                'description' => 'Narrows the query results based on the list’s reference.',
             ],
             'default' => [
                 'name' => 'default',
                 'type' => Type::boolean(),
-                'description' => 'Narrows the query results based on whether it is the default list.'
+                'description' => 'Narrows the query results based on whether it is the default list.',
             ],
         ]);
     }

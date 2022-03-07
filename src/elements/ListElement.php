@@ -18,38 +18,12 @@ use yii\base\Exception;
 
 class ListElement extends Element
 {
-    // Properties
-    // =========================================================================
-
-    public ?string $reference = null;
-    public ?string $lastIp = null;
-    public ?int $typeId = null;
-    public ?int $userId = null;
-    public ?string $sessionId = null;
-    public ?bool $default = null;
-
-    private ?ListType $_listType = null;
-    private ?User $_owner = null;
-    private ?User $_user = null;
-    private ?FieldLayout $_fieldLayout = null;
-
-
-    // Public Methods
+    // Static Methods
     // =========================================================================
 
     public static function displayName(): string
     {
         return Craft::t('wishlist', 'Wishlist List');
-    }
-
-    public function __toString(): string
-    {
-        return (string)$this->title;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->title;
     }
 
     public static function hasContent(): bool
@@ -89,30 +63,40 @@ class ListElement extends Element
                 'label' => Craft::t('wishlist', 'All lists'),
                 'criteria' => [
                     'typeId' => $listTypeIds,
-                    'editable' => $editable
+                    'editable' => $editable,
                 ],
-                'defaultSort' => ['postDate', 'desc']
-            ]
+                'defaultSort' => ['postDate', 'desc'],
+            ],
         ];
 
         $sources[] = ['heading' => Craft::t('wishlist', 'List Types')];
 
         foreach ($listTypes as $listType) {
-            $key = 'listType:'.$listType->id;
-            $canEditLists = Craft::$app->getUser()->checkPermission('wishlist-manageListType:'.$listType->id);
+            $key = 'listType:' . $listType->id;
+            $canEditLists = Craft::$app->getUser()->checkPermission('wishlist-manageListType:' . $listType->id);
 
             $sources[$key] = [
                 'key' => $key,
                 'label' => $listType->name,
                 'data' => [
                     'handle' => $listType->handle,
-                    'editable' => $canEditLists
+                    'editable' => $canEditLists,
                 ],
-                'criteria' => ['typeId' => $listType->id, 'editable' => $editable]
+                'criteria' => ['typeId' => $listType->id, 'editable' => $editable],
             ];
         }
 
         return $sources;
+    }
+
+    public static function find(): ListQuery
+    {
+        return new ListQuery(static::class);
+    }
+
+    public static function gqlTypeNameByContext(mixed $context): string
+    {
+        return 'List';
     }
 
     protected static function defineActions(string $source = null): array
@@ -128,6 +112,81 @@ class ListElement extends Element
         return $actions;
     }
 
+    protected static function defineTableAttributes(): array
+    {
+        return [
+            'title' => ['label' => Craft::t('app', 'Title')],
+            'type' => ['label' => Craft::t('wishlist', 'List Type')],
+            'owner' => ['label' => Craft::t('wishlist', 'Owner')],
+            'items' => ['label' => Craft::t('wishlist', 'Items')],
+            'dateCreated' => ['label' => Craft::t('app', 'Date Created')],
+            'dateUpdated' => ['label' => Craft::t('app', 'Date Updated')],
+        ];
+    }
+
+    protected static function defineDefaultTableAttributes(string $source): array
+    {
+        $attributes = [];
+
+        if ($source === '*') {
+            $attributes[] = 'type';
+        }
+
+        return $attributes;
+    }
+
+    protected static function defineSearchableAttributes(): array
+    {
+        return ['title'];
+    }
+
+    protected static function defineSortOptions(): array
+    {
+        return [
+            'title' => Craft::t('app', 'Title'),
+            [
+                'label' => Craft::t('app', 'Date Created'),
+                'orderBy' => 'elements.dateCreated',
+                'attribute' => 'dateCreated',
+            ],
+            [
+                'label' => Craft::t('app', 'Date Updated'),
+                'orderBy' => 'elements.dateUpdated',
+                'attribute' => 'dateUpdated',
+            ],
+        ];
+    }
+
+
+    // Properties
+    // =========================================================================
+
+    public ?string $reference = null;
+    public ?string $lastIp = null;
+    public ?int $typeId = null;
+    public ?int $userId = null;
+    public ?string $sessionId = null;
+    public ?bool $default = null;
+
+    private ?ListType $_listType = null;
+    private ?User $_owner = null;
+    private ?User $_user = null;
+    private ?FieldLayout $_fieldLayout = null;
+
+
+    // Public Methods
+    // =========================================================================
+
+    public function __toString(): string
+    {
+        return (string)$this->title;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->title;
+    }
+
     public function rules(): array
     {
         $rules = parent::rules();
@@ -135,11 +194,6 @@ class ListElement extends Element
         $rules[] = [['typeId'], 'required'];
 
         return $rules;
-    }
-
-    public static function find(): ListQuery
-    {
-        return new ListQuery(static::class);
     }
 
     public function getIsEditable(): bool
@@ -211,6 +265,10 @@ class ListElement extends Element
         return $this->userId ?? $this->sessionId ?? null;
     }
 
+
+    // URLs
+    // -------------------------------------------------------------------------
+
     public function getOwner(): ?User
     {
         if ($this->_owner !== null) {
@@ -223,6 +281,10 @@ class ListElement extends Element
 
         return $this->_owner = $this->getUser();
     }
+
+
+    // Events
+    // -------------------------------------------------------------------------
 
     public function setFieldValuesFromRequest(string $paramNamespace = ''): void
     {
@@ -247,14 +309,13 @@ class ListElement extends Element
         }
     }
 
+
+    // Protected methods
+    // =========================================================================
+
     public function getPdfUrl(): string
     {
         return UrlHelper::actionUrl("wishlist/pdf?listId={$this->id}");
-    }
-
-    public static function gqlTypeNameByContext(mixed $context): string
-    {
-        return 'List';
     }
 
     public function getGqlTypeName(): string
@@ -262,18 +323,10 @@ class ListElement extends Element
         return static::gqlTypeNameByContext($this);
     }
 
-
-    // URLs
-    // -------------------------------------------------------------------------
-
     public function getAddToCartUrl(): string
     {
-        return UrlHelper::actionUrl('wishlist/lists/add-to-cart', [ 'listId' => $this->id ]);
+        return UrlHelper::actionUrl('wishlist/lists/add-to-cart', ['listId' => $this->id]);
     }
-
-
-    // Events
-    // -------------------------------------------------------------------------
 
     public function afterSave(bool $isNew): void
     {
@@ -281,13 +334,13 @@ class ListElement extends Element
             $listRecord = ListRecord::findOne($this->id);
 
             if (!$listRecord) {
-                throw new Exception('Invalid list id: '.$this->id);
+                throw new Exception('Invalid list id: ' . $this->id);
             }
         } else {
             $listRecord = new ListRecord();
             $listRecord->id = $this->id;
         }
-        
+
         $listRecord->typeId = $this->typeId;
         $listRecord->reference = $this->reference;
         $listRecord->lastIp = $this->lastIp;
@@ -298,38 +351,6 @@ class ListElement extends Element
         $listRecord->save(false);
 
         parent::afterSave($isNew);
-    }
-
-
-    // Protected methods
-    // =========================================================================
-
-    protected static function defineTableAttributes(): array
-    {
-        return [
-            'title' => ['label' => Craft::t('app', 'Title')],
-            'type' => ['label' => Craft::t('wishlist', 'List Type')],
-            'owner' => ['label' => Craft::t('wishlist', 'Owner')],
-            'items' => ['label' => Craft::t('wishlist', 'Items')],
-            'dateCreated' => ['label' => Craft::t('app', 'Date Created')],
-            'dateUpdated' => ['label' => Craft::t('app', 'Date Updated')],
-        ];
-    }
-
-    protected static function defineDefaultTableAttributes(string $source): array
-    {
-        $attributes = [];
-
-        if ($source === '*') {
-            $attributes[] = 'type';
-        }
-
-        return $attributes;
-    }
-
-    protected static function defineSearchableAttributes(): array
-    {
-        return ['title'];
     }
 
     protected function tableAttributeHtml(string $attribute): string
@@ -352,22 +373,5 @@ class ListElement extends Element
             default:
                 return parent::tableAttributeHtml($attribute);
         }
-    }
-
-    protected static function defineSortOptions(): array
-    {
-        return [
-            'title' => Craft::t('app', 'Title'),
-            [
-                'label' => Craft::t('app', 'Date Created'),
-                'orderBy' => 'elements.dateCreated',
-                'attribute' => 'dateCreated'
-            ],
-            [
-                'label' => Craft::t('app', 'Date Updated'),
-                'orderBy' => 'elements.dateUpdated',
-                'attribute' => 'dateUpdated'
-            ],
-        ];
     }
 }

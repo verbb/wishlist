@@ -63,7 +63,7 @@ class Pdf extends Component
         } catch (\Exception $e) {
             // Set the pdf html to the render error.
             Craft::error('List PDF render error. List ID: ' . $list->id . '. ' . $e->getMessage());
-            
+
             Craft::$app->getErrorHandler()->logException($e);
             $html = Craft::t('events', 'An error occurred while generating this PDF.');
         }

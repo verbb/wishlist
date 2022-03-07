@@ -4,7 +4,7 @@ return [
     //
     // Email Messages
     //
-    
+
     'wishlist_share_list_heading' => 'When a user shares a wishlist list:',
     'wishlist_share_list_subject' => '{{ sender.fullName }} has shared their wishlist with you on {{ siteName }}.',
     'wishlist_share_list_body' => "Hey {{ recipient.friendlyName }},\n\n" .

@@ -17,17 +17,17 @@ class ItemArguments extends ElementArguments
             'listId' => [
                 'name' => 'listId',
                 'type' => Type::listOf(QueryArgument::getType()),
-                'description' => 'Narrows the query results based on the list ID.'
+                'description' => 'Narrows the query results based on the list ID.',
             ],
             'elementId' => [
                 'name' => 'elementId',
                 'type' => Type::listOf(QueryArgument::getType()),
-                'description' => 'Narrows the query results based on the owner element ID.'
+                'description' => 'Narrows the query results based on the owner element ID.',
             ],
             'elementClass' => [
                 'name' => 'elementClass',
                 'type' => Type::listOf(Type::string()),
-                'description' => 'Narrows the query results based on the owner element class.'
+                'description' => 'Narrows the query results based on the owner element class.',
             ],
         ]);
     }

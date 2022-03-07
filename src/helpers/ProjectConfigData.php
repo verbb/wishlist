@@ -27,7 +27,7 @@ class ProjectConfigData
                 'name',
                 'handle',
                 'default',
-                'uid'
+                'uid',
             ])
             ->from(['{{%wishlist_listtypes}} listTypes'])
             ->all();
@@ -47,7 +47,7 @@ class ProjectConfigData
 
             if (!empty($listTypeRow['itemFieldLayoutId'])) {
                 $layout = Craft::$app->getFields()->getLayoutById($listTypeRow['itemFieldLayoutId']);
-                
+
                 if ($layout) {
                     $listTypeRow['itemFieldLayouts'] = [$layout->uid => $layout->getConfig()];
                 }

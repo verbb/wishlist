@@ -99,7 +99,6 @@ class MigrateShortlist extends Migration
         $list->save(false);
 
         return $list;
-
     }
 
     private function _migrateItems(): void
@@ -154,7 +153,6 @@ class MigrateShortlist extends Migration
 
             $item->save(false);
         }
-
     }
 
 }

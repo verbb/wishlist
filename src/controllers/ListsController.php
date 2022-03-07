@@ -23,9 +23,8 @@ class ListsController extends BaseController
     // Properties
     // =========================================================================
 
-    protected array|bool|int $allowAnonymous = ['create', 'delete', 'clear', 'update', 'update-items', 'add-to-cart', 'share-by-email'];
-
     public static ?Commerce $commercePlugin = null;
+    protected array|bool|int $allowAnonymous = ['create', 'delete', 'clear', 'update', 'update-items', 'add-to-cart', 'share-by-email'];
 
 
     // Public Methods
@@ -53,7 +52,7 @@ class ListsController extends BaseController
         $variables = [
             'listTypeHandle' => $listTypeHandle,
             'listId' => $listId,
-            'list' => $list
+            'list' => $list,
         ];
 
         // Make sure a correct list type handle was passed, so we can check permissions
@@ -95,7 +94,7 @@ class ListsController extends BaseController
         $list = ListElement::findOne($listId);
 
         if (!$list) {
-            throw new Exception(Craft::t('wishlist', 'No list exists with the ID “{id}”.',['id' => $listId]));
+            throw new Exception(Craft::t('wishlist', 'No list exists with the ID “{id}”.', ['id' => $listId]));
         }
 
         $this->enforceListPermissions($list);
@@ -108,7 +107,7 @@ class ListsController extends BaseController
             $session->setError(Craft::t('wishlist', 'Couldn’t delete list.'));
 
             Craft::$app->getUrlManager()->setRouteParams([
-                'list' => $list
+                'list' => $list,
             ]);
 
             return null;
@@ -145,7 +144,7 @@ class ListsController extends BaseController
 
             // Send the category back to the template
             Craft::$app->getUrlManager()->setRouteParams([
-                'list' => $list
+                'list' => $list,
             ]);
 
             return null;
@@ -158,7 +157,7 @@ class ListsController extends BaseController
                 'title' => $list->title,
                 'status' => $list->getStatus(),
                 'url' => $list->getUrl(),
-                'cpEditUrl' => $list->getCpEditUrl()
+                'cpEditUrl' => $list->getCpEditUrl(),
             ]);
         }
 
@@ -178,7 +177,7 @@ class ListsController extends BaseController
         $list = $this->_setListFromPost();
         $list->enabled = true;
 
-         // Check if we're allowed to manage lists
+        // Check if we're allowed to manage lists
         $this->enforceEnabledList($list);
         $this->enforceListPermissions($list);
 
@@ -194,7 +193,7 @@ class ListsController extends BaseController
             'title' => $list->title,
             'status' => $list->getStatus(),
             'url' => $list->getUrl(),
-            'cpEditUrl' => $list->getCpEditUrl()
+            'cpEditUrl' => $list->getCpEditUrl(),
         ], $list);
     }
 
@@ -209,7 +208,7 @@ class ListsController extends BaseController
 
         $list = $this->_setListFromPost();
 
-         // Check if we're allowed to manage lists
+        // Check if we're allowed to manage lists
         $this->enforceEnabledList($list);
         $this->enforceListPermissions($list);
 
@@ -217,7 +216,7 @@ class ListsController extends BaseController
         if (!WishList::$plugin->getLists()->isListOwner($list)) {
             throw new Exception(Craft::t('wishlist', 'You can only update your own list.'));
         }
-        
+
         if (!Wishlist::$plugin->getLists()->saveElement($list)) {
             return $this->returnError('Unable to update list.', ['list' => $list]);
         }
@@ -285,10 +284,10 @@ class ListsController extends BaseController
         $list = ListElement::findOne($listId);
 
         if (!$list) {
-            throw new Exception(Craft::t('wishlist', 'No list exists with the ID “{id}”.',['id' => $listId]));
+            throw new Exception(Craft::t('wishlist', 'No list exists with the ID “{id}”.', ['id' => $listId]));
         }
 
-         // Check if we're allowed to manage lists
+        // Check if we're allowed to manage lists
         $this->enforceEnabledList($list);
         $this->enforceListPermissions($list);
 
@@ -317,7 +316,7 @@ class ListsController extends BaseController
             throw new Exception(Craft::t('wishlist', 'No list exists with the ID “{id}”.', ['id' => $listId]));
         }
 
-         // Check if we're allowed to manage lists
+        // Check if we're allowed to manage lists
         $this->enforceEnabledList($list);
         $this->enforceListPermissions($list);
 
@@ -347,10 +346,10 @@ class ListsController extends BaseController
         $list = ListElement::findOne($listId);
 
         if (!$list) {
-            throw new Exception(Craft::t('wishlist', 'No list exists with the ID “{id}”.',['id' => $listId]));
+            throw new Exception(Craft::t('wishlist', 'No list exists with the ID “{id}”.', ['id' => $listId]));
         }
 
-         // Check if we're allowed to manage lists
+        // Check if we're allowed to manage lists
         $this->enforceEnabledList($list);
         $this->enforceListPermissions($list);
 
@@ -428,11 +427,11 @@ class ListsController extends BaseController
             $message = Craft::t('wishlist', 'No list exists with the ID “{id}”.', ['id' => $listId]);
 
             Wishlist::error($message);
-            
+
             return $this->returnError($message);
         }
 
-         // Check if we're allowed to manage lists
+        // Check if we're allowed to manage lists
         $this->enforceEnabledList($list);
         $this->enforceListPermissions($list);
 
@@ -443,7 +442,7 @@ class ListsController extends BaseController
             $message = Craft::t('wishlist', 'You must supply and sender and recipient');
 
             Wishlist::error($message);
-            
+
             return $this->returnError($message);
         }
 
@@ -452,8 +451,8 @@ class ListsController extends BaseController
         $recipient = new User($recipient);
 
         $variables = [
-            'list' => $list, 
-            'sender' => $sender, 
+            'list' => $list,
+            'sender' => $sender,
             'recipient' => $recipient,
             'fields' => $request->getParam('fields'),
         ];
@@ -485,7 +484,7 @@ class ListsController extends BaseController
             ]);
 
             Wishlist::error($message);
-            
+
             return $this->returnError($message);
         }
     }

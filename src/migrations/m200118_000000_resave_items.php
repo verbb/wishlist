@@ -12,7 +12,7 @@ class m200118_000000_resave_items extends Migration
     public function safeUp(): bool
     {
         Craft::$app->getQueue()->push(new ResaveElements([
-            'elementType' => Item::class
+            'elementType' => Item::class,
         ]));
 
         return true;

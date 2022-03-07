@@ -50,11 +50,18 @@ class Item extends Element
 
     public static function defineSources(string $context = null): array
     {
-        return [[
-            'key' => '*',
-            'label' => Craft::t('wishlist', 'All items'),
-            'defaultSort' => ['dateCreated', 'desc'],
-        ]];
+        return [
+            [
+                'key' => '*',
+                'label' => Craft::t('wishlist', 'All items'),
+                'defaultSort' => ['dateCreated', 'desc'],
+            ],
+        ];
+    }
+
+    public static function gqlTypeNameByContext(mixed $context): string
+    {
+        return 'Item';
     }
 
     protected static function defineActions(string $source = null): array
@@ -113,7 +120,7 @@ class Item extends Element
     public ?int $elementSiteId = null;
     public ?string $elementClass = null;
     public ?int $listId = null;
-
+    
     private ?ElementInterface $_element = null;
     private ?ListElement $_list = null;
     private ?FieldLayout $_fieldLayout = null;
@@ -184,7 +191,7 @@ class Item extends Element
     {
         return UrlHelper::cpUrl('wishlist/lists/' . $this->getList()->getType()->handle . '/' . $this->listId . '/items/' . $this->id);
     }
-    
+
     public function getFieldLayout(): ?FieldLayout
     {
         if ($this->_fieldLayout !== null) {
@@ -277,11 +284,6 @@ class Item extends Element
         }
     }
 
-    public static function gqlTypeNameByContext(mixed $context): string
-    {
-        return 'Item';
-    }
-
     public function getGqlTypeName(): string
     {
         return static::gqlTypeNameByContext($this);
@@ -293,22 +295,22 @@ class Item extends Element
 
     public function getAddUrl($params = []): string
     {
-        $params = array_merge([ 'elementId' => $this->elementId, 'listId' => $this->listId ], $params);
+        $params = array_merge(['elementId' => $this->elementId, 'listId' => $this->listId], $params);
 
         return UrlHelper::actionUrl('wishlist/items/add', $params);
     }
 
     public function getRemoveUrl($params = []): string
     {
-        $params = array_merge([ 'elementId' => $this->elementId, 'listId' => $this->listId ], $params);
+        $params = array_merge(['elementId' => $this->elementId, 'listId' => $this->listId], $params);
 
         return UrlHelper::actionUrl('wishlist/items/remove', $params);
     }
 
     public function getToggleUrl($params = []): string
     {
-        $params = array_merge([ 'elementId' => $this->elementId, 'listId' => $this->listId ], $params);
-        
+        $params = array_merge(['elementId' => $this->elementId, 'listId' => $this->listId], $params);
+
         return UrlHelper::actionUrl('wishlist/items/toggle', $params);
     }
 

@@ -71,7 +71,7 @@ class ListTypesController extends Controller
             'itemFields' => [
                 'label' => Craft::t('wishlist', 'Item Fields'),
                 'url' => '#item-fields',
-            ]
+            ],
         ];
 
         $variables['tabs'] = $tabs;
@@ -119,7 +119,7 @@ class ListTypesController extends Controller
 
         // Send the listType back to the template
         Craft::$app->getUrlManager()->setRouteParams([
-            'listType' => $listType
+            'listType' => $listType,
         ]);
     }
 

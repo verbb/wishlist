@@ -244,7 +244,7 @@ class Lists extends Component
                                 $db->createCommand()
                                     ->update('{{%wishlist_items}}', ['listId' => $oldestList->id], ['listId' => $userList->id])
                                     ->execute();
-                            
+
                                 // Delete the newer list, now the items have been moved off
                                 $db->createCommand()
                                     ->delete('{{%elements}}', ['id' => $userList->id])
@@ -278,7 +278,7 @@ class Lists extends Component
 
                                 foreach ($duplicateItems as $duplicateItem) {
                                     $key = implode('_', [$duplicateItem['listId'], $duplicateItem['elementId'], $duplicateItem['optionsSignature']]);
-                                    
+
                                     // If first occurrence, save and delete all instances
                                     if (!isset($processedItems[$key])) {
                                         $processedItems[$key] = $duplicateItem;
@@ -310,7 +310,7 @@ class Lists extends Component
         if (!$context['isNewUser']) {
             $context['tabs']['wishlistInfo'] = [
                 'label' => Craft::t('wishlist', 'Wishlists'),
-                'url' => '#wishlistInfo'
+                'url' => '#wishlistInfo',
             ];
         }
     }
@@ -362,7 +362,7 @@ class Lists extends Component
             Craft::$app->getResponse()->getRawCookies()->add($cookie);
         }
 
-        return $sessionId; 
+        return $sessionId;
     }
 
     private function _getListsIdsToPurge(): array
@@ -406,5 +406,5 @@ class Lists extends Component
 
         return array_merge($userIds, $guestIds);
     }
-    
+
 }
