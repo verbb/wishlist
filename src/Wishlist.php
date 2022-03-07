@@ -185,9 +185,12 @@ class Wishlist extends Plugin
                 $listTypePermissions['wishlist-manageListType' . $suffix] = ['label' => Craft::t('wishlist', 'Manage “{type}” lists', ['type' => $listType->name])];
             }
 
-            $event->permissions[Craft::t('wishlist', 'Wishlist')] = [
-                'wishlist-manageListTypes' => ['label' => Craft::t('wishlist', 'Manage list types')],
-                'wishlist-manageLists' => ['label' => Craft::t('wishlist', 'Manage lists'), 'nested' => $listTypePermissions],
+            $event->permissions[] = [
+                'heading' => Craft::t('wishlist', 'Wishlist'),
+                'permissions' => [
+                    'wishlist-manageListTypes' => ['label' => Craft::t('wishlist', 'Manage list types')],
+                    'wishlist-manageLists' => ['label' => Craft::t('wishlist', 'Manage lists'), 'nested' => $listTypePermissions],
+                ],
             ];
         });
     }
