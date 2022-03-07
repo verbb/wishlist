@@ -7,7 +7,6 @@ use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\errors\ItemError;
 
 use Craft;
-use craft\web\Controller;
 
 use yii\base\Exception;
 use yii\web\Response;
@@ -17,7 +16,7 @@ class ItemsController extends BaseController
     // Properties
     // =========================================================================
 
-    protected $allowAnonymous = ['add', 'remove', 'update', 'toggle'];
+    protected array|bool|int $allowAnonymous = ['add', 'remove', 'update', 'toggle'];
 
 
     // Public Methods
@@ -48,7 +47,7 @@ class ItemsController extends BaseController
         return $this->renderTemplate('wishlist/items/_edit', $variables);
     }
 
-    public function actionSaveItem()
+    public function actionSaveItem(): ?Response
     {
         $this->requirePostRequest();
 
@@ -56,7 +55,7 @@ class ItemsController extends BaseController
         $itemId = $request->getParam('itemId');
 
         if ($itemId) {
-            $item = Wishlist::getInstance()->getItems()->getItemById($itemId);
+            $item = Wishlist::$plugin->getItems()->getItemById($itemId);
 
             if (!$item) {
                 throw new Exception(Craft::t('wishlist', 'No item with the ID “{id}”', ['id' => $itemId]));
@@ -103,13 +102,13 @@ class ItemsController extends BaseController
         return $this->redirectToPostedUrl($item);
     }
 
-    public function actionDelete()
+    public function actionDelete(): ?Response
     {
         $this->requirePostRequest();
 
         $request = Craft::$app->getRequest();
         $itemId = $request->getParam('itemId');
-        $item = Wishlist::getInstance()->getItems()->getItemById($itemId);
+        $item = Wishlist::$plugin->getItems()->getItemById($itemId);
 
         if (!$item) {
             throw new Exception(Craft::t('wishlist', 'Item not found with the ID “{id}”', ['id' => $itemId]));
@@ -143,7 +142,7 @@ class ItemsController extends BaseController
     // Front-end Methods
     // =========================================================================
 
-    public function actionAdd()
+    public function actionAdd(): ?Response
     {
         $settings = Wishlist::$plugin->getSettings();
         $request = Craft::$app->getRequest();
@@ -181,7 +180,7 @@ class ItemsController extends BaseController
             $item = $this->_setItemFromPost($elementId);
 
              // Check if we're allowed to manage lists
-            $this->enforceEnabledList($item->list);
+            $this->enforceEnabledList($item->getList());
 
             // Set any additional options on the item
             $options = $postItem['options'] ?? [];
@@ -227,10 +226,10 @@ class ItemsController extends BaseController
         $variables['item'] = $item;
         $variables['notice'] = '`item` in the response is deprecated and will be removed in the next major release. Please use `items` instead.';
 
-        return $this->returnSuccess('Item' . ((count($postItems) > 1) ? 's' : '') . ' added to list.', $variables);
+        return $this->returnSuccess('Item' . (((is_countable($postItems) ? count($postItems) : 0) > 1) ? 's' : '') . ' added to list.', $variables);
     }
 
-    public function actionRemove()
+    public function actionRemove(): ?Response
     {
         $request = Craft::$app->getRequest();
         $listId = $request->getParam('listId');
@@ -284,7 +283,7 @@ class ItemsController extends BaseController
             }
 
             if ($options) {
-                $optionsSignature = Wishlist::getInstance()->getItems()->getOptionsSignature($options);
+                $optionsSignature = Wishlist::$plugin->getItems()->getOptionsSignature($options);
                 $query->optionsSignature($optionsSignature);
             }
 
@@ -322,7 +321,7 @@ class ItemsController extends BaseController
         return $this->returnSuccess('Items removed from list.', $variables);
     }
 
-    public function actionToggle()
+    public function actionToggle(): ?Response
     {
         $request = Craft::$app->getRequest();
         $listId = $request->getParam('listId');
@@ -382,7 +381,7 @@ class ItemsController extends BaseController
             }
 
             if ($options) {
-                $optionsSignature = Wishlist::getInstance()->getItems()->getOptionsSignature($options);
+                $optionsSignature = Wishlist::$plugin->getItems()->getOptionsSignature($options);
                 $query->optionsSignature($optionsSignature);
             }
 
@@ -430,7 +429,7 @@ class ItemsController extends BaseController
         return $this->returnSuccess('Items toggled in list.', $variables);
     }
 
-    public function actionUpdate()
+    public function actionUpdate(): ?Response
     {
         $request = Craft::$app->getRequest();
         $itemId = $request->getParam('itemId');
@@ -446,7 +445,7 @@ class ItemsController extends BaseController
         }
 
          // Check if we're allowed to manage lists
-        $this->enforceEnabledList($item->list);
+        $this->enforceEnabledList($item->getList());
 
         $item->setFieldValuesFromRequest('fields');
         
@@ -461,7 +460,7 @@ class ItemsController extends BaseController
     // Private Methods
     // =========================================================================
 
-    private function _prepareVariableArray(&$variables)
+    private function _prepareVariableArray(&$variables): void
     {
         // List related checks
         if (empty($variables['item'])) {
@@ -516,9 +515,7 @@ class ItemsController extends BaseController
         }
 
         // Create the item, and force the item's list to also be created if not already
-        $item = WishList::$plugin->getItems()->createItem($elementId, $listId, $listTypeId, true);
-
-        return $item;
+        return WishList::$plugin->getItems()->createItem($elementId, $listId, $listTypeId, true);
     }
 
 }

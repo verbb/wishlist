@@ -2,7 +2,6 @@
 namespace verbb\wishlist\services;
 
 use verbb\wishlist\Wishlist;
-use verbb\wishlist\elements\Item;
 use verbb\wishlist\elements\ListElement;
 
 use Craft;
@@ -14,38 +13,41 @@ use craft\helpers\ConfigHelper;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
 use craft\helpers\StringHelper;
-use craft\models\Structure;
 
 use DateTime;
 
 use yii\web\Cookie;
 use yii\web\UserEvent;
 
+use Throwable;
+use verbb\wishlist\elements\db\ListQuery;
+
 class Lists extends Component
 {
     // Properties
     // =========================================================================
 
-    protected $listName = 'wishlist_list';
-    private $_lists = [];
+    protected string $listName = 'wishlist_list';
+    private array $_lists = [];
 
 
     // Public Methods
     // =========================================================================
 
-    public function getListById(int $id, $siteId = null)
+    public function getListById(int $id, $siteId = null): ?ListElement
     {
+        /* @noinspection PhpIncompatibleReturnTypeInspection */
         return Craft::$app->getElements()->getElementById($id, ListElement::class, $siteId);
     }
 
-    public function saveElement(ElementInterface $element, bool $runValidation = true, bool $propagate = true)
+    public function saveElement(ElementInterface $element, bool $runValidation = true, bool $propagate = true): bool
     {
         $updateListSearchIndexes = Wishlist::$plugin->getSettings()->updateListSearchIndexes;
 
         return Craft::$app->getElements()->saveElement($element, $runValidation, $propagate, $updateListSearchIndexes);
     }
 
-    public function getList($id = null, $forceSave = false, $listTypeId = null): ListElement
+    public function getList($id = null, $forceSave = false, $listTypeId = null): ElementInterface
     {
         $session = Craft::$app->getSession();
 
@@ -77,12 +79,12 @@ class Lists extends Component
 
                 if ($listTypeId) {
                     // If this list type is new for the user, let's create a new list for it.
-                    $listType = Wishlist::getInstance()->getListTypes()->getListTypeById($listTypeId);
+                    $listType = Wishlist::$plugin->getListTypes()->getListTypeById($listTypeId);
                 }
 
                 if ($listType === null) {
                     // If we still don't have a valid list type, let's get the default one.
-                    $listType = Wishlist::getInstance()->getListTypes()->getDefaultListType();
+                    $listType = Wishlist::$plugin->getListTypes()->getDefaultListType();
                 }
 
                 $this->_lists[$cacheKey] = new ListElement();
@@ -108,16 +110,14 @@ class Lists extends Component
             if ($changedIp || $changedUserId) {
                 Wishlist::$plugin->getLists()->saveElement($this->_lists[$cacheKey], false);
             }
-        } else {
-            if ($forceSave) {
-                Wishlist::$plugin->getLists()->saveElement($this->_lists[$cacheKey], false);
-            }
+        } else if ($forceSave) {
+            Wishlist::$plugin->getLists()->saveElement($this->_lists[$cacheKey], false);
         }
 
         return $this->_lists[$cacheKey];
     }
 
-    public function getListQueryForOwner()
+    public function getListQueryForOwner(): ListQuery
     {
         $query = ListElement::find();
 
@@ -133,7 +133,7 @@ class Lists extends Component
         return $query;
     }
 
-    public function isListOwner($list)
+    public function isListOwner($list): bool
     {
         $id = false;
         $currentUser = Craft::$app->getUser()->getIdentity();
@@ -144,12 +144,12 @@ class Lists extends Component
             $id = $this->getSessionId();
         }
 
-        return (bool)((int)$list->getOwnerId() === (int)$id);
+        return (int)$list->getOwnerId() === (int)$id;
     }
 
     public function createList(): ListElement
     {
-        $listType = Wishlist::getInstance()->getListTypes()->getDefaultListType();
+        $listType = Wishlist::$plugin->getListTypes()->getDefaultListType();
 
         $list = new ListElement();
         $list->reference = $this->generateReferenceNumber();
@@ -165,15 +165,15 @@ class Lists extends Component
 
     public function purgeInactiveLists(): int
     {
-        $doPurge = Wishlist::getInstance()->getSettings()->purgeInactiveLists;
+        $doPurge = Wishlist::$plugin->getSettings()->purgeInactiveLists;
 
         if ($doPurge) {
             $listIds = $this->_getListsIdsToPurge();
 
             // Taken from craft\services\Elements::deleteElement(); Using the method directly
-            // takes too much resources since it retrieves the list before deleting it.
+            // takes too many resources since it retrieves the list before deleting it.
 
-            // Delete the elements table rows, which will cascade across all other InnoDB tables
+            // Delete the elements' table rows, which will cascade across all other InnoDB tables
             Craft::$app->getDb()->createCommand()
                 ->delete('{{%elements}}', ['id' => $listIds])
                 ->execute();
@@ -183,7 +183,7 @@ class Lists extends Component
                 ->delete('{{%searchindex}}', ['elementId' => $listIds])
                 ->execute();
 
-            return \count($listIds);
+            return count($listIds);
         }
 
         return 0;
@@ -196,14 +196,14 @@ class Lists extends Component
 
     public function generateSessionId(): string
     {
-        return md5(uniqid(mt_rand(), true));
+        return md5(uniqid(random_int(0, mt_getrandmax()), true));
     }
 
-    public function loginHandler(UserEvent $event)
+    public function loginHandler(UserEvent $event): void
     {
         $user = $event->identity;
 
-        // Consolidates lists to the user
+        // Consolidate lists to the user
         $this->consolidateListsToUser($user);
     }
 
@@ -224,7 +224,7 @@ class Lists extends Component
 
             if ($settings->mergeLastListOnLogin) {
                 // Check if we've now got multiple lists for a logged-in user. We need to merge them
-                $listTypes = Wishlist::getInstance()->getListTypes()->getAllListTypes();
+                $listTypes = Wishlist::$plugin->getListTypes()->getAllListTypes();
 
                 // We want to merge lists per list type
                 foreach ($listTypes as $listType) {
@@ -251,7 +251,7 @@ class Lists extends Component
                                     ->execute();
                             }
 
-                            // Now, check if there are any duplicates and we should check. We ditch the oldest item(s).
+                            // Now, check if there are any duplicates, and we should check. We ditch the oldest item(s).
                             if (!$settings->allowDuplicates) {
                                 $db->getSchema()->refresh();
 
@@ -273,13 +273,13 @@ class Lists extends Component
                                     ORDER BY [[wishlist_items.dateUpdated]] DESC
                                     ", [':list_id' => $oldestList->id])->queryAll();
 
-                                // Save the first occurence (newest updated) for each item
+                                // Save the first occurrence (newest updated) for each item
                                 $processedItems = [];
 
                                 foreach ($duplicateItems as $duplicateItem) {
                                     $key = implode('_', [$duplicateItem['listId'], $duplicateItem['elementId'], $duplicateItem['optionsSignature']]);
                                     
-                                    // If first occurence, save and delete all other instances
+                                    // If first occurrence, save and delete all instances
                                     if (!isset($processedItems[$key])) {
                                         $processedItems[$key] = $duplicateItem;
 
@@ -298,14 +298,14 @@ class Lists extends Component
                     }
                 }
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Wishlist::error(Craft::t('app', '{e} - {f}: {l}.', ['e' => $e->getMessage(), 'f' => $e->getFile(), 'l' => $e->getLine()]));
         }
 
         return true;
     }
 
-    public function addEditUserListInfoTab(array &$context)
+    public function addEditUserListInfoTab(array &$context): void
     {
         if (!$context['isNewUser']) {
             $context['tabs']['wishlistInfo'] = [
@@ -330,7 +330,7 @@ class Lists extends Component
 
     private function getSessionId()
     {
-        $settings = Wishlist::getInstance()->getSettings();
+        $settings = Wishlist::$plugin->getSettings();
 
         $session = Craft::$app->getSession();
         $sessionId = $session[$this->listName];
@@ -350,7 +350,7 @@ class Lists extends Component
             $configInterval = ConfigHelper::durationInSeconds($settings->cookieExpiry);
             $expiry = (new DateTime())->add(DateTimeHelper::secondsToInterval($configInterval));
 
-            // Save this as a cookie for better persistency
+            // Save this as a cookie for better persistence
             $cookie = Craft::createObject(Craft::cookieConfig([
                 'class' => Cookie::class,
                 'name' => $cookieName,
@@ -367,7 +367,7 @@ class Lists extends Component
 
     private function _getListsIdsToPurge(): array
     {
-        $settings = Wishlist::getInstance()->getSettings();
+        $settings = Wishlist::$plugin->getSettings();
 
         $configInterval = ConfigHelper::durationInSeconds($settings->purgeInactiveListsDuration);
         $edge = new DateTime();

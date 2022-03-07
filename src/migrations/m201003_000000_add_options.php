@@ -1,17 +1,13 @@
 <?php
 namespace verbb\wishlist\migrations;
 
-use verbb\wishlist\elements\Item;
-
-use Craft;
 use craft\db\Migration;
 use craft\db\Query;
 use craft\helpers\Json;
-use craft\queue\jobs\ResaveElements;
 
 class m201003_000000_add_options extends Migration
 {
-    public function safeUp()
+    public function safeUp(): bool
     {
         if (!$this->db->columnExists('{{%wishlist_items}}', 'options')) {
             $this->addColumn('{{%wishlist_items}}', 'options', $this->text()->after('elementClass'));
@@ -40,7 +36,7 @@ class m201003_000000_add_options extends Migration
         return true;
     }
 
-    public function safeDown()
+    public function safeDown(): bool
     {
         echo "m201003_000000_add_options cannot be reverted.\n";
         return false;

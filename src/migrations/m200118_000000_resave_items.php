@@ -9,7 +9,7 @@ use craft\queue\jobs\ResaveElements;
 
 class m200118_000000_resave_items extends Migration
 {
-    public function safeUp()
+    public function safeUp(): bool
     {
         Craft::$app->getQueue()->push(new ResaveElements([
             'elementType' => Item::class
@@ -18,7 +18,7 @@ class m200118_000000_resave_items extends Migration
         return true;
     }
 
-    public function safeDown()
+    public function safeDown(): bool
     {
         echo "m200118_000000_resave_items cannot be reverted.\n";
         return false;

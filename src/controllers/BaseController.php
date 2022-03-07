@@ -8,23 +8,24 @@ use craft\helpers\StringHelper;
 use craft\web\Controller;
 
 use yii\web\ForbiddenHttpException;
+use yii\web\Response;
 
 class BaseController extends Controller
 {
     // Protected Methods
     // =========================================================================
 
-    protected function enforceEnabledList($list)
+    protected function enforceEnabledList($list): void
     {
         $settings = Wishlist::$plugin->getSettings();
 
-        // If its disabled, and should we check?
+        // If it's disabled, and should we check?
         if ($list && !$list->enabled && !$settings->manageDisabledLists) {
             throw new ForbiddenHttpException('User is not permitted to perform this action');
         }
     }
 
-    protected function returnSuccess($message, $params = [], $object = null)
+    protected function returnSuccess($message, $params = [], $object = null): Response
     {
         $request = Craft::$app->getRequest();
 
@@ -54,7 +55,7 @@ class BaseController extends Controller
         return $this->redirect($request->referrer);
     }
 
-    protected function returnError($message, $params = [])
+    protected function returnError($message, $params = []): ?Response
     {
         $request = Craft::$app->getRequest();
 

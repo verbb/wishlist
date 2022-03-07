@@ -7,24 +7,20 @@ use verbb\wishlist\elements\Item;
 use Craft;
 use craft\base\Component;
 use craft\base\ElementInterface;
-use craft\events\ElementEvent;
-use craft\events\SiteEvent;
-use craft\queue\jobs\ResaveElements;
 use craft\helpers\Json;
-
-use yii\web\UserEvent;
 
 class Items extends Component
 {
     // Public Methods
     // =========================================================================
 
-    public function getItemById(int $id, $siteId = null)
+    public function getItemById(int $id, $siteId = null): ?Item
     {
+        /* @noinspection PhpIncompatibleReturnTypeInspection */
         return Craft::$app->getElements()->getElementById($id, Item::class, $siteId);
     }
 
-    public function getItemsForList(int $listId, $siteId = null)
+    public function getItemsForList(int $listId, $siteId = null): array
     {
         return Item::find()
             ->listId($listId)
@@ -32,7 +28,7 @@ class Items extends Component
             ->all();
     }
 
-    public function deleteItemsForList(int $listId, $siteId = null)
+    public function deleteItemsForList(int $listId, $siteId = null): bool
     {
         $items = Item::find()
             ->listId($listId)
@@ -46,7 +42,7 @@ class Items extends Component
         return true;
     }
 
-    public function createItem($elementId, $listId, $listTypeId = null, $forceSave = false)
+    public function createItem($elementId, $listId, $listTypeId = null, $forceSave = false): ?Item
     {
         // null `listId` is okay - a new list will get created.
         if (!$elementId) {
@@ -64,21 +60,21 @@ class Items extends Component
         $item->listId = $list->id;
         $item->elementId = $element->id;
         $item->elementSiteId = $element->siteId;
-        $item->elementClass = get_class($element);
+        $item->elementClass = $element::class;
 
         $item->setFieldValuesFromRequest('fields');
 
         return $item;
     }
 
-    public function saveElement(ElementInterface $element, bool $runValidation = true, bool $propagate = true)
+    public function saveElement(ElementInterface $element, bool $runValidation = true, bool $propagate = true): bool
     {
         $updateItemSearchIndexes = Wishlist::$plugin->getSettings()->updateItemSearchIndexes;
 
         return Craft::$app->getElements()->saveElement($element, $runValidation, $propagate, $updateItemSearchIndexes);
     }
 
-    public function getOptionsSignature($options)
+    public function getOptionsSignature($options): string
     {
         ksort($options);
 

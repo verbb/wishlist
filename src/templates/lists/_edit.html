@@ -71,7 +71,7 @@
                 {% set elementType = 'verbb\\wishlist\\elements\\Item' %}
                 {% set elementInstance = craft.app.elements.createElement(elementType) %}
                 {% set context = 'index' %}
-                {% set sources = craft.app.elementIndexes.getSources(elementType, 'index') %}
+                {% set sources = craft.app.elementSources.getSources(elementType, 'index') %}
 
                 <div class="element-toolbar flex flex-nowrap">
                     {% include '_elements/toolbar' with {

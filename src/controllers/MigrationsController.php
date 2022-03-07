@@ -6,25 +6,24 @@ use verbb\wishlist\migrations\MigrateUpvote;
 
 use Craft;
 use craft\db\Query;
-use craft\errors\MissingComponentException;
-use craft\errors\ShellCommandException;
 use craft\helpers\App;
 use craft\web\Controller;
 
-use yii\base\Exception;
+use Throwable;
 
 class MigrationsController extends Controller
 {
     // Public Methods
     // =========================================================================
 
-    public function actionShortlist()
+    public function actionShortlist(): void
     {
         App::maxPowerCaptain();
 
         // Backup!
         Craft::$app->getDb()->backup();
 
+        $outputs = [];
         $shortlists = (new Query())->from('{{%shortlist_list}}')->all();
 
         foreach ($shortlists as $shortlist) {
@@ -33,11 +32,10 @@ class MigrationsController extends Controller
             try {
                 ob_start();
                 $migration->up();
-                $output = ob_get_contents();
-                ob_end_clean();
+                $output = ob_get_clean();
 
                 $outputs[$shortlist['id']] = nl2br($output);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $outputs[$shortlist['id']] = 'Failed to migrate: ' . $e->getMessage();
             }
         }
@@ -47,17 +45,16 @@ class MigrationsController extends Controller
         ]);
 
         Craft::$app->getSession()->setNotice(Craft::t('wishlist', 'Shortlist lists migrated.'));
-
-        return null;
     }
 
-    public function actionUpvote()
+    public function actionUpvote(): void
     {
         App::maxPowerCaptain();
 
         // Backup!
         Craft::$app->getDb()->backup();
 
+        $outputs = [];
         $upvotes = (new Query())->from('{{%upvote_userhistories}}')->all();
 
         foreach ($upvotes as $upvote) {
@@ -66,11 +63,10 @@ class MigrationsController extends Controller
             try {
                 ob_start();
                 $migration->up();
-                $output = ob_get_contents();
-                ob_end_clean();
+                $output = ob_get_clean();
 
                 $outputs[$upvote['id']] = nl2br($output);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $outputs[$upvote['id']] = 'Failed to migrate: ' . $e->getMessage();
             }
         }
@@ -80,7 +76,5 @@ class MigrationsController extends Controller
         ]);
 
         Craft::$app->getSession()->setNotice(Craft::t('wishlist', 'Upvote lists migrated.'));
-
-        return null;
     }
 }

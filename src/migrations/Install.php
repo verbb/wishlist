@@ -13,17 +13,10 @@ use craft\records\FieldLayout;
 
 class Install extends Migration
 {
-    // Private properties
-    // =========================================================================
-
-    private $_itemFieldLayoutId;
-    private $_listFieldLayoutId;
-
-
     // Public Methods
     // =========================================================================
 
-    public function safeUp()
+    public function safeUp(): bool
     {
         $this->createTables();
         $this->createIndexes();
@@ -33,7 +26,7 @@ class Install extends Migration
         return true;
     }
 
-    public function safeDown()
+    public function safeDown(): bool
     {
         $this->dropForeignKeys();
         $this->dropTables();
@@ -42,7 +35,7 @@ class Install extends Migration
         return true;
     }
 
-    public function createTables()
+    public function createTables(): void
     {
         $this->createTable('{{%wishlist_lists}}', [
             'id' => $this->primaryKey(),
@@ -83,7 +76,7 @@ class Install extends Migration
         ]);
     }
 
-    public function createIndexes()
+    public function createIndexes(): void
     {
         $this->createIndex(null, '{{%wishlist_lists}}', 'typeId', false);
 
@@ -95,7 +88,7 @@ class Install extends Migration
         $this->createIndex(null, '{{%wishlist_items}}', ['listId'], false);
     }
 
-    public function addForeignKeys()
+    public function addForeignKeys(): void
     {
         $this->addForeignKey(null, '{{%wishlist_lists}}', ['id'], '{{%elements}}', ['id'], 'CASCADE', null);
         $this->addForeignKey(null, '{{%wishlist_lists}}', ['typeId'], '{{%wishlist_listtypes}}', ['id'], 'CASCADE');
@@ -109,7 +102,7 @@ class Install extends Migration
         $this->addForeignKey(null, '{{%wishlist_items}}', ['elementSiteId'], '{{%sites}}', ['id'], 'CASCADE', 'CASCADE');
     }
 
-    public function insertDefaultData()
+    public function insertDefaultData(): void
     {
         // Don't make the same config changes twice
         $installed = (Craft::$app->projectConfig->get('plugins.wishlist', true) !== null);
@@ -117,16 +110,17 @@ class Install extends Migration
 
         if (!$installed && !$configExists) {
             $this->insert(FieldLayout::tableName(), ['type' => ListElement::class]);
-            $this->_listFieldLayoutId = $this->db->getLastInsertID(FieldLayout::tableName());
+            $listFieldLayoutId = $this->db->getLastInsertID(FieldLayout::tableName());
+
             $this->insert(FieldLayout::tableName(), ['type' => Item::class]);
-            $this->_itemFieldLayoutId = $this->db->getLastInsertID(FieldLayout::tableName());
+            $itemFieldLayoutId = $this->db->getLastInsertID(FieldLayout::tableName());
 
             $data = [
                 'name' => 'Wishlist',
                 'handle' => 'wishlist',
                 'default' => true,
-                'fieldLayoutId' => $this->_listFieldLayoutId,
-                'itemFieldLayoutId' => $this->_itemFieldLayoutId,
+                'fieldLayoutId' => $listFieldLayoutId,
+                'itemFieldLayoutId' => $itemFieldLayoutId,
             ];
 
             $listType = new ListType($data);
@@ -134,21 +128,21 @@ class Install extends Migration
         }
     }
 
-    public function dropForeignKeys()
+    public function dropForeignKeys(): void
     {
         MigrationHelper::dropAllForeignKeysOnTable('{{%wishlist_lists}}', $this);
         MigrationHelper::dropAllForeignKeysOnTable('{{%wishlist_listtypes}}', $this);
         MigrationHelper::dropAllForeignKeysOnTable('{{%wishlist_items}}', $this);
     }
 
-    public function dropTables()
+    public function dropTables(): void
     {
         $this->dropTable('{{%wishlist_lists}}');
         $this->dropTable('{{%wishlist_listtypes}}');
         $this->dropTable('{{%wishlist_items}}');
     }
 
-    public function dropProjectConfig()
+    public function dropProjectConfig(): void
     {
         Craft::$app->projectConfig->remove('wishlist');
     }

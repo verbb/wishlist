@@ -7,37 +7,31 @@ use verbb\wishlist\errors\ItemError;
 use verbb\wishlist\errors\ListError;
 
 use Craft;
-use craft\base\Element;
 use craft\elements\User;
-use craft\helpers\DateTimeHelper;
-use craft\helpers\Localization;
-use craft\helpers\UrlHelper;
-use craft\models\Site;
-use craft\web\Controller;
 
 use craft\commerce\Plugin as Commerce;
 use craft\commerce\base\Purchasable;
 
 use yii\base\Exception;
-use yii\web\ForbiddenHttpException;
 use yii\web\HttpException;
-use yii\web\NotFoundHttpException;
 use yii\web\Response;
-use yii\web\ServerErrorHttpException;
+
+use Throwable;
 
 class ListsController extends BaseController
 {
     // Properties
     // =========================================================================
 
-    protected $allowAnonymous = ['create', 'delete', 'clear', 'update', 'update-items', 'add-to-cart', 'share-by-email'];
-    public static $commercePlugin;
+    protected array|bool|int $allowAnonymous = ['create', 'delete', 'clear', 'update', 'update-items', 'add-to-cart', 'share-by-email'];
+
+    public static ?Commerce $commercePlugin = null;
 
 
     // Public Methods
     // =========================================================================
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -47,7 +41,7 @@ class ListsController extends BaseController
     public function actionIndex(): Response
     {
         // Remove all inactive lists older than a certain date in config.
-        Wishlist::getInstance()->getLists()->purgeInactiveLists();
+        Wishlist::$plugin->getLists()->purgeInactiveLists();
 
         return $this->renderTemplate('wishlist/lists/index');
     }
@@ -62,7 +56,7 @@ class ListsController extends BaseController
             'list' => $list
         ];
 
-        // Make sure a correct list type handle was passed so we can check permissions
+        // Make sure a correct list type handle was passed, so we can check permissions
         if ($listTypeHandle) {
             $listType = Wishlist::$plugin->getListTypes()->getListTypeByHandle($listTypeHandle);
         }
@@ -91,7 +85,7 @@ class ListsController extends BaseController
         return $this->renderTemplate('wishlist/lists/_edit', $variables);
     }
 
-    public function actionDeleteList()
+    public function actionDeleteList(): ?Response
     {
         $this->requirePostRequest();
         $request = Craft::$app->getRequest();
@@ -129,7 +123,7 @@ class ListsController extends BaseController
         return $this->redirectToPostedUrl($list);
     }
 
-    public function actionSaveList()
+    public function actionSaveList(): ?Response
     {
         $this->requirePostRequest();
 
@@ -177,7 +171,7 @@ class ListsController extends BaseController
     // Front-end Methods
     // =========================================================================
 
-    public function actionCreate()
+    public function actionCreate(): ?Response
     {
         $request = Craft::$app->getRequest();
 
@@ -204,7 +198,7 @@ class ListsController extends BaseController
         ], $list);
     }
 
-    public function actionUpdate()
+    public function actionUpdate(): ?Response
     {
         $request = Craft::$app->getRequest();
         $listId = $request->getParam('listId');
@@ -231,7 +225,7 @@ class ListsController extends BaseController
         return $this->returnSuccess('List updated.', [], $list);
     }
 
-    public function actionUpdateItems()
+    public function actionUpdateItems(): ?Response
     {
         $request = Craft::$app->getRequest();
         $listId = $request->getParam('listId');
@@ -259,17 +253,15 @@ class ListsController extends BaseController
                 $removeItem = $request->getParam("items.{$itemId}.remove");
                 $fields = $request->getParam("items.{$itemId}.fields");
 
-                $item = Wishlist::getInstance()->getItems()->getItemById($itemId);
+                $item = Wishlist::$plugin->getItems()->getItemById($itemId);
                 $item->setFieldValues($fields);
 
                 if ($removeItem) {
                     if (!Craft::$app->getElements()->deleteElement($item)) {
                         $errors[$itemId] = new ItemError('Unable to delete item from list.', ['item' => $item]);
                     }
-                } else {
-                    if (!Wishlist::$plugin->getItems()->saveElement($item)) {
-                        $errors[$itemId] = new ItemError('Unable to update item in list.', ['item' => $item]);
-                    }
+                } else if (!Wishlist::$plugin->getItems()->saveElement($item)) {
+                    $errors[$itemId] = new ItemError('Unable to update item in list.', ['item' => $item]);
                 }
 
                 $variables['items'][] = $item;
@@ -285,7 +277,7 @@ class ListsController extends BaseController
         return $this->returnSuccess('List items updated.', $variables, $list);
     }
 
-    public function actionDelete()
+    public function actionDelete(): ?Response
     {
         $request = Craft::$app->getRequest();
         $listId = $request->getRequiredParam('listId');
@@ -314,7 +306,7 @@ class ListsController extends BaseController
         return $this->returnSuccess('List deleted.', [], $list);
     }
 
-    public function actionClear()
+    public function actionClear(): ?Response
     {
         $request = Craft::$app->getRequest();
         $listId = $request->getRequiredParam('listId');
@@ -343,10 +335,10 @@ class ListsController extends BaseController
         return $this->returnSuccess('List cleared.', [], $list);
     }
 
-    public function actionAddToCart()
+    public function actionAddToCart(): ?Response
     {
         if (!self::$commercePlugin) {
-            return;
+            return null;
         }
 
         $request = Craft::$app->getRequest();
@@ -387,7 +379,7 @@ class ListsController extends BaseController
 
                 // Ignore zero value qty for multi-add forms https://github.com/craftcms/commerce/issues/330#issuecomment-384533139
                 if ($qty > 0) {
-                    $lineItem = Commerce::getInstance()->getLineItems()->resolveLineItem($cart->id, $purchasable->id, $options);
+                    $lineItem = Commerce::getInstance()->getLineItems()->resolveLineItem($cart, $purchasable->id, $options);
 
                     // New line items already have a qty of one.
                     if ($lineItem->id) {
@@ -425,7 +417,7 @@ class ListsController extends BaseController
         return $this->returnSuccess('Items added to cart.', [], $list);
     }
 
-    public function actionShareByEmail()
+    public function actionShareByEmail(): ?Response
     {
         $request = Craft::$app->getRequest();
         $listId = $request->getRequiredParam('listId');
@@ -486,7 +478,7 @@ class ListsController extends BaseController
             Wishlist::log($message);
 
             return $this->returnSuccess($message);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $message = Craft::t('wishlist', 'Failed to send list share to {email} - {error}.', [
                 'email' => $recipient->email,
                 'error' => $e->getMessage(),
@@ -502,7 +494,7 @@ class ListsController extends BaseController
     // Protected Methods
     // =========================================================================
 
-    protected function enforceListPermissions(ListElement $list)
+    protected function enforceListPermissions(ListElement $list): void
     {
         if (!$list->getType()) {
             Craft::error('Attempting to access a list that doesn’t have a type', __METHOD__);
@@ -521,7 +513,7 @@ class ListsController extends BaseController
     // Private Methods
     // =========================================================================
 
-    private function _prepareVariableArray(&$variables)
+    private function _prepareVariableArray(&$variables): void
     {
         // List related checks
         if (empty($variables['list'])) {
@@ -557,7 +549,7 @@ class ListsController extends BaseController
         $listId = $request->getParam('listId');
 
         if ($listId) {
-            $list = Wishlist::getInstance()->getLists()->getListById($listId);
+            $list = Wishlist::$plugin->getLists()->getListById($listId);
 
             if (!$list) {
                 throw new Exception(Craft::t('wishlist', 'No list with the ID “{id}”', ['id' => $listId]));

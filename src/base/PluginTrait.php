@@ -8,7 +8,6 @@ use verbb\wishlist\services\Items;
 use verbb\wishlist\services\Pdf;
 
 use Craft;
-use craft\log\FileTarget;
 
 use yii\log\Logger;
 
@@ -16,50 +15,54 @@ use verbb\base\BaseHelper;
 
 trait PluginTrait
 {
-    // Static Properties
+    // Properties
     // =========================================================================
 
-    public static $plugin;
+    public static Wishlist $plugin;
+
+
+    // Static Methods
+    // =========================================================================
+
+    public static function log($message): void
+    {
+        Craft::getLogger()->log($message, Logger::LEVEL_INFO, 'wishlist');
+    }
+
+    public static function error($message): void
+    {
+        Craft::getLogger()->log($message, Logger::LEVEL_ERROR, 'wishlist');
+    }
 
 
     // Public Methods
     // =========================================================================
 
-    public function getLists()
+    public function getLists(): Lists
     {
         return $this->get('lists');
     }
 
-    public function getListTypes()
+    public function getListTypes(): ListTypes
     {
         return $this->get('listTypes');
     }
 
-    public function getItems()
+    public function getItems(): Items
     {
         return $this->get('items');
     }
 
-    public function getPdf()
+    public function getPdf(): Pdf
     {
         return $this->get('pdf');
-    }
-
-    public static function log($message)
-    {
-        Craft::getLogger()->log($message, Logger::LEVEL_INFO, 'wishlist');
-    }
-
-    public static function error($message)
-    {
-        Craft::getLogger()->log($message, Logger::LEVEL_ERROR, 'wishlist');
     }
 
 
     // Private Methods
     // =========================================================================
 
-    private function _setPluginComponents()
+    private function _setPluginComponents(): void
     {
         $this->setComponents([
             'lists' => Lists::class,
@@ -71,7 +74,7 @@ trait PluginTrait
         BaseHelper::registerModule();
     }
 
-    private function _setLogging()
+    private function _setLogging(): void
     {
         BaseHelper::setFileLogging('wishlist');
     }

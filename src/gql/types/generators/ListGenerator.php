@@ -2,32 +2,28 @@
 namespace verbb\wishlist\gql\types\generators;
 
 use verbb\wishlist\elements\ListElement;
-use verbb\wishlist\gql\arguments\ListArguments;
 use verbb\wishlist\gql\interfaces\ListInterface;
 use verbb\wishlist\gql\types\ListType;
 
 use Craft;
 use craft\gql\base\Generator;
 use craft\gql\base\GeneratorInterface;
-use craft\gql\base\ObjectType;
 use craft\gql\base\SingleGeneratorInterface;
 use craft\gql\GqlEntityRegistry;
-use craft\gql\TypeLoader;
 use craft\gql\TypeManager;
-use craft\helpers\Gql as GqlHelper;
 
 class ListGenerator extends Generator implements GeneratorInterface, SingleGeneratorInterface
 {
-    // Public Methods
+    // Static Methods
     // =========================================================================
 
-    public static function generateTypes($context = null): array
+    public static function generateTypes(mixed $context = null): array
     {
         $type = static::generateType($context);
         return [$type->name => $type];
     }
 
-    public static function generateType($context): ObjectType
+    public static function generateType(mixed $context): mixed
     {
         $context = $context ?: Craft::$app->getFields()->getLayoutByType(ListElement::class);
 

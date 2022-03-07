@@ -3,39 +3,35 @@ namespace verbb\wishlist\elements;
 
 use verbb\wishlist\Wishlist;
 use verbb\wishlist\elements\db\ListQuery;
-use verbb\wishlist\models\ListTypeModel;
+use verbb\wishlist\models\ListType;
 use verbb\wishlist\records\ListRecord;
 
 use Craft;
 use craft\base\Element;
-use craft\elements\db\ElementQueryInterface;
 use craft\elements\User;
-use craft\db\Query;
 use craft\elements\actions\Delete;
-use craft\helpers\ArrayHelper;
-use craft\helpers\DateTimeHelper;
 use craft\helpers\UrlHelper;
-use craft\validators\DateTimeValidator;
+use craft\models\FieldLayout;
+use craft\web\UploadedFile;
 
 use yii\base\Exception;
-use yii\base\InvalidConfigException;
 
 class ListElement extends Element
 {
     // Properties
     // =========================================================================
 
-    public $reference;
-    public $lastIp;
-    public $typeId;
-    public $userId;
-    public $sessionId;
-    public $default;
+    public ?string $reference = null;
+    public ?string $lastIp = null;
+    public ?int $typeId = null;
+    public ?int $userId = null;
+    public ?string $sessionId = null;
+    public ?bool $default = null;
 
-    private $_listType;
-    private $_owner;
-    private $_user;
-    private $_fieldLayout;
+    private ?ListType $_listType = null;
+    private ?User $_owner = null;
+    private ?User $_user = null;
+    private ?FieldLayout $_fieldLayout = null;
 
 
     // Public Methods
@@ -51,7 +47,7 @@ class ListElement extends Element
         return (string)$this->title;
     }
 
-    public function getName()
+    public function getName(): ?string
     {
         return $this->title;
     }
@@ -141,7 +137,7 @@ class ListElement extends Element
         return $rules;
     }
 
-    public static function find(): ElementQueryInterface
+    public static function find(): ListQuery
     {
         return new ListQuery(static::class);
     }
@@ -155,7 +151,7 @@ class ListElement extends Element
         return false;
     }
 
-    public function getCpEditUrl()
+    public function getCpEditUrl(): ?string
     {
         if ($listType = $this->getType()) {
             return UrlHelper::cpUrl('wishlist/lists/' . $listType->handle . '/' . $this->id);
@@ -164,7 +160,7 @@ class ListElement extends Element
         return null;
     }
 
-    public function getFieldLayout()
+    public function getFieldLayout(): ?FieldLayout
     {
         if ($this->_fieldLayout !== null) {
             return $this->_fieldLayout;
@@ -179,7 +175,7 @@ class ListElement extends Element
         return $this->_fieldLayout = $listType->getListFieldLayout();
     }
 
-    public function getType()
+    public function getType(): ?ListType
     {
         if ($this->_listType !== null) {
             return $this->_listType;
@@ -192,12 +188,12 @@ class ListElement extends Element
         return $this->_listType = Wishlist::$plugin->getListTypes()->getListTypeById($this->typeId);
     }
 
-    public function getItems()
+    public function getItems(): ?db\ItemQuery
     {
         return $this->id ? Item::find()->listId($this->id) : null;
     }
 
-    public function getUser()
+    public function getUser(): ?User
     {
         if ($this->_user !== null) {
             return $this->_user;
@@ -210,12 +206,12 @@ class ListElement extends Element
         return $this->_user = User::find()->id($this->userId)->one();
     }
 
-    public function getOwnerId()
+    public function getOwnerId(): int|string|null
     {
         return $this->userId ?? $this->sessionId ?? null;
     }
 
-    public function getOwner()
+    public function getOwner(): ?User
     {
         if ($this->_owner !== null) {
             return $this->_owner;
@@ -228,7 +224,7 @@ class ListElement extends Element
         return $this->_owner = $this->getUser();
     }
 
-    public function setFieldValuesFromRequest(string $paramNamespace = '')
+    public function setFieldValuesFromRequest(string $paramNamespace = ''): void
     {
         $this->setFieldParamNamespace($paramNamespace);
         $values = Craft::$app->getRequest()->getParam($paramNamespace, []);
@@ -237,7 +233,7 @@ class ListElement extends Element
             // Do we have any post data for this field?
             if (isset($values[$field->handle])) {
                 $value = $values[$field->handle];
-            } else if (!empty($this->_fieldParamNamePrefix) && UploadedFile::getInstancesByName($this->_fieldParamNamePrefix . '.' . $field->handle)) {
+            } else if (!empty($this->getFieldParamNamespace()) && UploadedFile::getInstancesByName($this->getFieldParamNamespace() . '.' . $field->handle)) {
                 // A file was uploaded for this field
                 $value = null;
             } else {
@@ -251,12 +247,12 @@ class ListElement extends Element
         }
     }
 
-    public function getPdfUrl()
+    public function getPdfUrl(): string
     {
         return UrlHelper::actionUrl("wishlist/pdf?listId={$this->id}");
     }
 
-    public static function gqlTypeNameByContext($context): string
+    public static function gqlTypeNameByContext(mixed $context): string
     {
         return 'List';
     }
@@ -270,7 +266,7 @@ class ListElement extends Element
     // URLs
     // -------------------------------------------------------------------------
 
-    public function getAddToCartUrl()
+    public function getAddToCartUrl(): string
     {
         return UrlHelper::actionUrl('wishlist/lists/add-to-cart', [ 'listId' => $this->id ]);
     }
@@ -279,7 +275,7 @@ class ListElement extends Element
     // Events
     // -------------------------------------------------------------------------
 
-    public function afterSave(bool $isNew)
+    public function afterSave(bool $isNew): void
     {
         if (!$isNew) {
             $listRecord = ListRecord::findOne($this->id);
@@ -301,7 +297,7 @@ class ListElement extends Element
 
         $listRecord->save(false);
 
-        return parent::afterSave($isNew);
+        parent::afterSave($isNew);
     }
 
 
@@ -352,7 +348,7 @@ class ListElement extends Element
 
                 return '';
             case 'items':
-                return $this->items->count();
+                return $this->getItems()->count();
             default:
                 return parent::tableAttributeHtml($attribute);
         }

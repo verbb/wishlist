@@ -7,28 +7,20 @@ use verbb\wishlist\records\Item as ItemRecord;
 
 use Craft;
 use craft\base\Element;
-use craft\controllers\ElementIndexesController;
-use craft\db\Query;
+use craft\base\ElementInterface;
 use craft\elements\actions\Delete;
-use craft\elements\actions\Edit;
-use craft\elements\actions\NewChild;
-use craft\elements\actions\SetStatus;
-use craft\elements\actions\View;
-use craft\elements\db\ElementQueryInterface;
-use Craft\helpers\ArrayHelper;
-use craft\helpers\Html;
 use craft\helpers\Json;
-use craft\helpers\Template;
 use craft\helpers\UrlHelper;
+use craft\models\FieldLayout;
+use craft\web\UploadedFile;
 
 use yii\base\Exception;
-use yii\base\InvalidConfigException;
 
 use LitEmoji\LitEmoji;
 
 class Item extends Element
 {
-    // Static
+    // Static Methods
     // =========================================================================
 
     public static function displayName(): string
@@ -36,7 +28,7 @@ class Item extends Element
         return Craft::t('wishlist', 'Wishlist Item');
     }
 
-    public static function refHandle()
+    public static function refHandle(): ?string
     {
         return 'wishlistItem';
     }
@@ -51,20 +43,18 @@ class Item extends Element
         return true;
     }
 
-    public static function find(): ElementQueryInterface
+    public static function find(): ItemQuery
     {
         return new ItemQuery(static::class);
     }
 
     public static function defineSources(string $context = null): array
     {
-        $sources = [[
+        return [[
             'key' => '*',
             'label' => Craft::t('wishlist', 'All items'),
             'defaultSort' => ['dateCreated', 'desc'],
         ]];
-
-        return $sources;
     }
 
     protected static function defineActions(string $source = null): array
@@ -84,10 +74,6 @@ class Item extends Element
     {
         return ['title', 'elementDisplay'];
     }
-
-
-    // Element index methods
-    // -------------------------------------------------------------------------
 
     protected static function defineSortOptions(): array
     {
@@ -122,37 +108,37 @@ class Item extends Element
     // Properties
     // =========================================================================
 
-    public $id;
-    public $elementId;
-    public $elementSiteId;
-    public $elementClass;
-    public $listId;
+    public ?int $id = null;
+    public ?int $elementId = null;
+    public ?int $elementSiteId = null;
+    public ?string $elementClass = null;
+    public ?int $listId = null;
 
-    private $_element;
-    private $_list;
-    private $_fieldLayout;
-    private $_listItemIds = [];
-    private $_options = [];
+    private ?ElementInterface $_element = null;
+    private ?ListElement $_list = null;
+    private ?FieldLayout $_fieldLayout = null;
+    private array $_listItemIds = [];
+    private array $_options = [];
 
 
     // Public Methods
     // =========================================================================
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 
         $this->updateTitle();
     }
 
-    public function updateTitle()
+    public function updateTitle(): void
     {
         if ($element = $this->getElement()) {
             $this->title = $element->title;
         }
     }
 
-    public function getElement()
+    public function getElement(): ?ElementInterface
     {
         if ($this->_element !== null) {
             return $this->_element;
@@ -165,12 +151,12 @@ class Item extends Element
         return $this->_element = Craft::$app->getElements()->getElementById($this->elementId, $this->elementClass, $this->elementSiteId);
     }
 
-    public function setElement($element = null)
+    public function setElement($element = null): void
     {
         $this->_element = $element;
     }
 
-    public function getList()
+    public function getList(): ?ListElement
     {
         if ($this->_list !== null) {
             return $this->_list;
@@ -189,17 +175,17 @@ class Item extends Element
         return $this->_list = $list;
     }
 
-    public function getElementDisplay()
+    public function getElementDisplay(): ?string
     {
         return $this->elementClass ? $this->elementClass::displayName() : null;
     }
 
-    public function getCpEditUrl()
+    public function getCpEditUrl(): ?string
     {
-        return UrlHelper::cpUrl('wishlist/lists/' . $this->getList()->type->handle . '/' . $this->listId . '/items/' . $this->id);
+        return UrlHelper::cpUrl('wishlist/lists/' . $this->getList()->getType()->handle . '/' . $this->listId . '/items/' . $this->id);
     }
     
-    public function getFieldLayout()
+    public function getFieldLayout(): ?FieldLayout
     {
         if ($this->_fieldLayout !== null) {
             return $this->_fieldLayout;
@@ -212,7 +198,7 @@ class Item extends Element
         return $this->_fieldLayout = parent::getFieldLayout();
     }
 
-    public function getInList()
+    public function getInList(): bool
     {
         if ($this->id && $list = $this->getList()) {
             if (!$this->_listItemIds) {
@@ -230,7 +216,7 @@ class Item extends Element
         return $this->_options;
     }
 
-    public function setOptions($options)
+    public function setOptions($options): void
     {
         $options = Json::decodeIfJson($options);
 
@@ -241,11 +227,9 @@ class Item extends Element
         $cleanEmojiValues = static function(&$options) use (&$cleanEmojiValues) {
             foreach ($options as $key => $value) {
                 if (is_array($value)) {
-                    $cleanEmojiValues($options[$key]);
-                } else {
-                    if (is_string($value)) {
-                        $options[$key] = LitEmoji::unicodeToShortcode($value);
-                    }
+                    $cleanEmojiValues($value);
+                } else if (is_string($value)) {
+                    $options[$key] = LitEmoji::unicodeToShortcode($value);
                 }
             }
 
@@ -260,17 +244,17 @@ class Item extends Element
         }
     }
 
-    public function getOptionsSignature()
+    public function getOptionsSignature(): string
     {
-        return Wishlist::getInstance()->getItems()->getOptionsSignature($this->_options);
+        return Wishlist::$plugin->getItems()->getOptionsSignature($this->_options);
     }
 
-    public function setOptionsSignature($value)
+    public function setOptionsSignature($value): void
     {
         // Read-only value, but method exists to prevent query errors
     }
 
-    public function setFieldValuesFromRequest(string $paramNamespace = '')
+    public function setFieldValuesFromRequest(string $paramNamespace = ''): void
     {
         $this->setFieldParamNamespace($paramNamespace);
         $values = Craft::$app->getRequest()->getParam($paramNamespace, []);
@@ -279,7 +263,7 @@ class Item extends Element
             // Do we have any post data for this field?
             if (isset($values[$field->handle])) {
                 $value = $values[$field->handle];
-            } else if (!empty($this->_fieldParamNamePrefix) && UploadedFile::getInstancesByName($this->_fieldParamNamePrefix . '.' . $field->handle)) {
+            } else if (!empty($this->getFieldParamNamespace()) && UploadedFile::getInstancesByName($this->getFieldParamNamespace() . '.' . $field->handle)) {
                 // A file was uploaded for this field
                 $value = null;
             } else {
@@ -293,7 +277,7 @@ class Item extends Element
         }
     }
 
-    public static function gqlTypeNameByContext($context): string
+    public static function gqlTypeNameByContext(mixed $context): string
     {
         return 'Item';
     }
@@ -307,21 +291,21 @@ class Item extends Element
     // URLs
     // -------------------------------------------------------------------------
 
-    public function getAddUrl($params = [])
+    public function getAddUrl($params = []): string
     {
         $params = array_merge([ 'elementId' => $this->elementId, 'listId' => $this->listId ], $params);
 
         return UrlHelper::actionUrl('wishlist/items/add', $params);
     }
 
-    public function getRemoveUrl($params = [])
+    public function getRemoveUrl($params = []): string
     {
         $params = array_merge([ 'elementId' => $this->elementId, 'listId' => $this->listId ], $params);
 
         return UrlHelper::actionUrl('wishlist/items/remove', $params);
     }
 
-    public function getToggleUrl($params = [])
+    public function getToggleUrl($params = []): string
     {
         $params = array_merge([ 'elementId' => $this->elementId, 'listId' => $this->listId ], $params);
         
@@ -332,7 +316,7 @@ class Item extends Element
     // Events
     // -------------------------------------------------------------------------
 
-    public function afterSave(bool $isNew)
+    public function afterSave(bool $isNew): void
     {
         // Get the node record
         if (!$isNew) {

@@ -5,30 +5,30 @@ use craft\base\Model;
 
 class Settings extends Model
 {
-    // Public Properties
+    // Properties
     // =========================================================================
 
-    public $pluginName = 'Wishlist';
-    public $showListInfoTab = true;
+    public string $pluginName = 'Wishlist';
+    public bool $showListInfoTab = true;
 
     // Lists
-    public $allowDuplicates = false;
-    public $manageDisabledLists = true;
-    public $mergeLastListOnLogin = false;
-    public $purgeInactiveLists = true;
-    public $purgeInactiveListsDuration = 'P3M';
-    public $purgeInactiveGuestListsDuration = 'P1D';
-    public $purgeEmptyListsOnly = true;
-    public $purgeEmptyGuestListsOnly = true;
-    public $cookieExpiry = false;
-    public $updateListSearchIndexes = true;
-    public $updateItemSearchIndexes = true;
+    public bool $allowDuplicates = false;
+    public bool $manageDisabledLists = true;
+    public bool $mergeLastListOnLogin = false;
+    public bool $purgeInactiveLists = true;
+    public string $purgeInactiveListsDuration = 'P3M';
+    public string $purgeInactiveGuestListsDuration = 'P1D';
+    public bool $purgeEmptyListsOnly = true;
+    public bool $purgeEmptyGuestListsOnly = true;
+    public bool $cookieExpiry = false;
+    public bool $updateListSearchIndexes = true;
+    public bool $updateItemSearchIndexes = true;
 
     // PDF
-    public $pdfFilenameFormat = 'Wishlist-{id}';
-    public $pdfPath = '_pdf/wishlist';
-    public $pdfAllowRemoteImages = false;
-    public $pdfPaperSize = 'letter';
-    public $pdfPaperOrientation = 'portrait';
+    public string $pdfFilenameFormat = 'Wishlist-{id}';
+    public string $pdfPath = '_pdf/wishlist';
+    public bool $pdfAllowRemoteImages = false;
+    public string $pdfPaperSize = 'letter';
+    public string $pdfPaperOrientation = 'portrait';
 
 }

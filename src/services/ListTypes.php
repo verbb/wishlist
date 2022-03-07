@@ -5,16 +5,13 @@ use verbb\wishlist\elements\Item;
 use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\events\ListTypeEvent;
 use verbb\wishlist\models\ListType;
-use verbb\wishlist\records\ListRecord;
 use verbb\wishlist\records\ListType as ListTypeRecord;
 
 use Craft;
+use craft\base\Field;
 use craft\db\Query;
 use craft\events\ConfigEvent;
-use craft\events\DeleteSiteEvent;
 use craft\events\FieldEvent;
-use craft\events\SiteEvent;
-use craft\helpers\App;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Db;
 use craft\helpers\ProjectConfig as ProjectConfigHelper;
@@ -22,28 +19,30 @@ use craft\helpers\StringHelper;
 use craft\models\FieldLayout;
 
 use yii\base\Component;
-use yii\base\Exception;
+use yii\web\HttpException;
+
+use Throwable;
 
 class ListTypes extends Component
 {
     // Constants
     // =========================================================================
 
-    const EVENT_BEFORE_SAVE_LISTTYPE = 'beforeSaveListType';
-    const EVENT_AFTER_SAVE_LISTTYPE = 'afterSaveListType';
-    const CONFIG_LISTTYPES_KEY = 'wishlist.listTypes';
+    public const EVENT_BEFORE_SAVE_LISTTYPE = 'beforeSaveListType';
+    public const EVENT_AFTER_SAVE_LISTTYPE = 'afterSaveListType';
+    public const CONFIG_LISTTYPES_KEY = 'wishlist.listTypes';
 
 
     // Properties
     // =========================================================================
 
-    private $_fetchedAllListTypes = false;
-    private $_listTypesById;
-    private $_listTypesByHandle;
-    private $_allListTypeIds;
-    private $_editableListTypeIds;
-    private $_defaultListType;
-    private $_savingListTypes = [];
+    private bool $_fetchedAllListTypes = false;
+    private ?array $_listTypesById = null;
+    private ?array $_listTypesByHandle = null;
+    private ?array $_allListTypeIds = null;
+    private ?array $_editableListTypeIds = null;
+    private ?ListType $_defaultListType = null;
+    private array $_savingListTypes = [];
 
 
     // Public Methods
@@ -63,7 +62,7 @@ class ListTypes extends Component
         return $editableListTypes;
     }
 
-    public function getEditableListTypeIds(): array
+    public function getEditableListTypeIds(): ?array
     {
         if (null === $this->_editableListTypeIds) {
             $this->_editableListTypeIds = [];
@@ -79,7 +78,7 @@ class ListTypes extends Component
         return $this->_editableListTypeIds;
     }
 
-    public function getAllListTypeIds(): array
+    public function getAllListTypeIds(): ?array
     {
         if (null === $this->_allListTypeIds) {
             $this->_allListTypeIds = [];
@@ -131,7 +130,7 @@ class ListTypes extends Component
         return $this->_listTypesByHandle[$handle];
     }
 
-    public function getDefaultListType()
+    public function getDefaultListType(): ?ListType
     {
         if ($this->_defaultListType !== null) {
             return $this->_defaultListType;
@@ -178,7 +177,7 @@ class ListTypes extends Component
                 ->one();
 
             if (!$existingListTypeRecord) {
-                throw new ListTypeNotFoundException("No list type exists with the ID '{$listType->id}'");
+                throw new HttpException(404, "No list type exists with the ID '{$listType->id}'");
             }
 
             $listType->uid = $existingListTypeRecord->uid;
@@ -225,7 +224,7 @@ class ListTypes extends Component
 
     }
 
-    public function handleChangedListType(ConfigEvent $event)
+    public function handleChangedListType(ConfigEvent $event): void
     {
         $listTypeUid = $event->tokenMatches[0];
         $data = $event->newValue;
@@ -287,7 +286,7 @@ class ListTypes extends Component
             $listTypeRecord->save(false);
 
             $transaction->commit();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $transaction->rollBack();
             throw $e;
         }
@@ -318,7 +317,7 @@ class ListTypes extends Component
         return true;
     }
 
-    public function handleDeletedListType(ConfigEvent $event)
+    public function handleDeletedListType(ConfigEvent $event): void
     {
         $uid = $event->tokenMatches[0];
         $listTypeRecord = $this->_getListTypeRecord($uid);
@@ -352,7 +351,7 @@ class ListTypes extends Component
             $listTypeRecord->delete();
 
             $transaction->commit();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $transaction->rollBack();
 
             throw $e;
@@ -369,7 +368,7 @@ class ListTypes extends Component
         );
     }
 
-    public function pruneDeletedField(FieldEvent $event)
+    public function pruneDeletedField(FieldEvent $event): void
     {
         /** @var Field $field */
         $field = $event->field;
@@ -404,7 +403,7 @@ class ListTypes extends Component
         }
     }
 
-    public function getListTypeById(int $listTypeId)
+    public function getListTypeById(int $listTypeId): ?ListType
     {
         if (isset($this->_listTypesById[$listTypeId])) {
             return $this->_listTypesById[$listTypeId];
@@ -427,7 +426,7 @@ class ListTypes extends Component
         return $this->_listTypesById[$listTypeId];
     }
 
-    public function getListTypeByUid(string $uid)
+    public function getListTypeByUid(string $uid): ?ListType
     {
         return ArrayHelper::firstWhere($this->getAllListTypes(), 'uid', $uid, true);
     }
@@ -436,7 +435,7 @@ class ListTypes extends Component
     // Private methods
     // =========================================================================
 
-    private function _memoizeListType(ListType $listType)
+    private function _memoizeListType(ListType $listType): void
     {
         $this->_listTypesById[$listType->id] = $listType;
         $this->_listTypesByHandle[$listType->handle] = $listType;

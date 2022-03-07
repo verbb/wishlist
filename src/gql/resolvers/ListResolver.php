@@ -7,14 +7,12 @@ use verbb\wishlist\helpers\Gql as GqlHelper;
 use craft\gql\base\ElementResolver;
 use craft\helpers\Db;
 
-use GraphQL\Type\Definition\ResolveInfo;
-
 class ListResolver extends ElementResolver
 {
-    // Public Methods
+    // Static Methods
     // =========================================================================
 
-    public static function prepareQuery($source, array $arguments, $fieldName = null)
+    public static function prepareQuery(mixed $source, array $arguments, $fieldName = null): mixed
     {
         if ($source === null) {
             $query = ListElement::find();

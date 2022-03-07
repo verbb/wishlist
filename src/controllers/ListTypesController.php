@@ -5,7 +5,6 @@ use verbb\wishlist\Wishlist;
 use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\elements\Item;
 use verbb\wishlist\models\ListType;
-use verbb\wishlist\models\ListTypeSite;
 
 use Craft;
 use craft\web\Controller;
@@ -18,7 +17,7 @@ class ListTypesController extends Controller
     // Public Methods
     // =========================================================================
 
-    public function init()
+    public function init(): void
     {
         $this->requirePermission('wishlist-manageListTypes');
 
@@ -27,7 +26,7 @@ class ListTypesController extends Controller
 
     public function actionListTypeIndex(): Response
     {
-        $listTypes = Wishlist::getInstance()->getListTypes()->getAllListTypes();
+        $listTypes = Wishlist::$plugin->getListTypes()->getAllListTypes();
 
         return $this->renderTemplate('wishlist/list-types/index', compact('listTypes'));
     }
@@ -43,8 +42,7 @@ class ListTypesController extends Controller
 
         if (empty($variables['listType'])) {
             if (!empty($variables['listTypeId'])) {
-                $listTypeId = $variables['listTypeId'];
-                $variables['listType'] = Wishlist::getInstance()->getListTypes()->getListTypeById($listTypeId);
+                $variables['listType'] = Wishlist::$plugin->getListTypes()->getListTypeById($listTypeId);
 
                 if (!$variables['listType']) {
                     throw new HttpException(404);
@@ -82,7 +80,7 @@ class ListTypesController extends Controller
         return $this->renderTemplate('wishlist/list-types/_edit', $variables);
     }
 
-    public function actionSaveListType()
+    public function actionSaveListType(): void
     {
         $currentUser = Craft::$app->getUser()->getIdentity();
 
@@ -112,7 +110,7 @@ class ListTypesController extends Controller
         $listType->getBehavior('itemFieldLayout')->setFieldLayout($itemFieldLayout);
 
         // Save it
-        if (Wishlist::getInstance()->getListTypes()->saveListType($listType)) {
+        if (Wishlist::$plugin->getListTypes()->saveListType($listType)) {
             Craft::$app->getSession()->setNotice(Craft::t('wishlist', 'List type saved.'));
             $this->redirectToPostedUrl($listType);
         } else {
@@ -132,7 +130,7 @@ class ListTypesController extends Controller
 
         $listTypeId = Craft::$app->getRequest()->getRequiredBodyParam('id');
 
-        Wishlist::getInstance()->getListTypes()->deleteListTypeById($listTypeId);
+        Wishlist::$plugin->getListTypes()->deleteListTypeById($listTypeId);
         return $this->asJson(['success' => true]);
     }
 }

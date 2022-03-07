@@ -8,11 +8,8 @@ use verbb\wishlist\elements\ListElement;
 use Craft;
 use craft\db\Migration;
 use craft\db\Query;
-use craft\db\Table;
 use craft\helpers\Console;
 use craft\helpers\Json;
-
-use Throwable;
 
 use yii\helpers\Markdown;
 
@@ -21,13 +18,13 @@ class MigrateUpvote extends Migration
     // Properties
     // =========================================================================
 
-    public $id;
+    public ?int $id = null;
 
 
     // Public Methods
     // =========================================================================
 
-    public function safeUp()
+    public function safeUp(): bool
     {
         $history = (new Query())
             ->from('{{%upvote_userhistories}}')
@@ -74,7 +71,7 @@ class MigrateUpvote extends Migration
             $item = new Item();
             $item->listId = $list->id;
             $item->elementId = $elementId;
-            $item->elementClass = get_class($element);
+            $item->elementClass = $element::class;
             $item->options = Json::encode([]);
             $item->optionsSignature = md5(Json::encode([]));
 
@@ -90,9 +87,11 @@ class MigrateUpvote extends Migration
 
             $this->stdout("    > Element ID #{$elementId} migrated.", Console::FG_GREEN);
         }
+
+        return true;
     }
 
-    public function safeDown()
+    public function safeDown(): bool
     {
         return false;
     }
@@ -101,7 +100,7 @@ class MigrateUpvote extends Migration
     // Private Methods
     // =========================================================================
 
-    private function stdout($string, $color = '')
+    private function stdout($string, $color = ''): void
     {
         $class = '';
 

@@ -4,9 +4,6 @@ namespace verbb\wishlist\fieldlayoutelements;
 use Craft;
 use craft\base\ElementInterface;
 use craft\fieldlayoutelements\BaseField;
-use craft\helpers\Html;
-
-use yii\base\InvalidArgumentException;
 
 class OptionsField extends BaseField
 {
@@ -27,12 +24,12 @@ class OptionsField extends BaseField
     // Protected Methods
     // =========================================================================
 
-    protected function defaultLabel(ElementInterface $element = null, bool $static = false)
+    protected function defaultLabel(ElementInterface $element = null, bool $static = false): ?string
     {
         return Craft::t('wishlist', 'Options');
     }
 
-    protected function inputHtml(ElementInterface $element = null, bool $static = false)
+    protected function inputHtml(ElementInterface $element = null, bool $static = false): ?string
     {
         return Craft::$app->getView()->renderTemplate('wishlist/_includes/_item-options', [
             'element' => $element,

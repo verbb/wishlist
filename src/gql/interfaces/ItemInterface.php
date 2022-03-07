@@ -3,23 +3,17 @@ namespace verbb\wishlist\gql\interfaces;
 
 use verbb\wishlist\elements\Item;
 use verbb\wishlist\gql\types\generators\ItemGenerator;
-use verbb\wishlist\gql\arguments\ItemArguments;
-use verbb\wishlist\gql\interfaces\ItemInterface as ItemInterfaceLocal;
 
-use craft\gql\base\InterfaceType as BaseInterfaceType;
 use craft\gql\interfaces\Element;
-use craft\gql\types\DateTime;
-use craft\gql\TypeLoader;
 use craft\gql\TypeManager;
 use craft\gql\GqlEntityRegistry;
-use craft\helpers\Gql;
 
 use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\Type;
 
 class ItemInterface extends Element
 {
-    // Public Methods
+    // Static Methods
     // =========================================================================
 
     public static function getTypeGenerator(): string

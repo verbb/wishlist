@@ -6,35 +6,42 @@ use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\records\ListRecord;
 use verbb\wishlist\records\Item;
 
-use Craft;
 use craft\db\Migration;
 use craft\db\Query;
 use craft\db\Table;
+use craft\elements\Asset;
+use craft\elements\Tag;
+use craft\elements\User;
+use craft\elements\Category;
+use craft\elements\Entry;
 use craft\helpers\Json;
 
-use Throwable;
+use craft\commerce\elements\Variant;
+use craft\commerce\elements\Product;
 
 class MigrateShortlist extends Migration
 {
     // Properties
     // =========================================================================
 
-    public $shortlistId;
+    public mixed $shortlistId = null;
 
-    private $_list;
+    private mixed $_list = null;
 
 
     // Public Methods
     // =========================================================================
 
-    public function safeUp()
+    public function safeUp(): bool
     {
         if ($this->_list = $this->_migrateList()) {
             $this->_migrateItems();
         }
+
+        return true;
     }
 
-    public function safeDown()
+    public function safeDown(): bool
     {
         return false;
     }
@@ -43,7 +50,7 @@ class MigrateShortlist extends Migration
     // Private Methods
     // =========================================================================
 
-    private function _migrateList()
+    private function _migrateList(): bool|ListRecord
     {
         $shortlist = (new Query())
             ->from('{{%shortlist_list}}')
@@ -95,7 +102,7 @@ class MigrateShortlist extends Migration
 
     }
 
-    private function _migrateItems()
+    private function _migrateItems(): void
     {
         $shortlistItems = (new Query())
             ->from('{{%shortlist_item}}')
@@ -112,19 +119,19 @@ class MigrateShortlist extends Migration
             $elementClass = '';
 
             if ($shortlistItem['elementType'] === 'Entry') {
-                $elementClass = 'craft\\elements\\Entry';
+                $elementClass = Entry::class;
             } else if ($shortlistItem['elementType'] === 'Category') {
-                $elementClass = 'craft\\elements\\Category';
+                $elementClass = Category::class;
             } else if ($shortlistItem['elementType'] === 'User') {
-                $elementClass = 'craft\\elements\\User';
+                $elementClass = User::class;
             } else if ($shortlistItem['elementType'] === 'Tag') {
-                $elementClass = 'craft\\elements\\Tag';
+                $elementClass = Tag::class;
             } else if ($shortlistItem['elementType'] === 'Asset') {
-                $elementClass = 'craft\\elements\\Asset';
+                $elementClass = Asset::class;
             } else if ($shortlistItem['elementType'] === 'Commerce_Product') {
-                $elementClass = 'craft\\commerce\\elements\\Product';
+                $elementClass = Product::class;
             } else if ($shortlistItem['elementType'] === 'Commerce_Variant') {
-                $elementClass = 'craft\\commerce\\elements\\Variant';
+                $elementClass = Variant::class;
             }
 
             if ($element && $elementClass) {

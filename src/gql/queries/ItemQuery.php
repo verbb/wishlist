@@ -12,10 +12,10 @@ use GraphQL\Type\Definition\Type;
 
 class ItemQuery extends Query
 {
-    // Public Methods
+    // Static Methods
     // =========================================================================
 
-    public static function getQueries($checkToken = true): array
+    public static function getQueries(bool $checkToken = true): array
     {
         if ($checkToken && !GqlHelper::canQueryWishlistItems()) {
             return [];

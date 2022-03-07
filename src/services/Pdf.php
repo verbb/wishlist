@@ -6,7 +6,6 @@ use verbb\wishlist\events\PdfEvent;
 
 use Craft;
 use craft\helpers\FileHelper;
-use craft\helpers\UrlHelper;
 use craft\web\View;
 
 use Dompdf\Dompdf;
@@ -21,8 +20,8 @@ class Pdf extends Component
     // Constants
     // =========================================================================
 
-    const EVENT_BEFORE_RENDER_PDF = 'beforeRenderPdf';
-    const EVENT_AFTER_RENDER_PDF = 'afterRenderPdf';
+    public const EVENT_BEFORE_RENDER_PDF = 'beforeRenderPdf';
+    public const EVENT_AFTER_RENDER_PDF = 'afterRenderPdf';
 
     // Public Methods
     // =========================================================================
@@ -115,9 +114,9 @@ class Pdf extends Component
 
         if ($format === 'plain') {
             return $html;
-        } else {
-            $dompdf->render();
         }
+
+        $dompdf->render();
 
         // Trigger an 'afterRenderPdf' event
         $event = new PdfEvent([

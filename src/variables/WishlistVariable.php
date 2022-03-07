@@ -2,16 +2,11 @@
 namespace verbb\wishlist\variables;
 
 use verbb\wishlist\Wishlist;
-use verbb\wishlist\elements\db\ItemQuery;
-use verbb\wishlist\elements\db\ListQuery;
 use verbb\wishlist\elements\Item;
 use verbb\wishlist\elements\ListElement;
+use verbb\wishlist\elements\db\ListQuery;
 
-use Craft;
-use craft\helpers\UrlHelper;
-use craft\web\View;
-
-use yii\base\Behavior;
+use verbb\wishlist\elements\db\ItemQuery;
 
 class WishlistVariable
 {
@@ -23,7 +18,7 @@ class WishlistVariable
         return Wishlist::$plugin;
     }
 
-    public function getPluginName()
+    public function getPluginName(): string
     {
         return Wishlist::$plugin->getPluginName();
     }
@@ -36,9 +31,9 @@ class WishlistVariable
             }
 
             return Wishlist::$plugin->getLists()->getListQueryForOwner();
-        } else {
-            return ListElement::find();
         }
+
+        return ListElement::find();
     }
 
     public function items(): ItemQuery
@@ -46,7 +41,7 @@ class WishlistVariable
         return Item::find();
     }
 
-    public function item($elementId, $listId = null, $listType = null)
+    public function item($elementId, $listId = null, $listType = null): ?Item
     {
         $item = null;
         $listTypeId = null;
@@ -73,7 +68,7 @@ class WishlistVariable
         return $item;
     }
 
-    public function getInUserLists($elementId)
+    public function getInUserLists($elementId): bool
     {
         // Get all lists for the current user (session).
         $userListIds = Wishlist::$plugin->getLists()->getListQueryForOwner()->ids();

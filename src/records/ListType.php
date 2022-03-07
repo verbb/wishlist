@@ -1,10 +1,9 @@
 <?php
 namespace verbb\wishlist\records;
 
+use craft\db\ActiveQuery;
 use craft\db\ActiveRecord;
 use craft\records\FieldLayout;
-
-use yii\db\ActiveQueryInterface;
 
 class ListType extends ActiveRecord
 {
@@ -16,12 +15,12 @@ class ListType extends ActiveRecord
         return '{{%wishlist_listtypes}}';
     }
 
-    public function getFieldLayout(): ActiveQueryInterface
+    public function getFieldLayout(): ActiveQuery
     {
         return $this->hasOne(FieldLayout::class, ['id' => 'fieldLayoutId']);
     }
 
-    public function getItemFieldLayout(): ActiveQueryInterface
+    public function getItemFieldLayout(): ActiveQuery
     {
         return $this->hasOne(FieldLayout::class, ['id' => 'itemFieldLayoutId']);
     }

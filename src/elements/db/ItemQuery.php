@@ -1,74 +1,67 @@
 <?php
 namespace verbb\wishlist\elements\db;
 
-use Craft;
-use craft\db\Query;
-use craft\db\QueryAbortedException;
 use craft\elements\db\ElementQuery;
-use craft\helpers\ArrayHelper;
 use craft\helpers\Db;
-use craft\helpers\StringHelper;
-
-use yii\db\Connection;
 
 class ItemQuery extends ElementQuery
 {
     // Properties
     // =========================================================================
 
-    public $id;
-    public $elementId;
-    public $elementSiteId;
-    public $elementClass;
-    public $listId;
-    public $listTypeId;
-    public $options;
-    public $optionsSignature;
-    public $enabled = true;
+    public mixed $id = null;
+    public mixed $elementId = null;
+    public mixed $elementSiteId = null;
+    public mixed $elementClass = null;
+    public mixed $listId = null;
+    public mixed $listTypeId = null;
+    public mixed $options = null;
+    public mixed $optionsSignature = null;
+    public bool $enabled = true;
 
-    protected $defaultOrderBy = ['wishlist_items.dateCreated' => SORT_DESC];
+    protected array $defaultOrderBy = ['wishlist_items.dateCreated' => SORT_DESC];
 
 
     // Public Methods
     // =========================================================================
 
-    public function elementId($value)
+    public function elementId($value): static
     {
         $this->elementId = $value;
         return $this;
     }
 
-    public function elementSiteId($value)
+    public function elementSiteId($value): static
     {
         $this->elementSiteId = $value;
         return $this;
     }
 
-    public function elementClass($value)
+    public function elementClass($value): static
     {
         $this->elementClass = $value;
         return $this;
     }
 
-    public function listId($value)
+    public function listId($value): static
     {
         $this->listId = $value;
         return $this;
     }
 
-    public function listTypeId($value)
+    public function listTypeId($value): static
     {
         $this->listTypeId = $value;
         return $this;
     }
 
-    public function options($value)
+    public function options($value): static
     {
         $this->options = $value;
         return $this;
     }
 
-    public function optionsSignature($value)
+    public function optionsSignature($value): static
     {
         $this->optionsSignature = $value;
         return $this;

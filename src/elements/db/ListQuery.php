@@ -2,30 +2,25 @@
 namespace verbb\wishlist\elements\db;
 
 use verbb\wishlist\WishList;
-use verbb\wishlist\elements\ListElement;
-use verbb\wishlist\models\ListTypeModel;
+use verbb\wishlist\models\ListType;
 
 use Craft;
 use craft\db\Query;
 use craft\db\QueryAbortedException;
 use craft\elements\db\ElementQuery;
-use craft\helpers\ArrayHelper;
 use craft\helpers\Db;
-
-use DateTime;
-use yii\db\Connection;
 
 class ListQuery extends ElementQuery
 {
     // Properties
     // =========================================================================
 
-    public $editable = false;
-    public $reference;
-    public $typeId;
-    public $default;
-    public $userId;
-    public $sessionId;
+    public bool $editable = false;
+    public mixed $reference = null;
+    public mixed $typeId = null;
+    public mixed $default = null;
+    public mixed $userId = null;
+    public mixed $sessionId = null;
 
 
     // Public Methods
@@ -42,14 +37,14 @@ class ListQuery extends ElementQuery
         }
     }
 
-    public function editable(bool $value = true)
+    public function editable(bool $value = true): static
     {
         $this->editable = $value;
 
         return $this;
     }
 
-    public function type($value)
+    public function type($value): static
     {
         if ($value instanceof ListType) {
             $this->typeId = $value->id;
@@ -66,35 +61,35 @@ class ListQuery extends ElementQuery
         return $this;
     }
 
-    public function typeId($value)
+    public function typeId($value): static
     {
         $this->typeId = $value;
 
         return $this;
     }
 
-    public function reference($value)
+    public function reference($value): static
     {
         $this->reference = $value;
 
         return $this;
     }
 
-    public function default($value)
+    public function default($value): static
     {
         $this->default = $value;
 
         return $this;
     }
 
-    public function userId($value)
+    public function userId($value): static
     {
         $this->userId = $value;
 
         return $this;
     }
 
-    public function sessionId($value)
+    public function sessionId($value): static
     {
         $this->sessionId = $value;
 
@@ -153,7 +148,7 @@ class ListQuery extends ElementQuery
     // Private Methods
     // =========================================================================
 
-    private function _applyEditableParam()
+    private function _applyEditableParam(): void
     {
         if (!$this->editable) {
             return;

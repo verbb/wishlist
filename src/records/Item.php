@@ -1,11 +1,12 @@
 <?php
 namespace verbb\wishlist\records;
 
+use verbb\wishlist\elements\ListElement;
+
+use craft\db\ActiveQuery;
 use craft\db\ActiveRecord;
 use craft\records\Element;
 use craft\records\Site;
-
-use yii\db\ActiveQueryInterface;
 
 class Item extends ActiveRecord
 {
@@ -17,17 +18,17 @@ class Item extends ActiveRecord
         return '{{%wishlist_items}}';
     }
 
-    public function getElement(): ActiveQueryInterface
+    public function getElement(): ActiveQuery
     {
         return $this->hasOne(Element::class, ['id' => 'id']);
     }
 
-    public function getElementSite(): ActiveQueryInterface
+    public function getElementSite(): ActiveQuery
     {
         return $this->hasOne(Site::class, ['id' => 'elementSiteId']);
     }
 
-    public function getList(): ActiveQueryInterface
+    public function getList(): ActiveQuery
     {
         return $this->hasOne(ListElement::class, ['id' => 'listId']);
     }

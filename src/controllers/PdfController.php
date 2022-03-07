@@ -6,21 +6,20 @@ use verbb\wishlist\Wishlist;
 use Craft;
 use craft\web\Controller;
 
-use yii\web\HttpException;
-use yii\web\Response;
+use yii\console\Response;
 
 class PdfController extends Controller
 {
     // Properties
     // =========================================================================
 
-    protected $allowAnonymous = true;
+    protected array|bool|int $allowAnonymous = true;
 
 
     // Public Methods
     // =========================================================================
 
-    public function actionIndex()
+    public function actionIndex(): \craft\web\Response|string|Response
     {
         $request = Craft::$app->getRequest();
 
@@ -33,7 +32,7 @@ class PdfController extends Controller
         $filename = $this->getView()->renderObjectTemplate($filenameFormat, $list);
 
         if (!$filename) {
-            $filename = 'Wishist';
+            $filename = 'Wishlist';
         }
 
         $options = [
@@ -49,8 +48,8 @@ class PdfController extends Controller
 
         if ($format === 'plain') {
             return $pdf;
-        } else {
-            return Craft::$app->getResponse()->sendContentAsFile($pdf, $filename . '.pdf', $options);
         }
+
+        return Craft::$app->getResponse()->sendContentAsFile($pdf, $filename . '.pdf', $options);
     }
 }

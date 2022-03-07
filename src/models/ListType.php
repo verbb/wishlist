@@ -3,12 +3,10 @@ namespace verbb\wishlist\models;
 
 use verbb\wishlist\elements\Item;
 use verbb\wishlist\elements\ListElement;
-use verbb\wishlist\Plugin;
 use verbb\wishlist\records\ListType as ListTypeRecord;
 
 use craft\base\Model;
 use craft\behaviors\FieldLayoutBehavior;
-use craft\helpers\ArrayHelper;
 use craft\helpers\UrlHelper;
 use craft\models\FieldLayout;
 use craft\validators\HandleValidator;
@@ -19,24 +17,24 @@ class ListType extends Model
     // Properties
     // =========================================================================
 
-    public $id;
-    public $name;
-    public $handle;
-    public $fieldLayoutId;
-    public $itemFieldLayoutId;
-    public $default;
-    public $uid;
+    public ?int $id = null;
+    public ?string $name = null;
+    public ?string $handle = null;
+    public ?int $fieldLayoutId = null;
+    public ?int $itemFieldLayoutId = null;
+    public ?bool $default = null;
+    public ?string $uid = null;
 
 
     // Public Methods
     // =========================================================================
 
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->handle;
+        return (string) $this->handle;
     }
 
-    public function rules()
+    public function rules(): array
     {
         return [
             [['id', 'fieldLayoutId', 'itemFieldLayoutId'], 'number', 'integerOnly' => true],
@@ -59,14 +57,12 @@ class ListType extends Model
 
     public function getListFieldLayout(): FieldLayout
     {
-        $behavior = $this->getBehavior('listFieldLayout');
-        return $behavior->getFieldLayout();
+        return $this->getBehavior('listFieldLayout')->getFieldLayout();
     }
 
     public function getItemFieldLayout(): FieldLayout
     {
-        $behavior = $this->getBehavior('itemFieldLayout');
-        return $behavior->getFieldLayout();
+        return $this->getBehavior('itemFieldLayout')->getFieldLayout();
     }
 
     public function behaviors(): array

@@ -6,14 +6,13 @@ use verbb\wishlist\services\ListTypes;
 use Craft;
 use craft\db\Migration;
 use craft\db\Query;
-use craft\helpers\ArrayHelper;
 
 class m200110_000000_project_config_support extends Migration
 {
     // Public Methods
     // =========================================================================
 
-    public function safeUp()
+    public function safeUp(): bool
     {
         // Don't make the same config changes twice
         $projectConfig = Craft::$app->getProjectConfig();
@@ -24,9 +23,11 @@ class m200110_000000_project_config_support extends Migration
 
         $listTypeData = $this->_getListTypeData();
         $projectConfig->set(ListTypes::CONFIG_LISTTYPES_KEY, $listTypeData);
+
+        return true;
     }
 
-    public function safeDown()
+    public function safeDown(): bool
     {
         echo "m200110_000000_project_config_support cannot be reverted.\n";
         return false;
@@ -72,8 +73,6 @@ class m200110_000000_project_config_support extends Migration
             }
 
             unset($listTypeRow['uid'], $listTypeRow['fieldLayoutId'], $listTypeRow['itemFieldLayoutId']);
-
-            $listTypeRow['default'] = $listTypeRow['default'];
 
             $typeData[$rowUid] = $listTypeRow;
         }

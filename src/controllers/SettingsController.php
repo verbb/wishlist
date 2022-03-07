@@ -2,23 +2,26 @@
 namespace verbb\wishlist\controllers;
 
 use verbb\wishlist\Wishlist;
+use verbb\wishlist\models\Settings;
 
 use Craft;
 use craft\web\Controller;
+
+use yii\web\Response;
 
 class SettingsController extends Controller
 {
     // Public Methods
     // =========================================================================
 
-    public function actionIndex()
+    public function actionIndex(): Response
     {
         $settings = Wishlist::$plugin->getSettings();
 
         return $this->renderTemplate('wishlist/settings/general', compact('settings'));
     }
 
-    public function actionSaveSettings()
+    public function actionSaveSettings(): ?Response
     {
         $this->requirePostRequest();
 

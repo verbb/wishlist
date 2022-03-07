@@ -8,7 +8,7 @@ use GraphQL\Type\Definition\Type;
 
 class ItemArguments extends ElementArguments
 {
-    // Public Methods
+    // Static Methods
     // =========================================================================
 
     public static function getArguments(): array

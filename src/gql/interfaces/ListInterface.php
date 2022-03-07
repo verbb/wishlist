@@ -4,24 +4,17 @@ namespace verbb\wishlist\gql\interfaces;
 use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\gql\types\generators\ListGenerator;
 use verbb\wishlist\gql\arguments\ItemArguments;
-use verbb\wishlist\gql\arguments\ListArguments;
-use verbb\wishlist\gql\interfaces\ItemInterface;
-use verbb\wishlist\gql\interfaces\ListInterface as ListInterfaceLocal;
 
-use craft\gql\base\InterfaceType as BaseInterfaceType;
 use craft\gql\interfaces\Element;
-use craft\gql\types\DateTime;
-use craft\gql\TypeLoader;
 use craft\gql\TypeManager;
 use craft\gql\GqlEntityRegistry;
-use craft\helpers\Gql;
 
 use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\Type;
 
 class ListInterface extends Element
 {
-    // Public Methods
+    // Static Methods
     // =========================================================================
 
     public static function getTypeGenerator(): string

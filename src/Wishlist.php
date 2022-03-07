@@ -15,10 +15,10 @@ use verbb\wishlist\services\ListTypes;
 use verbb\wishlist\variables\WishlistVariable;
 
 use Craft;
+use craft\base\Model;
 use craft\base\Plugin;
 use craft\console\controllers\ResaveController;
 use craft\console\Controller as ConsoleController;
-use craft\elements\User as UserElement;
 use craft\events\DefineConsoleActionsEvent;
 use craft\events\DefineFieldLayoutFieldsEvent;
 use craft\events\RebuildConfigEvent;
@@ -46,12 +46,12 @@ use yii\web\User;
 
 class Wishlist extends Plugin
 {
-    // Public Properties
+    // Properties
     // =========================================================================
 
-    public $schemaVersion = '1.0.4';
-    public $hasCpSettings = true;
-    public $hasCpSection = true;
+    public string $schemaVersion = '1.0.4';
+    public bool $hasCpSettings = true;
+    public bool $hasCpSection = true;
 
 
     // Traits
@@ -63,7 +63,7 @@ class Wishlist extends Plugin
     // Public Methods
     // =========================================================================
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -85,17 +85,17 @@ class Wishlist extends Plugin
         $this->_registerGraphQl();
     }
 
-    public function getPluginName()
+    public function getPluginName(): string
     {
         return Craft::t('wishlist', $this->getSettings()->pluginName);
     }
 
-    public function getSettingsResponse()
+    public function getSettingsResponse(): mixed
     {
-        Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('wishlist/settings'));
+        return Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('wishlist/settings'));
     }
 
-    public function getCpNavItem(): array
+    public function getCpNavItem(): ?array
     {
         $navItems = parent::getCpNavItem();
 
@@ -129,7 +129,7 @@ class Wishlist extends Plugin
     // Protected Methods
     // =========================================================================
 
-    protected function createSettingsModel(): Settings
+    protected function createSettingsModel(): ?Model
     {
         return new Settings();
     }
@@ -138,7 +138,7 @@ class Wishlist extends Plugin
     // Private Methods
     // =========================================================================
 
-    private function _registerCpRoutes()
+    private function _registerCpRoutes(): void
     {
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event) {
             $event->rules = array_merge($event->rules, [
@@ -160,7 +160,7 @@ class Wishlist extends Plugin
         });
     }
 
-    private function _registerEmailMessages()
+    private function _registerEmailMessages(): void
     {
         Event::on(SystemMessages::class, SystemMessages::EVENT_REGISTER_MESSAGES, function(RegisterEmailMessagesEvent $event) {
             $event->messages = array_merge($event->messages, [
@@ -174,10 +174,10 @@ class Wishlist extends Plugin
         });
     }
 
-    private function _registerPermissions()
+    private function _registerPermissions(): void
     {
         Event::on(UserPermissions::class, UserPermissions::EVENT_REGISTER_PERMISSIONS, function(RegisterUserPermissionsEvent $event) {
-            $listTypes = Wishlist::getInstance()->getListTypes()->getAllListTypes();
+            $listTypes = Wishlist::$plugin->getListTypes()->getAllListTypes();
 
             $listTypePermissions = [];
             foreach ($listTypes as $id => $listType) {
@@ -192,14 +192,14 @@ class Wishlist extends Plugin
         });
     }
 
-    private function _registerVariables()
+    private function _registerVariables(): void
     {
         Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $event) {
             $event->sender->set('wishlist', WishlistVariable::class);
         });
     }
 
-    private function _registerElementTypes()
+    private function _registerElementTypes(): void
     {
         Event::on(Elements::class, Elements::EVENT_REGISTER_ELEMENT_TYPES, function(RegisterComponentTypesEvent $event) {
             $event->types[] = ListElement::class;
@@ -207,7 +207,7 @@ class Wishlist extends Plugin
         });
     }
 
-    private function _registerProjectConfigEventListeners()
+    private function _registerProjectConfigEventListeners(): void
     {
         $projectConfigService = Craft::$app->getProjectConfig();
 
@@ -218,34 +218,34 @@ class Wishlist extends Plugin
 
         Event::on(Fields::class, Fields::EVENT_AFTER_DELETE_FIELD, [$listTypeService, 'pruneDeletedField']);
 
-        Event::on(ProjectConfig::class, ProjectConfig::EVENT_REBUILD, function (RebuildConfigEvent $event) {
+        Event::on(ProjectConfig::class, ProjectConfig::EVENT_REBUILD, function (RebuildConfigEvent $event): void {
             $event->config['wishlist'] = ProjectConfigData::rebuildProjectConfig();
         });
     }
 
-    private function _registerGarbageCollection()
+    private function _registerGarbageCollection(): void
     {
         Event::on(Gc::class, Gc::EVENT_RUN, function() {
-            // Deletes lists that meet the purge settings
+            // Delete lists that meet the purge settings
             Wishlist::$plugin->getLists()->purgeInactiveLists();
         });
     }
 
-    private function _registerSessionEventListeners()
+    private function _registerSessionEventListeners(): void
     {
         if (!Craft::$app->getRequest()->getIsConsoleRequest()) {
             Event::on(User::class, User::EVENT_AFTER_LOGIN, [$this->getLists(), 'loginHandler']);
         }
     }
 
-    private function _defineResaveCommand()
+    private function _defineResaveCommand(): void
     {
         if (!Craft::$app->getRequest()->getIsConsoleRequest()) {
             return;
         }
 
-        Event::on(ResaveController::class, ConsoleController::EVENT_DEFINE_ACTIONS, function(DefineConsoleActionsEvent $e) {
-            $e->actions['wishlist-items'] = [
+        Event::on(ResaveController::class, ConsoleController::EVENT_DEFINE_ACTIONS, function(DefineConsoleActionsEvent $event) {
+            $event->actions['wishlist-items'] = [
                 'action' => function(): int {
                     $controller = Craft::$app->controller;
 
@@ -264,7 +264,7 @@ class Wishlist extends Plugin
                 ],
             ];
 
-            $e->actions['wishlist-lists'] = [
+            $event->actions['wishlist-lists'] = [
                 'action' => function(): int {
                     $controller = Craft::$app->controller;
 
@@ -277,7 +277,7 @@ class Wishlist extends Plugin
         });
     }
 
-    private function _registerGraphQl()
+    private function _registerGraphQl(): void
     {
         Event::on(Gql::class, Gql::EVENT_REGISTER_GQL_TYPES, function(RegisterGqlTypesEvent $event) {
             $event->types[] = ListInterface::class;
@@ -295,7 +295,7 @@ class Wishlist extends Plugin
         });
 
         Event::on(Gql::class, Gql::EVENT_REGISTER_GQL_SCHEMA_COMPONENTS, function(RegisterGqlSchemaComponentsEvent $event) {
-            $listTypes = Wishlist::getInstance()->getListTypes()->getAllListTypes();
+            $listTypes = Wishlist::$plugin->getListTypes()->getAllListTypes();
 
             if (!empty($listTypes)) {
                 $label = Craft::t('wishlist', 'Wishlist');
@@ -312,7 +312,7 @@ class Wishlist extends Plugin
         });
     }
 
-    private function _registerTemplateHooks()
+    private function _registerTemplateHooks(): void
     {
         if ($this->getSettings()->showListInfoTab) {
             Craft::$app->getView()->hook('cp.users.edit', [$this->getLists(), 'addEditUserListInfoTab']);
@@ -320,15 +320,13 @@ class Wishlist extends Plugin
         }
     }
 
-    private function _defineFieldLayoutElements()
+    private function _defineFieldLayoutElements(): void
     {
-        Event::on(FieldLayout::class, FieldLayout::EVENT_DEFINE_STANDARD_FIELDS, function(DefineFieldLayoutFieldsEvent $e) {
-            $fieldLayout = $e->sender;
+        Event::on(FieldLayout::class, FieldLayout::EVENT_DEFINE_NATIVE_FIELDS, function(DefineFieldLayoutFieldsEvent $event): void {
+            $fieldLayout = $event->sender;
 
-            switch ($fieldLayout->type) {
-                case Item::class:
-                    $e->fields[] = OptionsField::class;
-                    break;
+            if ($fieldLayout->type == Item::class) {
+                $event->fields[] = OptionsField::class;
             }
         });
     }
