@@ -258,7 +258,7 @@ class Wishlist extends Plugin
                         $query->listId(explode(',', $controller->listId));
                     }
 
-                    return $controller->saveElements($query);
+                    return $controller->resaveElements($query);
                 },
                 'options' => ['listId'],
                 'helpSummary' => 'Re-saves Wishlist items.',
@@ -273,7 +273,7 @@ class Wishlist extends Plugin
 
                     $query = ListElement::find();
 
-                    return $controller->saveElements($query);
+                    return $controller->resaveElements($query);
                 },
                 'helpSummary' => 'Re-saves Wishlist lists.',
             ];

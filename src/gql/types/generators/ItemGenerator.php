@@ -10,7 +10,6 @@ use craft\gql\base\Generator;
 use craft\gql\base\GeneratorInterface;
 use craft\gql\base\SingleGeneratorInterface;
 use craft\gql\GqlEntityRegistry;
-use craft\gql\TypeManager;
 
 class ItemGenerator extends Generator implements GeneratorInterface, SingleGeneratorInterface
 {
@@ -29,7 +28,7 @@ class ItemGenerator extends Generator implements GeneratorInterface, SingleGener
 
         $typeName = Item::gqlTypeNameByContext(null);
         $contentFieldGqlTypes = self::getContentFields($context);
-        $itemFields = TypeManager::prepareFieldDefinitions(array_merge(ItemInterface::getFieldDefinitions(), $contentFieldGqlTypes), $typeName);
+        $itemFields = Craft::$app->getGql()->prepareFieldDefinitions(array_merge(ItemInterface::getFieldDefinitions(), $contentFieldGqlTypes), $typeName);
 
         return GqlEntityRegistry::getEntity($typeName) ?: GqlEntityRegistry::createEntity($typeName, new ItemType([
             'name' => $typeName,

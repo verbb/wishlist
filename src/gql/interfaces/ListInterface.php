@@ -5,8 +5,8 @@ use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\gql\types\generators\ListGenerator;
 use verbb\wishlist\gql\arguments\ItemArguments;
 
+use Craft;
 use craft\gql\interfaces\Element;
-use craft\gql\TypeManager;
 use craft\gql\GqlEntityRegistry;
 
 use GraphQL\Type\Definition\InterfaceType;
@@ -49,7 +49,7 @@ class ListInterface extends Element
 
     public static function getFieldDefinitions(): array
     {
-        return TypeManager::prepareFieldDefinitions(array_merge(parent::getFieldDefinitions(), [
+        return Craft::$app->getGql()->prepareFieldDefinitions(array_merge(parent::getFieldDefinitions(), [
             'items' => [
                 'name' => 'items',
                 'args' => ItemArguments::getArguments(),

@@ -4,8 +4,8 @@ namespace verbb\wishlist\gql\interfaces;
 use verbb\wishlist\elements\Item;
 use verbb\wishlist\gql\types\generators\ItemGenerator;
 
+use Craft;
 use craft\gql\interfaces\Element;
-use craft\gql\TypeManager;
 use craft\gql\GqlEntityRegistry;
 
 use GraphQL\Type\Definition\InterfaceType;
@@ -48,7 +48,7 @@ class ItemInterface extends Element
 
     public static function getFieldDefinitions(): array
     {
-        return TypeManager::prepareFieldDefinitions(array_merge(parent::getFieldDefinitions(), [
+        return Craft::$app->getGql()->prepareFieldDefinitions(array_merge(parent::getFieldDefinitions(), [
             'listId' => [
                 'name' => 'listId',
                 'type' => Type::int(),

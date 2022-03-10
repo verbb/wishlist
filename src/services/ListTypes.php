@@ -331,7 +331,7 @@ class ListTypes extends Component
         try {
             $lists = ListElement::find()
                 ->typeId($listTypeRecord->id)
-                ->anyStatus()
+                ->status(null)
                 ->limit(null)
                 ->all();
 

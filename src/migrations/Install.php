@@ -8,7 +8,7 @@ use verbb\wishlist\models\ListType;
 
 use Craft;
 use craft\db\Migration;
-use craft\helpers\MigrationHelper;
+use craft\helpers\Db;
 use craft\records\FieldLayout;
 
 class Install extends Migration
@@ -130,9 +130,9 @@ class Install extends Migration
 
     public function dropForeignKeys(): void
     {
-        MigrationHelper::dropAllForeignKeysOnTable('{{%wishlist_lists}}', $this);
-        MigrationHelper::dropAllForeignKeysOnTable('{{%wishlist_listtypes}}', $this);
-        MigrationHelper::dropAllForeignKeysOnTable('{{%wishlist_items}}', $this);
+        Db::dropAllForeignKeysOnTable('{{%wishlist_lists}}', $this);
+        Db::dropAllForeignKeysOnTable('{{%wishlist_listtypes}}', $this);
+        Db::dropAllForeignKeysOnTable('{{%wishlist_items}}', $this);
     }
 
     public function dropTables(): void
