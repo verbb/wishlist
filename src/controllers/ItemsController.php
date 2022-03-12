@@ -5,6 +5,7 @@ use verbb\wishlist\Wishlist;
 use verbb\wishlist\elements\Item;
 use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\errors\ItemError;
+use verbb\wishlist\models\Settings;
 
 use Craft;
 
@@ -144,6 +145,7 @@ class ItemsController extends BaseController
 
     public function actionAdd(): ?Response
     {
+        /* @var Settings $settings */
         $settings = Wishlist::$plugin->getSettings();
         $request = Craft::$app->getRequest();
 

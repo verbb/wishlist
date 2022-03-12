@@ -16,6 +16,7 @@ class SettingsController extends Controller
 
     public function actionIndex(): Response
     {
+        /* @var Settings $settings */
         $settings = Wishlist::$plugin->getSettings();
 
         return $this->renderTemplate('wishlist/settings/general', compact('settings'));

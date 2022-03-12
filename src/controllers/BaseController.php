@@ -2,6 +2,7 @@
 namespace verbb\wishlist\controllers;
 
 use verbb\wishlist\Wishlist;
+use verbb\wishlist\models\Settings;
 
 use Craft;
 use craft\helpers\StringHelper;
@@ -17,6 +18,7 @@ class BaseController extends Controller
 
     protected function enforceEnabledList($list): void
     {
+        /* @var Settings $settings */
         $settings = Wishlist::$plugin->getSettings();
 
         // If it's disabled, and should we check?

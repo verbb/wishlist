@@ -3,6 +3,7 @@ namespace verbb\wishlist\services;
 
 use verbb\wishlist\Wishlist;
 use verbb\wishlist\events\PdfEvent;
+use verbb\wishlist\models\Settings;
 
 use Craft;
 use craft\helpers\FileHelper;
@@ -28,6 +29,7 @@ class Pdf extends Component
 
     public function renderPdf($list): string
     {
+        /* @var Settings $settings */
         $settings = Wishlist::$plugin->getSettings();
 
         $request = Craft::$app->getRequest();

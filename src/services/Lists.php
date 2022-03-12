@@ -3,6 +3,8 @@ namespace verbb\wishlist\services;
 
 use verbb\wishlist\Wishlist;
 use verbb\wishlist\elements\ListElement;
+use verbb\wishlist\elements\db\ListQuery;
+use verbb\wishlist\models\Settings;
 
 use Craft;
 use craft\base\Component;
@@ -20,7 +22,6 @@ use yii\web\Cookie;
 use yii\web\UserEvent;
 
 use Throwable;
-use verbb\wishlist\elements\db\ListQuery;
 
 class Lists extends Component
 {
@@ -210,6 +211,7 @@ class Lists extends Component
     public function consolidateListsToUser(UserElement $user, array $lists = null): bool
     {
         try {
+            /* @var Settings $settings */
             $settings = Wishlist::$plugin->getSettings();
             $db = Craft::$app->getDb();
 
@@ -330,6 +332,7 @@ class Lists extends Component
 
     private function getSessionId()
     {
+        /* @var Settings $settings */
         $settings = Wishlist::$plugin->getSettings();
 
         $session = Craft::$app->getSession();
@@ -367,6 +370,7 @@ class Lists extends Component
 
     private function _getListsIdsToPurge(): array
     {
+        /* @var Settings $settings */
         $settings = Wishlist::$plugin->getSettings();
 
         $configInterval = ConfigHelper::durationInSeconds($settings->purgeInactiveListsDuration);
