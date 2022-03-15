@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.4.12 - 2022-03-15
+
+### Changed
+- Now requires Craft 3.6.0+.
+
+### Fixed
+- Fix GraphQL generator issues in some cases (Gatsby).
+- Fix when purging lists, not taking into account timezone and comparing UTC dates correctly.
+
 ## 1.4.11 - 2021-09-07
 
 ### Fixed
