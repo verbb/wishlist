@@ -1,7 +1,7 @@
 # PDF Template
 You can also generate a PDF version of your lists, for your users to download and save, or share with other users.
 
-To get started, ensure you've setup the **PDF Template** under the [Configuration](docs:get-started/configuration) for Wishlist. Feel free to adjust any additional PDF-related options as required.
+To get started, ensure you've set up the **PDF Template** under the [Configuration](docs:get-started/configuration) for Wishlist. Feel free to adjust any additional PDF-related options as required.
 
 Then, you'll want to fetch the list you want to generate the PDF for.
 
@@ -13,7 +13,7 @@ Then, you'll want to fetch the list you want to generate the PDF for.
 {% endif %}
 ```
 
-Here, we're generating a link for the user to click on to download their PDF. When clicked, their PDF will be downloaded. The URL will look look something similar to:
+Here, we're generating a link for the user to click on to download their PDF. When clicked, their PDF will be downloaded. The URL will look something similar to:
 
 `https://craft.test/actions/wishlist/pdf?listId=123`
 

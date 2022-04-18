@@ -134,7 +134,7 @@ Any of the above actions will be made on the users' default list. You can also t
 :::
 
 ## List Types
-The above actions will all be actioned on the default list. Its common to specify another list type to manage items on. You might have a list type called 'Favourites', which you want to add/delete/toggle on.
+The above actions will all be actioned on the default list. It's common to specify another list type to manage items on. You might have a list type called 'Favourites', which you want to add/delete/toggle on.
 
 To make use of this, you need to supply either the `listTypeHandle` or `listTypeId` in your actions.
 
@@ -232,7 +232,7 @@ You can also manage the list items in a provided list. The example below shows a
 ```
 
 ## Item Options
-You can also store additional, arbitrary content alongside a Wishlist item in the form of item options. This content won't be visisble to users, unless you decide to output it. It will be visible in the control panel, when editing an item.
+You can also store additional, arbitrary content alongside a Wishlist item in the form of item options. This content won't be visible to users, unless you decide to output it. It will be visible in the control panel, when editing an item.
 
  ```twig
 {% for entry in craft.entries.section('news').all() %}

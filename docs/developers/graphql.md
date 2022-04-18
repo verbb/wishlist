@@ -59,7 +59,7 @@ This query is used to query for lists.
 | `uri`| `[String]` | Narrows the query results based on the elements’ URIs.
 | `search`| `String` | Narrows the query results to only elements that match a search query.
 | `relatedTo`| `[Int]` | Narrows the query results to elements that relate to *any* of the provided element IDs. This argument is ignored, if `relatedToAll` is also used.
-| `relatedToAll`| `[Int]` | Narrows the query results to elements that relate to *all* of the provided element IDs. Using this argument will cause `relatedTo` argument to be ignored.
+| `relatedToAll`| `[Int]` | Narrows the query results to elements that relate to *all* the provided element IDs. Using this argument will cause `relatedTo` argument to be ignored.
 | `ref`| `[String]` | Narrows the query results based on a reference string.
 | `fixedOrder`| `Boolean` | Causes the query results to be returned in the order specified by the `id` argument.
 | `inReverse`| `Boolean` | Causes the query results to be returned in reverse order.
@@ -147,7 +147,7 @@ This query is used to query for items.
 | `uri`| `[String]` | Narrows the query results based on the elements’ URIs.
 | `search`| `String` | Narrows the query results to only elements that match a search query.
 | `relatedTo`| `[Int]` | Narrows the query results to elements that relate to *any* of the provided element IDs. This argument is ignored, if `relatedToAll` is also used.
-| `relatedToAll`| `[Int]` | Narrows the query results to elements that relate to *all* of the provided element IDs. Using this argument will cause `relatedTo` argument to be ignored.
+| `relatedToAll`| `[Int]` | Narrows the query results to elements that relate to *all* the provided element IDs. Using this argument will cause `relatedTo` argument to be ignored.
 | `ref`| `[String]` | Narrows the query results based on a reference string.
 | `fixedOrder`| `Boolean` | Causes the query results to be returned in the order specified by the `id` argument.
 | `inReverse`| `Boolean` | Causes the query results to be returned in reverse order.

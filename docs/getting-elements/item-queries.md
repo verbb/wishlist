@@ -13,7 +13,7 @@ $myQuery = \verbb\wishlist\elements\Item::find();
 ```
 :::
 
-Once you’ve created a item query, you can set parameters on it to narrow down the results, and then execute it by calling `.all()`. An array of [Item](docs:developers/item) objects will be returned.
+Once you’ve created an item query, you can set parameters on it to narrow down the results, and then execute it by calling `.all()`. An array of [Item](docs:developers/item) objects will be returned.
 
 :::tip
 See Introduction to [Element Queries](https://docs.craftcms.com/v3/dev/element-queries/) in the Craft docs to learn about how element queries work.

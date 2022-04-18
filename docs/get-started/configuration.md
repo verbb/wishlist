@@ -48,7 +48,7 @@ return [
 
 ### PDF
 - `pdfPath` - Set the path to your PDF.
-- `pdfFilenameFormat` - Set the defaulf PDF filename format.
+- `pdfFilenameFormat` - Set the default PDF filename format.
 - `pdfAllowRemoteImages` - Whether to allow remote images in the PDF.
 - `pdfPaperSize` - Sets the paper size for the PDF.
 - `pdfPaperOrientation` - Sets the paper orientation for the PDF.
