@@ -1,8 +1,7 @@
 # Managing Lists
-
 You can Add, Delete or Clear lists, and its recommended that these options should only be available to registered users to prevent abuse.
 
-### Add List
+## Add List
 
 ::: code
 ```twig Form
@@ -30,7 +29,7 @@ You can Add, Delete or Clear lists, and its recommended that these options shoul
 ```
 :::
 
-### Update List
+## Update List
 
 ::: code
 ```twig Form
@@ -57,7 +56,7 @@ You can Add, Delete or Clear lists, and its recommended that these options shoul
 :::
 
 
-### Delete List
+## Delete List
 
 ::: code
 ```twig Form
@@ -86,7 +85,7 @@ You can Add, Delete or Clear lists, and its recommended that these options shoul
 :::
 
 
-### Clear List
+## Clear List
 
 ::: code
 ```twig Form
@@ -114,7 +113,6 @@ You can Add, Delete or Clear lists, and its recommended that these options shoul
 ```
 :::
 
-```
 
 ## Message Flash
 When performing any of the above actions a "Flash message" will appear based on whether the task you complete was successful or failed. You can modify these messages for your own needs by providing extra params in your request.

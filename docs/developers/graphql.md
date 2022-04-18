@@ -1,5 +1,4 @@
 # GraphQL
-
 Wishlist supports accessing items and lists via GraphQL. Be sure to read about [Craft's GraphQL support](https://docs.craftcms.com/v3/graphql.html).
 
 ## Lists

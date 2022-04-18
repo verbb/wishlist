@@ -1,5 +1,4 @@
 # List Queries
-
 You can fetch lists in your templates or PHP code using **list queries**.
 
 :::code

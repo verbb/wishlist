@@ -1,5 +1,4 @@
 # Sharing Lists
-
 A common scenario is to share a users wishlist with another user, often a guest or third-party who doesn't have an account. You can do this by using the `reference` attribute on a list, which makes it easy to generate unique URLs.
 
 :::tip

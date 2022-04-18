@@ -1,5 +1,4 @@
 # Events
-
 Events can be used to extend the functionality of Wishlist.
 
 ## List related events

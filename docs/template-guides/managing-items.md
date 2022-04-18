@@ -1,8 +1,7 @@
 # Managing Items
-
 You can Add, Remove, Update or Toggle items in any list. You have the option of either using a `<form>` element or simply via a URL, depending on your templating needs.
 
-### Add Item
+## Add Item
 
 ::: code
 ```twig Form
@@ -40,7 +39,7 @@ You can Add, Remove, Update or Toggle items in any list. You have the option of 
 :::
 
 
-### Remove Item
+## Remove Item
 
 ::: code
 ```twig Form
@@ -66,7 +65,7 @@ You can Add, Remove, Update or Toggle items in any list. You have the option of 
 :::
 
 
-### Toggle Item
+## Toggle Item
 
 ::: code
 ```twig Form
@@ -91,7 +90,7 @@ You can Add, Remove, Update or Toggle items in any list. You have the option of 
 ```
 :::
 
-### Update Item
+## Update Item
 
 ::: code
 ```twig Form

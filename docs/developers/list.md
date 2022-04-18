@@ -1,5 +1,4 @@
 # List
-
 Whenever you're dealing with a list in your template, you're actually working with a `List` object.
 
 ## Attributes

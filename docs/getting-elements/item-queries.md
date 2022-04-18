@@ -1,5 +1,4 @@
 # Item Queries
-
 You can fetch items in your templates or PHP code using **item queries**.
 
 :::code

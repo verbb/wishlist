@@ -1,5 +1,4 @@
 # Getting List Items
-
 No doubt you'll want to display the contents of a user's list at some point. To do this, you'll need to first fetch the list first, which will be for the current user, and then loop through the contained items.
 
 Be sure to check if the list exists first. Lists are only created when you add something to it for the first time.
