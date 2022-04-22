@@ -1,11 +1,12 @@
 # GraphQL
-Wishlist supports accessing items and lists via GraphQL. Be sure to read about [Craft's GraphQL support](https://docs.craftcms.com/v3/graphql.html).
+Wishlist supports accessing [Item](docs:developers/item) and [List](docs:developers/list) objects via GraphQL. Be sure to read about [Craft's GraphQL support](https://docs.craftcms.com/v3/graphql.html).
 
 ## Lists
 
-### Query payload
+### Example
 
-```
+:::code
+```graphql GraphQL
 {
     wishlists (userId: 1) {
         title
@@ -17,9 +18,7 @@ Wishlist supports accessing items and lists via GraphQL. Be sure to read about [
 }
 ```
 
-### The response
-
-```
+```json JSON Response
 {
     "data": {
         "wishlists": [
@@ -39,6 +38,7 @@ Wishlist supports accessing items and lists via GraphQL. Be sure to read about [
     }
 }
 ```
+:::
 
 ### The `wishlists` query
 This query is used to query for lists.
@@ -98,9 +98,10 @@ This is the interface implemented by all lists.
 
 ## Items
 
-### Query payload
+### Example
 
-```
+:::code
+```graphql GraphQL
 {
     wishlistItems (listId: 4562, limit: 1) {
         element {
@@ -111,9 +112,7 @@ This is the interface implemented by all lists.
 }
 ```
 
-### The response
-
-```
+```json JSON Response
 {
     "data": {
         "wishlistItems": [
@@ -127,6 +126,7 @@ This is the interface implemented by all lists.
     }
 }
 ```
+:::
 
 ### The `wishlistItems` query
 This query is used to query for items.
