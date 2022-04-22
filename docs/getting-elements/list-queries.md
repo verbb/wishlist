@@ -2,12 +2,12 @@
 You can fetch lists in your templates or PHP code using **list queries**.
 
 :::code
-```twig
+```twig Twig
 {# Create a new list query #}
 {% set myQuery = craft.wishlist.lists() %}
 ```
 
-```php
+```php PHP
 // Create a new list query
 $myQuery = \verbb\wishlist\elements\ListElement::find();
 ```

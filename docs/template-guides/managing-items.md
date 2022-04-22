@@ -257,7 +257,7 @@ You can also store additional, arbitrary content alongside a Wishlist item in th
 You can also trigger any of the above actions through JavaScript.
 
 :::code
-```js
+```js JavaScript
 let $form = document.querySelector('#my-wishlist-form');
 let data = new FormData($form);
 
@@ -275,7 +275,7 @@ fetch('/', {
 });
 ```
 
-```jQuery
+```js jQuery
 let data = $('#my-wishlist-form').serialize();
 
 $.ajax({
