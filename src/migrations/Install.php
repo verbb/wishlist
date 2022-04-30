@@ -38,6 +38,7 @@ class Install extends Migration
 
     public function createTables(): void
     {
+        $this->archiveTableIfExists('{{%wishlist_lists}}');
         $this->createTable('{{%wishlist_lists}}', [
             'id' => $this->primaryKey(),
             'typeId' => $this->integer(),
@@ -51,6 +52,7 @@ class Install extends Migration
             'uid' => $this->uid(),
         ]);
 
+        $this->archiveTableIfExists('{{%wishlist_listtypes}}');
         $this->createTable('{{%wishlist_listtypes}}', [
             'id' => $this->primaryKey(),
             'fieldLayoutId' => $this->integer(),
@@ -63,6 +65,7 @@ class Install extends Migration
             'uid' => $this->uid(),
         ]);
 
+        $this->archiveTableIfExists('{{%wishlist_items}}');
         $this->createTable('{{%wishlist_items}}', [
             'id' => $this->primaryKey(),
             'listId' => $this->integer()->notNull(),
