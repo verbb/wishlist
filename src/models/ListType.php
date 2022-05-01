@@ -7,6 +7,8 @@ use verbb\wishlist\records\ListType as ListTypeRecord;
 
 use craft\base\Model;
 use craft\behaviors\FieldLayoutBehavior;
+use craft\helpers\Db;
+use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
 use craft\models\FieldLayout;
 use craft\validators\HandleValidator;
@@ -79,5 +81,36 @@ class ListType extends Model
                 'idAttribute' => 'itemFieldLayoutId',
             ],
         ];
+    }
+
+    public function getConfig(): array
+    {
+        $config = [
+            'name' => $this->name,
+            'handle' => $this->handle,
+            'default' => $this->default,
+        ];
+
+        $generateLayoutConfig = function(FieldLayout $fieldLayout): array {
+            $fieldLayoutConfig = $fieldLayout->getConfig();
+
+            if ($fieldLayoutConfig) {
+                if (empty($fieldLayout->id)) {
+                    $layoutUid = StringHelper::UUID();
+                    $fieldLayout->uid = $layoutUid;
+                } else {
+                    $layoutUid = Db::uidById('{{%fieldlayouts}}', $fieldLayout->id);
+                }
+
+                return [$layoutUid => $fieldLayoutConfig];
+            }
+
+            return [];
+        };
+
+        $config['listFieldLayouts'] = $generateLayoutConfig($this->getFieldLayout());
+        $config['itemFieldLayouts'] = $generateLayoutConfig($this->getItemFieldLayout());
+
+        return $config;
     }
 }
