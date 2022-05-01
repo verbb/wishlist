@@ -1,6 +1,8 @@
 <?php
 namespace verbb\wishlist\helpers;
 
+use verbb\wishlist\Wishlist;
+
 use Craft;
 use craft\db\Query;
 
@@ -11,53 +13,25 @@ class ProjectConfigData
 
     public static function rebuildProjectConfig(): array
     {
-        $output = [];
+        $configData = [];
 
-        $output['listTypes'] = self::_getListTypeData();
+        $configData['listTypes'] = self::_getListTypeData();
 
-        return $output;
+        return array_filter($configData);
     }
+
+    
+    // Private Methods
+    // =========================================================================
 
     private static function _getListTypeData(): array
     {
-        $listTypeRows = (new Query())
-            ->select([
-                'fieldLayoutId',
-                'itemFieldLayoutId',
-                'name',
-                'handle',
-                'default',
-                'uid',
-            ])
-            ->from(['{{%wishlist_listtypes}} listTypes'])
-            ->all();
+        $data = [];
 
-        $typeData = [];
-
-        foreach ($listTypeRows as $listTypeRow) {
-            $rowUid = $listTypeRow['uid'];
-
-            if (!empty($listTypeRow['fieldLayoutId'])) {
-                $layout = Craft::$app->getFields()->getLayoutById($listTypeRow['fieldLayoutId']);
-
-                if ($layout) {
-                    $listTypeRow['listFieldLayouts'] = [$layout->uid => $layout->getConfig()];
-                }
-            }
-
-            if (!empty($listTypeRow['itemFieldLayoutId'])) {
-                $layout = Craft::$app->getFields()->getLayoutById($listTypeRow['itemFieldLayoutId']);
-
-                if ($layout) {
-                    $listTypeRow['itemFieldLayouts'] = [$layout->uid => $layout->getConfig()];
-                }
-            }
-
-            unset($listTypeRow['uid'], $listTypeRow['fieldLayoutId'], $listTypeRow['itemFieldLayoutId']);
-
-            $typeData[$rowUid] = $listTypeRow;
+        foreach (Wishlist::$plugin->getListTypes()->getAllListTypes() as $listType) {
+            $data[$listType->uid] = $listType->getConfig();
         }
 
-        return $typeData;
+        return $data;
     }
 }
