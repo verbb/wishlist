@@ -72,8 +72,6 @@ class Wishlist extends Plugin
 
         $this->_registerComponents();
         $this->_registerLogTarget();
-        $this->_registerCpRoutes();
-        $this->_registerPermissions();
         $this->_registerSessionEventListeners();
         $this->_registerEmailMessages();
         $this->_registerVariables();
@@ -81,9 +79,20 @@ class Wishlist extends Plugin
         $this->_registerProjectConfigEventListeners();
         $this->_registerGarbageCollection();
         $this->_registerTemplateHooks();
-        $this->_defineResaveCommand();
-        $this->_defineFieldLayoutElements();
         $this->_registerGraphQl();
+
+        if (Craft::$app->getRequest()->getIsCpRequest()) {
+            $this->_registerCpRoutes();
+            $this->_registerFieldLayoutListener();
+        }
+
+        if (Craft::$app->getRequest()->getIsConsoleRequest()) {
+            $this->_registerResaveCommand();
+        }
+
+        if (Craft::$app->getEdition() === Craft::Pro) {
+            $this->_registerPermissions();
+        }
     }
 
     public function getPluginName(): string
@@ -242,7 +251,7 @@ class Wishlist extends Plugin
         }
     }
 
-    private function _defineResaveCommand(): void
+    private function _registerResaveCommand(): void
     {
         if (!Craft::$app->getRequest()->getIsConsoleRequest()) {
             return;
@@ -324,7 +333,7 @@ class Wishlist extends Plugin
         }
     }
 
-    private function _defineFieldLayoutElements(): void
+    private function _registerFieldLayoutListener(): void
     {
         Event::on(FieldLayout::class, FieldLayout::EVENT_DEFINE_NATIVE_FIELDS, function(DefineFieldLayoutFieldsEvent $event): void {
             $fieldLayout = $event->sender;
