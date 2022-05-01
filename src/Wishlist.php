@@ -17,8 +17,9 @@ use verbb\wishlist\variables\WishlistVariable;
 use Craft;
 use craft\base\Model;
 use craft\base\Plugin;
-use craft\console\controllers\ResaveController;
+use craft\console\Application as ConsoleApplication;
 use craft\console\Controller as ConsoleController;
+use craft\console\controllers\ResaveController;
 use craft\events\DefineConsoleActionsEvent;
 use craft\events\DefineFieldLayoutFieldsEvent;
 use craft\events\RebuildConfigEvent;
@@ -253,7 +254,7 @@ class Wishlist extends Plugin
 
     private function _registerResaveCommand(): void
     {
-        if (!Craft::$app->getRequest()->getIsConsoleRequest()) {
+        if (!Craft::$app instanceof ConsoleApplication) {
             return;
         }
 
@@ -280,9 +281,7 @@ class Wishlist extends Plugin
             $event->actions['wishlist-lists'] = [
                 'action' => function(): int {
                     $controller = Craft::$app->controller;
-
                     $query = ListElement::find();
-
                     return $controller->resaveElements($query);
                 },
                 'helpSummary' => 'Re-saves Wishlist lists.',
