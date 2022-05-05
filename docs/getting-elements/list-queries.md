@@ -1,14 +1,13 @@
 # List Queries
-
 You can fetch lists in your templates or PHP code using **list queries**.
 
 :::code
-```twig
+```twig Twig
 {# Create a new list query #}
 {% set myQuery = craft.wishlist.lists() %}
 ```
 
-```php
+```php PHP
 // Create a new list query
 $myQuery = \verbb\wishlist\elements\ListElement::find();
 ```
@@ -21,10 +20,9 @@ See Introduction to [Element Queries](https://docs.craftcms.com/v3/dev/element-q
 :::
 
 ## Example
-
 We can display lists for a given user by doing the following:
 
-1. Create an list query with `craft.wishlist.lists()`.
+1. Create a list query with `craft.wishlist.lists()`.
 2. Set the [typeId](#typeId), [limit](#limit) and [status](#status) parameters on it.
 3. Fetch all lists with `.all()` and output.
 4. Loop through the lists using a [for](https://twig.symfony.com/doc/2.x/tags/for.html) tag to output the contents.
@@ -464,7 +462,7 @@ Possible values include:
 | `'not foo'` | not of a type with a handle of `foo`.
 | `['foo', 'bar']` | of a type with a handle of `foo` or `bar`.
 | `['not', 'foo', 'bar']` | not of a type with a handle of `foo` or `bar`.
-| an List Type object | of a type represented by the object.
+| a List Type object | of a type represented by the object.
 
 ::: code
 ```twig

@@ -1,5 +1,4 @@
 # Add to Cart
-
 A great feature for a Commerce site is to allow your customers to create wishlist's of product they want to purchase, saved to their account for later purchase. To provide an even more seamless user experience would be to allow customers to add these wishlist items to their cart to purchase.
 
 That's exactly what you can do with the following code.
@@ -89,7 +88,7 @@ The above will add only the purchasables you supply to the cart. For example, yo
 
 If you had 5 items in your list, you'll have 5 `<form>` elements outputted. Each would have their own "Add to Cart" button.
 
-### Removing from list
+## Removing from list
 You can also set items to be removed from the list, once added to the cart. By default, items will remain in the users wishlist.
 
 When adding the entire list to the cart, you can clear all items from the list.

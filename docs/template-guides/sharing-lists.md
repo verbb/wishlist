@@ -1,9 +1,8 @@
 # Sharing Lists
-
 A common scenario is to share a users wishlist with another user, often a guest or third-party who doesn't have an account. You can do this by using the `reference` attribute on a list, which makes it easy to generate unique URLs.
 
 :::tip
-How your sharing implemention works is up to you – Wishlist doesn't force you into a particular scenario. As such, the below are example templates that you'll need to implement.
+How your sharing implementation works is up to you – Wishlist doesn't force you into a particular scenario. As such, the below are example templates that you'll need to implement.
 :::
 
 First, you'll want the owner of the list to be able to copy a URL to their list.
@@ -16,9 +15,9 @@ First, you'll want the owner of the list to be able to copy a URL to their list.
 {% endfor %}
 ```
 
-In order to actually show the list to the public, you'll need to create a template called `wishlist` in your templates directory. Note you can call this what you want, just make it match the URL above.
+In order to actually show the list to the public, you'll need to create a template called `wishlist` in your templates' directory. Note you can call this what you want, just make it match the URL above.
 
-Then, its just a matter of querying items based on the provided reference.
+Then, it's just a matter of querying items based on the provided reference.
 
 ```twig
 {% set reference = craft.app.request.getParam('id') %}
@@ -65,7 +64,7 @@ You can also email your lists directly via a form.
 
 Please note that the sender and recipient details are required, including a first name, last name and email. This is not only generally a good idea to provide for both the sender and the recipient for trust, but required to send an email. This will also help your emails look less 'spammy' if the recipient recognises the person sending the email.
 
-If the sender is a logged in user, you can of course set these inputs to hidden, and populate with the `currentUser` content from Craft.
+If the sender is a logged-in user, you can of course set these inputs to hidden, and populate with the `currentUser` content from Craft.
 
 ```twig
 <input type="text" name="sender[firstName]" value="{{ currentUser.firstName }}">

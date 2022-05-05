@@ -1,5 +1,4 @@
 # Events
-
 Events can be used to extend the functionality of Wishlist.
 
 ## List related events
@@ -94,7 +93,7 @@ Event::on(ListTypes::class, ListTypes::EVENT_AFTER_SAVE_LISTTYPE, function(ListT
 
 ### The `beforeSaveItem` event
 
-Plugins can get notified before a item is saved. Event handlers can prevent the item from getting sent by setting `$event->isValid` to false.
+Plugins can get notified before an item is saved. Event handlers can prevent the item from getting sent by setting `$event->isValid` to false.
 
 ```php
 use verbb\wishlist\elements\Item;
@@ -108,7 +107,7 @@ Event::on(Item::class, Item::EVENT_BEFORE_SAVE, function(Event $event) {
 
 ### The `afterSaveItem` event
 
-Plugins can get notified after a item has been saved
+Plugins can get notified after an item has been saved
 
 ```php
 use verbb\wishlist\elements\Item;
@@ -121,7 +120,7 @@ Event::on(Item::class, Item::EVENT_AFTER_SAVE, function(Event $event) {
 
 ### The `beforeDeleteItem` event
 
-Plugins can get notified before a item is deleted. Event handlers can prevent the item from getting sent by setting `$event->isValid` to false.
+Plugins can get notified before an item is deleted. Event handlers can prevent the item from getting sent by setting `$event->isValid` to false.
 
 ```php
 use verbb\wishlist\elements\Item;

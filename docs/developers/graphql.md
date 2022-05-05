@@ -1,12 +1,12 @@
 # GraphQL
-
-Wishlist supports accessing items and lists via GraphQL. Be sure to read about [Craft's GraphQL support](https://docs.craftcms.com/v3/graphql.html).
+Wishlist supports accessing [Item](docs:developers/item) and [List](docs:developers/list) objects via GraphQL. Be sure to read about [Craft's GraphQL support](https://docs.craftcms.com/v3/graphql.html).
 
 ## Lists
 
-### Query payload
+### Example
 
-```
+:::code
+```graphql GraphQL
 {
     wishlists (userId: 1) {
         title
@@ -18,9 +18,7 @@ Wishlist supports accessing items and lists via GraphQL. Be sure to read about [
 }
 ```
 
-### The response
-
-```
+```json JSON Response
 {
     "data": {
         "wishlists": [
@@ -40,6 +38,7 @@ Wishlist supports accessing items and lists via GraphQL. Be sure to read about [
     }
 }
 ```
+:::
 
 ### The `wishlists` query
 This query is used to query for lists.
@@ -60,7 +59,7 @@ This query is used to query for lists.
 | `uri`| `[String]` | Narrows the query results based on the elements’ URIs.
 | `search`| `String` | Narrows the query results to only elements that match a search query.
 | `relatedTo`| `[Int]` | Narrows the query results to elements that relate to *any* of the provided element IDs. This argument is ignored, if `relatedToAll` is also used.
-| `relatedToAll`| `[Int]` | Narrows the query results to elements that relate to *all* of the provided element IDs. Using this argument will cause `relatedTo` argument to be ignored.
+| `relatedToAll`| `[Int]` | Narrows the query results to elements that relate to *all* the provided element IDs. Using this argument will cause `relatedTo` argument to be ignored.
 | `ref`| `[String]` | Narrows the query results based on a reference string.
 | `fixedOrder`| `Boolean` | Causes the query results to be returned in the order specified by the `id` argument.
 | `inReverse`| `Boolean` | Causes the query results to be returned in reverse order.
@@ -99,9 +98,10 @@ This is the interface implemented by all lists.
 
 ## Items
 
-### Query payload
+### Example
 
-```
+:::code
+```graphql GraphQL
 {
     wishlistItems (listId: 4562, limit: 1) {
         element {
@@ -112,9 +112,7 @@ This is the interface implemented by all lists.
 }
 ```
 
-### The response
-
-```
+```json JSON Response
 {
     "data": {
         "wishlistItems": [
@@ -128,6 +126,7 @@ This is the interface implemented by all lists.
     }
 }
 ```
+:::
 
 ### The `wishlistItems` query
 This query is used to query for items.
@@ -148,7 +147,7 @@ This query is used to query for items.
 | `uri`| `[String]` | Narrows the query results based on the elements’ URIs.
 | `search`| `String` | Narrows the query results to only elements that match a search query.
 | `relatedTo`| `[Int]` | Narrows the query results to elements that relate to *any* of the provided element IDs. This argument is ignored, if `relatedToAll` is also used.
-| `relatedToAll`| `[Int]` | Narrows the query results to elements that relate to *all* of the provided element IDs. Using this argument will cause `relatedTo` argument to be ignored.
+| `relatedToAll`| `[Int]` | Narrows the query results to elements that relate to *all* the provided element IDs. Using this argument will cause `relatedTo` argument to be ignored.
 | `ref`| `[String]` | Narrows the query results based on a reference string.
 | `fixedOrder`| `Boolean` | Causes the query results to be returned in the order specified by the `id` argument.
 | `inReverse`| `Boolean` | Causes the query results to be returned in reverse order.

@@ -6,6 +6,16 @@
 - Now requires PHP `^8.0.2`.
 - Now requires Craft `^4.0.0-beta.1`.
 
+## 1.4.12 - 2022-03-15
+
+### Changed
+- Now requires Craft 3.6.0+.
+
+### Fixed
+- Fix GraphQL generator issues in some cases (Gatsby).
+- Fix when purging lists, not taking into account timezone and comparing UTC dates correctly.
+- Fix an error when generating PDFs and custom fonts, where the temporary folder isn’t writable (or created).
+
 ## 1.4.11 - 2021-09-07
 
 ### Fixed
