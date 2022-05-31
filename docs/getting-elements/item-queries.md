@@ -57,14 +57,14 @@ Item queries support the following parameters:
 Clears out the [status()](https://docs.craftcms.com/api/v3/craft-elements-db-elementquery.html#method-status) and [enabledForSite()](https://docs.craftcms.com/api/v3/craft-elements-db-elementquery.html#method-enabledforsite) parameters.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch all items, regardless of status #}
 {% set items = craft.wishlist.items()
     .anyStatus()
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch all items, regardless of status
 $items = \verbb\wishlist\elements\Item::find()
     ->anyStatus()
@@ -79,14 +79,14 @@ $items = \verbb\wishlist\elements\Item::find()
 Causes the query to return matching items as arrays of data, rather than [Item](docs:developers/item) objects.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch items as arrays #}
 {% set items = craft.wishlist.items()
     .asArray()
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch items as arrays
 $items = \verbb\wishlist\elements\Item::find()
     ->asArray()
@@ -109,7 +109,7 @@ Possible values include:
 | `['and', '>= 2018-04-04', '< 2018-05-01']` | that were created between 2018-04-01 and 2018-05-01.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch items created last month #}
 {% set start = date('first day of last month') | atom %}
 {% set end = date('first day of this month') | atom %}
@@ -119,7 +119,7 @@ Possible values include:
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch items created last month
 $start = new \DateTime('first day of next month')->format(\DateTime::ATOM);
 $end = new \DateTime('first day of this month')->format(\DateTime::ATOM);
@@ -145,7 +145,7 @@ Possible values include:
 | `['and', '>= 2018-04-04', '< 2018-05-01']` | that were updated between 2018-04-01 and 2018-05-01.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch items updated in the last week #}
 {% set lastWeek = date('1 week ago')|atom %}
 
@@ -154,7 +154,7 @@ Possible values include:
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch items updated in the last week
 $lastWeek = new \DateTime('1 week ago')->format(\DateTime::ATOM);
 
@@ -180,14 +180,14 @@ Possible values include:
 | `['not', 1, 2]` | not created for an element with an ID of 1 or 2.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch items created for an element with an ID of 1 #}
 {% set items = craft.wishlist.items()
     .elementId(1)
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch items created for an element with an ID of 1
 $items = \verbb\wishlist\elements\Item::find()
     ->elementId(1)
@@ -209,7 +209,7 @@ Possible values include:
 | `':empty:'` | created in a field that isn’t set to manage blocks on a per-site basis.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch items created for an element with an ID of 1, for a site with an ID of 2 #}
 {% set items = craft.wishlist.items()
     .elementId(1)
@@ -217,7 +217,7 @@ Possible values include:
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch items created for an element with an ID of 1, for a site with an ID of 2
 $items = \verbb\wishlist\elements\Item::find()
     ->elementId(1)
@@ -233,14 +233,14 @@ $items = \verbb\wishlist\elements\Item::find()
 Narrows the query results based on the class name the linked element was saved for.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch items created for an element with the provided class #}
 {% set items = craft.wishlist.items()
     .elementClass('craft\\elements\\Entry')
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch items created for an element with the provided class
 $items = \verbb\wishlist\elements\Item::find()
     ->elementClass(Entry::class)
@@ -255,7 +255,7 @@ $items = \verbb\wishlist\elements\Item::find()
 Causes the query results to be returned in the order specified by [id](#id).
 
 ::: code
-```twig
+```twig Twig
 {# Fetch items in a specific order #}
 {% set items = craft.wishlist.items()
     .id([1, 2, 3, 4, 5])
@@ -263,7 +263,7 @@ Causes the query results to be returned in the order specified by [id](#id).
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch items in a specific order
 $items = \verbb\wishlist\elements\Item::find()
     ->id([1, 2, 3, 4, 5])
@@ -288,14 +288,14 @@ Possible values include:
 | `['not', 1, 2]` | not with an ID of 1 or 2.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch the item by its ID #}
 {% set item = craft.wishlist.items()
     .id(1)
     .one() %}
 ```
 
-```php
+```php PHP
 // Fetch the item by its ID
 $item = \verbb\wishlist\elements\Item::find()
     ->id(1)
@@ -314,14 +314,14 @@ This can be combined with [fixedOrder](#fixedorder) if you want the results to b
 Causes the query results to be returned in reverse order.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch items in reverse #}
 {% set items = craft.wishlist.items()
     .inReverse()
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch items in reverse
 $items = \verbb\wishlist\elements\Item::find()
     ->inReverse()
@@ -336,14 +336,14 @@ $items = \verbb\wishlist\elements\Item::find()
 Determines the number of items that should be returned.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch up to 10 items  #}
 {% set items = craft.wishlist.items()
     .limit(10)
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch up to 10 items
 $items = \verbb\wishlist\elements\Item::find()
     ->limit(10)
@@ -367,14 +367,14 @@ Possible values include:
 | `['not', 1, 2]` | not with a list ID of 1 or 2.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch the item by its ID #}
 {% set item = craft.wishlist.items()
     .listId(1)
     .one() %}
 ```
 
-```php
+```php PHP
 // Fetch the item by its ID
 $item = \verbb\wishlist\elements\Item::find()
     ->listId(1)
@@ -398,14 +398,14 @@ Possible values include:
 | `['not', 1, 2]` | not with a list type ID of 1 or 2.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch the item by its ID #}
 {% set item = craft.wishlist.items()
     .listTypeId(1)
     .one() %}
 ```
 
-```php
+```php PHP
 // Fetch the item by its ID
 $item = \verbb\wishlist\elements\Item::find()
     ->listTypeId(1)
@@ -420,14 +420,14 @@ $item = \verbb\wishlist\elements\Item::find()
 Determines how many items should be skipped in the results.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch all items except for the first 3 #}
 {% set items = craft.wishlist.items()
     .offset(3)
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch all items except for the first 3
 $items = \verbb\wishlist\elements\Item::find()
     ->offset(3)
@@ -442,14 +442,14 @@ $items = \verbb\wishlist\elements\Item::find()
 Determines the order that the items should be returned in.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch all items in order of date created #}
 {% set items = craft.wishlist.items()
     .orderBy('elements.dateCreated asc')
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch all items in order of date created
 $items = \verbb\wishlist\elements\Item::find()
     ->orderBy('elements.dateCreated asc')
@@ -466,7 +466,7 @@ Narrows the query results to only items that match a search query.
 See [Searching](https://docs.craftcms.com/v3/searching.html) for a full explanation of how to work with this parameter.
 
 ::: code
-```twig
+```twig Twig
 {# Get the search query from the 'q' query string param #}
 {% set searchQuery = craft.request.getQueryParam('q') %}
 
@@ -476,7 +476,7 @@ See [Searching](https://docs.craftcms.com/v3/searching.html) for a full explanat
     .all() %}
 ```
 
-```php
+```php PHP
 // Get the search query from the 'q' query string param
 $searchQuery = \Craft::$app->request->getQueryParam('q');
 
@@ -504,14 +504,14 @@ Possible values include:
 | `['live', 'pending']` | that are live or pending.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch disabled items #}
 {% set items = craft.wishlist.items()
     .status('disabled')
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch disabled items
 $items = \verbb\wishlist\elements\Item::find()
     ->status('disabled')
@@ -526,14 +526,14 @@ $items = \verbb\wishlist\elements\Item::find()
 Narrows the query results based on the items’ UIDs.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch the item by its UID #}
 {% set item = craft.wishlist.items()
     .uid('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx')
     .one() %}
 ```
 
-```php
+```php PHP
 // Fetch the item by its UID
 $item = \verbb\wishlist\elements\Item::find()
     ->uid('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx')

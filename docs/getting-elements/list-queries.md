@@ -56,14 +56,14 @@ List queries support the following parameters:
 Clears out the [status()](https://docs.craftcms.com/api/v3/craft-elements-db-elementquery.html#method-status) and [enabledForSite()](https://docs.craftcms.com/api/v3/craft-elements-db-elementquery.html#method-enabledforsite) parameters.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch all lists, regardless of status #}
 {% set lists = craft.wishlist.lists()
     .anyStatus()
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch all lists, regardless of status
 $lists = \verbb\wishlist\elements\ListElement::find()
     ->anyStatus()
@@ -78,14 +78,14 @@ $lists = \verbb\wishlist\elements\ListElement::find()
 Causes the query to return matching lists as arrays of data, rather than [List](docs:developers/list) objects.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch lists as arrays #}
 {% set lists = craft.wishlist.lists()
     .asArray()
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch lists as arrays
 $lists = \verbb\wishlist\elements\ListElement::find()
     ->asArray()
@@ -108,7 +108,7 @@ Possible values include:
 | `['and', '>= 2018-04-04', '< 2018-05-01']` | that were created between 2018-04-01 and 2018-05-01.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch lists created last month #}
 {% set start = date('first day of last month') | atom %}
 {% set end = date('first day of this month') | atom %}
@@ -118,7 +118,7 @@ Possible values include:
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch lists created last month
 $start = new \DateTime('first day of next month')->format(\DateTime::ATOM);
 $end = new \DateTime('first day of this month')->format(\DateTime::ATOM);
@@ -144,7 +144,7 @@ Possible values include:
 | `['and', '>= 2018-04-04', '< 2018-05-01']` | that were updated between 2018-04-01 and 2018-05-01.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch lists updated in the last week #}
 {% set lastWeek = date('1 week ago')|atom %}
 
@@ -153,7 +153,7 @@ Possible values include:
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch lists updated in the last week
 $lastWeek = new \DateTime('1 week ago')->format(\DateTime::ATOM);
 
@@ -170,14 +170,14 @@ $lists = \verbb\wishlist\elements\ListElement::find()
 Fetch the list that is set as the default.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch list that is the default #}
 {% set list = craft.wishlist.lists()
     .default(true)
     .one() %}
 ```
 
-```php
+```php PHP
 // Fetch list that is the default
 $list = \verbb\wishlist\elements\ListElement::find()
     ->default(true)
@@ -192,7 +192,7 @@ $list = \verbb\wishlist\elements\ListElement::find()
 Causes the query results to be returned in the order specified by [id](#id).
 
 ::: code
-```twig
+```twig Twig
 {# Fetch lists in a specific order #}
 {% set lists = craft.wishlist.lists()
     .id([1, 2, 3, 4, 5])
@@ -200,7 +200,7 @@ Causes the query results to be returned in the order specified by [id](#id).
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch lists in a specific order
 $lists = \verbb\wishlist\elements\ListElement::find()
     ->id([1, 2, 3, 4, 5])
@@ -225,14 +225,14 @@ Possible values include:
 | `['not', 1, 2]` | not with an ID of 1 or 2.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch the list by its ID #}
 {% set list = craft.wishlist.lists()
     .id(1)
     .one() %}
 ```
 
-```php
+```php PHP
 // Fetch the list by its ID
 $list = \verbb\wishlist\elements\ListElement::find()
     ->id(1)
@@ -251,14 +251,14 @@ This can be combined with [fixedOrder](#fixedorder) if you want the results to b
 Causes the query results to be returned in reverse order.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch lists in reverse #}
 {% set lists = craft.wishlist.lists()
     .inReverse()
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch lists in reverse
 $lists = \verbb\wishlist\elements\ListElement::find()
     ->inReverse()
@@ -273,14 +273,14 @@ $lists = \verbb\wishlist\elements\ListElement::find()
 Determines the number of lists that should be returned.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch up to 10 lists  #}
 {% set lists = craft.wishlist.lists()
     .limit(10)
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch up to 10 lists
 $lists = \verbb\wishlist\elements\ListElement::find()
     ->limit(10)
@@ -295,14 +295,14 @@ $lists = \verbb\wishlist\elements\ListElement::find()
 Determines how many lists should be skipped in the results.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch all lists except for the first 3 #}
 {% set lists = craft.wishlist.lists()
     .offset(3)
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch all lists except for the first 3
 $lists = \verbb\wishlist\elements\ListElement::find()
     ->offset(3)
@@ -317,14 +317,14 @@ $lists = \verbb\wishlist\elements\ListElement::find()
 Determines the order that the lists should be returned in.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch all lists in order of date created #}
 {% set lists = craft.wishlist.lists()
     .orderBy('elements.dateCreated asc')
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch all lists in order of date created
 $lists = \verbb\wishlist\elements\ListElement::find()
     ->orderBy('elements.dateCreated asc')
@@ -345,7 +345,7 @@ Possible values include:
 | `'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'` | with a matching list reference number
 
 ::: code
-```twig
+```twig Twig
 {# Fetch the requested order #}
 {% set reference = craft.app.request.getQueryParam('reference') %}
 
@@ -354,7 +354,7 @@ Possible values include:
     .one() %}
 ```
 
-```php
+```php PHP
 // Fetch the requested order
 $reference = Craft::$app->request->getQueryParam('reference');
 
@@ -373,7 +373,7 @@ Narrows the query results to only lists that match a search query.
 See [Searching](https://docs.craftcms.com/v3/searching.html) for a full explanation of how to work with this parameter.
 
 ::: code
-```twig
+```twig Twig
 {# Get the search query from the 'q' query string param #}
 {% set searchQuery = craft.request.getQueryParam('q') %}
 
@@ -383,7 +383,7 @@ See [Searching](https://docs.craftcms.com/v3/searching.html) for a full explanat
     .all() %}
 ```
 
-```php
+```php PHP
 // Get the search query from the 'q' query string param
 $searchQuery = \Craft::$app->request->getQueryParam('q');
 
@@ -401,14 +401,14 @@ $lists = \verbb\wishlist\elements\ListElement::find()
 Narrows the query results based on the lists’ owners’ session ID.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch lists by the owners’ session ID #}
 {% set lists = craft.wishlist.lists()
     .sessionId('xxxxxxxxxxxxxxxxxxxxx')
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch lists by the owners’ session ID
 $lists = \verbb\wishlist\elements\ListElement::find()
     .sessionId('xxxxxxxxxxxxxxxxxxxxx')
@@ -433,14 +433,14 @@ Possible values include:
 | `['live', 'pending']` | that are live or pending.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch disabled lists #}
 {% set lists = craft.wishlist.lists()
     .status('disabled')
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch disabled lists
 $lists = \verbb\wishlist\elements\ListElement::find()
     ->status('disabled')
@@ -465,14 +465,14 @@ Possible values include:
 | a List Type object | of a type represented by the object.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch lists with a Foo list type #}
 {% set lists = craft.wishlist.lists()
     .type('foo')
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch lists with a Foo list type
 $lists = \verbb\wishlist\elements\ListElement::find()
     ->type('foo')
@@ -496,14 +496,14 @@ Possible values include:
 | `['not', 1, 2]` | not of a type with an ID of 1 or 2.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch lists of the list type with an ID of 1 #}
 {% set lists = craft.wishlist.lists()
     .typeId(1)
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch lists of the list type with an ID of 1
 $lists = \verbb\wishlist\elements\ListElement::find()
     ->typeId(1)
@@ -518,14 +518,14 @@ $lists = \verbb\wishlist\elements\ListElement::find()
 Narrows the query results based on the lists’ UIDs.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch the list by its UID #}
 {% set list = craft.wishlist.lists()
     .uid('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx')
     .one() %}
 ```
 
-```php
+```php PHP
 // Fetch the list by its UID
 $list = \verbb\wishlist\elements\ListElement::find()
     ->uid('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx')
@@ -549,14 +549,14 @@ Possible values include:
 | `['not', 1, 2]` | not of a user with an ID of 1 or 2.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch lists of the user with an ID of 1 #}
 {% set lists = craft.wishlist.lists()
     .userId(1)
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch lists of the user with an ID of 1
 $lists = \verbb\wishlist\elements\ListElement::find()
     ->userId(1)
