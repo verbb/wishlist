@@ -222,7 +222,6 @@ class ListTypes extends Component
         }
 
         return true;
-
     }
 
     public function handleChangedListType(ConfigEvent $event)
@@ -269,9 +268,9 @@ class ListTypes extends Component
                 $layout->id = $listTypeRecord->itemFieldLayoutId;
                 $layout->type = Item::class;
                 $layout->uid = key($data['itemFieldLayouts']);
-                
+
                 $fieldsService->saveLayout($layout);
-                
+
                 $listTypeRecord->itemFieldLayoutId = $layout->id;
             } else if ($listTypeRecord->itemFieldLayoutId) {
                 // Delete the item field layout
@@ -296,7 +295,7 @@ class ListTypes extends Component
         $this->_allListTypeIds = null;
         $this->_editableListTypeIds = null;
         $this->_fetchedAllListTypes = false;
-        
+
         unset(
             $this->_listTypesById[$listTypeRecord->id],
             $this->_listTypesByHandle[$listTypeRecord->handle]
@@ -362,7 +361,7 @@ class ListTypes extends Component
         $this->_allListTypeIds = null;
         $this->_editableListTypeIds = null;
         $this->_fetchedAllListTypes = false;
-        
+
         unset(
             $this->_listTypesById[$listTypeRecord->id],
             $this->_listTypesByHandle[$listTypeRecord->handle]

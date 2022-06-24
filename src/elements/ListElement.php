@@ -93,26 +93,26 @@ class ListElement extends Element
                 'label' => Craft::t('wishlist', 'All lists'),
                 'criteria' => [
                     'typeId' => $listTypeIds,
-                    'editable' => $editable
+                    'editable' => $editable,
                 ],
-                'defaultSort' => ['postDate', 'desc']
-            ]
+                'defaultSort' => ['postDate', 'desc'],
+            ],
         ];
 
         $sources[] = ['heading' => Craft::t('wishlist', 'List Types')];
 
         foreach ($listTypes as $listType) {
-            $key = 'listType:'.$listType->id;
-            $canEditLists = Craft::$app->getUser()->checkPermission('wishlist-manageListType:'.$listType->id);
+            $key = 'listType:' . $listType->id;
+            $canEditLists = Craft::$app->getUser()->checkPermission('wishlist-manageListType:' . $listType->id);
 
             $sources[$key] = [
                 'key' => $key,
                 'label' => $listType->name,
                 'data' => [
                     'handle' => $listType->handle,
-                    'editable' => $canEditLists
+                    'editable' => $canEditLists,
                 ],
-                'criteria' => ['typeId' => $listType->id, 'editable' => $editable]
+                'criteria' => ['typeId' => $listType->id, 'editable' => $editable],
             ];
         }
 
@@ -272,7 +272,7 @@ class ListElement extends Element
 
     public function getAddToCartUrl()
     {
-        return UrlHelper::actionUrl('wishlist/lists/add-to-cart', [ 'listId' => $this->id ]);
+        return UrlHelper::actionUrl('wishlist/lists/add-to-cart', ['listId' => $this->id]);
     }
 
 
@@ -285,13 +285,13 @@ class ListElement extends Element
             $listRecord = ListRecord::findOne($this->id);
 
             if (!$listRecord) {
-                throw new Exception('Invalid list id: '.$this->id);
+                throw new Exception('Invalid list id: ' . $this->id);
             }
         } else {
             $listRecord = new ListRecord();
             $listRecord->id = $this->id;
         }
-        
+
         $listRecord->typeId = $this->typeId;
         $listRecord->reference = $this->reference;
         $listRecord->lastIp = $this->lastIp;
@@ -365,12 +365,12 @@ class ListElement extends Element
             [
                 'label' => Craft::t('app', 'Date Created'),
                 'orderBy' => 'elements.dateCreated',
-                'attribute' => 'dateCreated'
+                'attribute' => 'dateCreated',
             ],
             [
                 'label' => Craft::t('app', 'Date Updated'),
                 'orderBy' => 'elements.dateUpdated',
-                'attribute' => 'dateUpdated'
+                'attribute' => 'dateUpdated',
             ],
         ];
     }

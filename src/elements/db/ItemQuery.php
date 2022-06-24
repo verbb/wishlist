@@ -80,7 +80,7 @@ class ItemQuery extends ElementQuery
     protected function beforePrepare(): bool
     {
         $this->joinElementTable('wishlist_items');
-            
+
         $this->subQuery->innerJoin('{{%wishlist_lists}} wishlist_lists', '[[wishlist_items.listId]] = [[wishlist_lists.id]]');
 
         $this->query->select([

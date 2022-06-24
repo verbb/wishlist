@@ -61,32 +61,32 @@ class ListInterface extends Element
                 'name' => 'items',
                 'args' => ItemArguments::getArguments(),
                 'type' => Type::listOf(ItemInterface::getType()),
-                'description' => 'The lists items. Accepts the same arguments as the `items` query.'
+                'description' => 'The lists items. Accepts the same arguments as the `items` query.',
             ],
             'typeId' => [
                 'name' => 'typeId',
                 'type' => Type::int(),
-                'description' => 'The list type ID.'
+                'description' => 'The list type ID.',
             ],
             'userId' => [
                 'name' => 'userId',
                 'type' => Type::int(),
-                'description' => 'The user ID that owns the list.'
+                'description' => 'The user ID that owns the list.',
             ],
             'sessionId' => [
                 'name' => 'sessionId',
                 'type' => Type::string(),
-                'description' => 'The list’s session ID.'
+                'description' => 'The list’s session ID.',
             ],
             'reference' => [
                 'name' => 'reference',
                 'type' => Type::string(),
-                'description' => 'The list’s reference.'
+                'description' => 'The list’s reference.',
             ],
             'default' => [
                 'name' => 'default',
                 'type' => Type::boolean(),
-                'description' => 'Whether it is the default list.'
+                'description' => 'Whether it is the default list.',
             ],
         ]), self::getName());
     }

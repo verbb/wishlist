@@ -64,7 +64,7 @@ class ItemsController extends BaseController
         } else {
             $item = new Item();
         }
-        
+
         $item->listId = $request->getParam('listId');
         $item->elementId = $request->getParam('elementId')[0];
         $item->setFieldValuesFromRequest('fields');
@@ -81,7 +81,7 @@ class ItemsController extends BaseController
 
             // Send the category back to the template
             Craft::$app->getUrlManager()->setRouteParams([
-                'item' => $item
+                'item' => $item,
             ]);
 
             return null;
@@ -94,7 +94,7 @@ class ItemsController extends BaseController
                 'title' => $item->title,
                 'status' => $item->getStatus(),
                 'url' => $item->getUrl(),
-                'cpEditUrl' => $item->getCpEditUrl()
+                'cpEditUrl' => $item->getCpEditUrl(),
             ]);
         }
 
@@ -151,11 +151,13 @@ class ItemsController extends BaseController
         $errors = [];
 
         // By default, handle multi-items, but if not - set them up as one
-        $postItems = $request->getParam('items', [[
-            'elementId' => $request->getParam('elementId'),
-            'fields' => $request->getParam('fields'),
-            'options' => $request->getParam('options'),
-        ]]);
+        $postItems = $request->getParam('items', [
+            [
+                'elementId' => $request->getParam('elementId'),
+                'fields' => $request->getParam('fields'),
+                'options' => $request->getParam('options'),
+            ],
+        ]);
 
         $variables = [
             'items' => [],
@@ -163,7 +165,7 @@ class ItemsController extends BaseController
 
         foreach ($postItems as $key => $postItem) {
             $elementId = $postItem['elementId'] ?? '';
-            
+
             if (!$elementId) {
                 $errors[$key] = new ItemError('Element ID must be provided.');
 
@@ -180,12 +182,12 @@ class ItemsController extends BaseController
 
             $item = $this->_setItemFromPost($elementId);
 
-             // Check if we're allowed to manage lists
+            // Check if we're allowed to manage lists
             $this->enforceEnabledList($item->list);
 
             // Set any additional options on the item
             $options = $postItem['options'] ?? [];
-            
+
             // Clear any empty options
             $options = array_filter($options);
 
@@ -197,7 +199,7 @@ class ItemsController extends BaseController
                 ->listId($item->listId)
                 ->optionsSignature($item->getOptionsSignature())
                 ->one();
-            
+
             if ($existingItem && !$settings->allowDuplicates) {
                 $errors[$key] = new ItemError('Item already in list.');
 
@@ -241,15 +243,15 @@ class ItemsController extends BaseController
         if (!$listTypeId && $listTypeHandle) {
             // Always take the ID first. If both are sent, Handle is ignored.
             $listType = WishList::$plugin->getListTypes()->getListTypeByHandle($listTypeHandle);
-            
+
             if ($listType) {
                 $listTypeId = $listType->id;
             }
         }
-        
+
         $list = Wishlist::$plugin->getLists()->getList($listId, true, $listTypeId);
 
-         // Check if we're allowed to manage lists
+        // Check if we're allowed to manage lists
         $this->enforceEnabledList($list);
 
         $errors = [];
@@ -259,18 +261,20 @@ class ItemsController extends BaseController
         ];
 
         // By default, handle multi-items, but if not - set them up as one
-        $postItems = $request->getParam('items', [[
-            'itemId' => $request->getParam('itemId'),
-            'elementId' => $request->getParam('elementId'),
-            'options' => $request->getParam('options'),
-            'fields' => $request->getParam('fields'),
-        ]]);
+        $postItems = $request->getParam('items', [
+            [
+                'itemId' => $request->getParam('itemId'),
+                'elementId' => $request->getParam('elementId'),
+                'options' => $request->getParam('options'),
+                'fields' => $request->getParam('fields'),
+            ],
+        ]);
 
         foreach ($postItems as $key => $postItem) {
             $itemId = $postItem['itemId'] ?? null;
             $elementId = $postItem['elementId'] ?? null;
             $options = $postItem['options'] ?? [];
-            
+
             if (!$elementId && !$itemId) {
                 $errors[$key] = new ItemError('Element ID or Item ID must be provided.');
 
@@ -296,13 +300,13 @@ class ItemsController extends BaseController
 
             if (!$item) {
                 $errors[$key] = new ItemError('Unable to find item in list.');
-            
+
                 continue;
             }
 
             if (!Craft::$app->getElements()->deleteElement($item)) {
                 $errors[$key] = new ItemError('Unable to delete item from list.', ['item' => $item]);
-            
+
                 continue;
             }
 
@@ -333,7 +337,7 @@ class ItemsController extends BaseController
         if (!$listTypeId && $listTypeHandle) {
             // Always take the ID first. If both are sent, Handle is ignored.
             $listType = WishList::$plugin->getListTypes()->getListTypeByHandle($listTypeHandle);
-            
+
             if ($listType) {
                 $listTypeId = $listType->id;
             }
@@ -341,7 +345,7 @@ class ItemsController extends BaseController
 
         $list = Wishlist::$plugin->getLists()->getList($listId, true, $listTypeId);
 
-         // Check if we're allowed to manage lists
+        // Check if we're allowed to manage lists
         $this->enforceEnabledList($list);
 
         $errors = [];
@@ -351,12 +355,14 @@ class ItemsController extends BaseController
         ];
 
         // By default, handle multi-items, but if not - set them up as one
-        $postItems = $request->getParam('items', [[
-            'itemId' => $request->getParam('itemId'),
-            'elementId' => $request->getParam('elementId'),
-            'options' => $request->getParam('options'),
-            'fields' => $request->getParam('fields'),
-        ]]);
+        $postItems = $request->getParam('items', [
+            [
+                'itemId' => $request->getParam('itemId'),
+                'elementId' => $request->getParam('elementId'),
+                'options' => $request->getParam('options'),
+                'fields' => $request->getParam('fields'),
+            ],
+        ]);
 
         $actions = [];
 
@@ -365,7 +371,7 @@ class ItemsController extends BaseController
             $elementId = $postItem['elementId'] ?? null;
             $fields = $postItem['fields'] ?? [];
             $options = $postItem['options'] ?? [];
-            
+
             // Clear any empty options
             $options = array_filter($options);
 
@@ -395,21 +401,21 @@ class ItemsController extends BaseController
             if ($item) {
                 if (!Craft::$app->getElements()->deleteElement($item)) {
                     $errors[$key] = new ItemError('Unable to delete item from list.', ['item' => $item]);
-                    
+
                     continue;
                 }
 
                 $variables['items'][] = array_merge(['action' => 'removed'], $item->toArray());
             } else {
                 $item = $this->_setItemFromPost($elementId);
-                
+
                 // Set any additional options and fields on the item
                 $item->setOptions($options);
                 $item->setFieldValues($fields);
 
                 if (!Wishlist::$plugin->getItems()->saveElement($item)) {
                     $errors[$key] = new ItemError('Unable to save item to list.', ['item' => $item]);
-                    
+
                     continue;
                 }
 
@@ -445,11 +451,11 @@ class ItemsController extends BaseController
             return $this->returnError('Unable to find item.');
         }
 
-         // Check if we're allowed to manage lists
+        // Check if we're allowed to manage lists
         $this->enforceEnabledList($item->list);
 
         $item->setFieldValuesFromRequest('fields');
-        
+
         if (!Wishlist::$plugin->getItems()->saveElement($item)) {
             return $this->returnError('Unable to update item in list.', ['item' => $item]);
         }
@@ -509,7 +515,7 @@ class ItemsController extends BaseController
         if (!$listTypeId && $listTypeHandle) {
             // Always take the ID first. If both are sent, Handle is ignored.
             $listType = WishList::$plugin->getListTypes()->getListTypeByHandle($listTypeHandle);
-            
+
             if ($listType) {
                 $listTypeId = $listType->id;
             }

@@ -29,7 +29,7 @@ class m201003_000000_add_options extends Migration
             foreach ($items as $key => $item) {
                 $this->update('{{%wishlist_items}}', [
                     'options' => Json::encode([]),
-                    'optionsSignature' => md5(Json::encode([]))
+                    'optionsSignature' => md5(Json::encode([])),
                 ], ['id' => $item['id']]);
             }
 

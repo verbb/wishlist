@@ -92,7 +92,6 @@ class MigrateShortlist extends Migration
         $list->save(false);
 
         return $list;
-
     }
 
     private function _migrateItems()
@@ -147,7 +146,6 @@ class MigrateShortlist extends Migration
 
             $item->save(false);
         }
-
     }
 
 }

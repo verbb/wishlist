@@ -44,7 +44,7 @@ class BaseController extends Controller
         }
 
         $this->setSuccessFlash(Craft::t('wishlist', $message));
-        
+
         if ($request->getIsPost()) {
 
             // Pass object to redirect for URL variables

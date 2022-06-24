@@ -143,17 +143,17 @@ class Wishlist extends Plugin
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event) {
             $event->rules = array_merge($event->rules, [
                 'wishlist' => 'wishlist/lists/index',
-                
+
                 'wishlist/lists/<listTypeHandle:{handle}>' => 'wishlist/lists/index',
                 'wishlist/lists/<listTypeHandle:{handle}>/new' => 'wishlist/lists/edit-list',
                 'wishlist/lists/<listTypeHandle:{handle}>/<listId:\d+>' => 'wishlist/lists/edit-list',
                 'wishlist/lists/<listTypeHandle:{handle}>/<listId:\d+>/items/new' => 'wishlist/items/edit-item',
                 'wishlist/lists/<listTypeHandle:{handle}>/<listId:\d+>/items/<itemId:\d+>' => 'wishlist/items/edit-item',
-                
+
                 'wishlist/list-types' => 'wishlist/list-types/list-type-index',
                 'wishlist/list-types/<listTypeId:\d+>' => 'wishlist/list-types/edit-list-type',
                 'wishlist/list-types/new' => 'wishlist/list-types/edit-list-type',
-                
+
                 'wishlist/settings' => 'wishlist/settings/index',
                 'wishlist/settings/general' => 'wishlist/settings/index',
             ]);
@@ -169,7 +169,7 @@ class Wishlist extends Plugin
                     'heading' => Craft::t('wishlist', 'wishlist_share_list_heading'),
                     'subject' => Craft::t('wishlist', 'wishlist_share_list_subject'),
                     'body' => Craft::t('wishlist', 'wishlist_share_list_body'),
-                ]
+                ],
             ]);
         });
     }
@@ -218,7 +218,7 @@ class Wishlist extends Plugin
 
         Event::on(Fields::class, Fields::EVENT_AFTER_DELETE_FIELD, [$listTypeService, 'pruneDeletedField']);
 
-        Event::on(ProjectConfig::class, ProjectConfig::EVENT_REBUILD, function (RebuildConfigEvent $event) {
+        Event::on(ProjectConfig::class, ProjectConfig::EVENT_REBUILD, function(RebuildConfigEvent $event) {
             $event->config['wishlist'] = ProjectConfigData::rebuildProjectConfig();
         });
     }
@@ -303,7 +303,7 @@ class Wishlist extends Plugin
 
                 foreach ($listTypes as $listType) {
                     $suffix = 'wishlistListTypes.' . $listType->uid;
-                    
+
                     $event->queries[$label][$suffix . ':read'] = [
                         'label' => Craft::t('wishlist', 'View wishlist type - {listType}', ['listType' => Craft::t('site', $listType->name)]),
                     ];

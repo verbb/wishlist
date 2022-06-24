@@ -45,7 +45,7 @@ class m200110_000000_project_config_support extends Migration
                 'name',
                 'handle',
                 'default',
-                'uid'
+                'uid',
             ])
             ->from(['{{%wishlist_listtypes}} listTypes'])
             ->all();

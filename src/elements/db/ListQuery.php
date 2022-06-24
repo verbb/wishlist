@@ -167,7 +167,7 @@ class ListQuery extends ElementQuery
 
         // Limit the query to only the sections the user has permission to edit
         $this->subQuery->andWhere([
-            'wishlist_lists.typeId' => Wishlist::$plugin->getListTypes()->getEditableListTypeIds()
+            'wishlist_lists.typeId' => Wishlist::$plugin->getListTypes()->getEditableListTypeIds(),
         ]);
     }
 }
