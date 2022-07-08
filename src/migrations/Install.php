@@ -132,18 +132,26 @@ class Install extends Migration
         }
     }
 
-    public function dropForeignKeys(): void
-    {
-        MigrationHelper::dropAllForeignKeysOnTable('{{%wishlist_lists}}', $this);
-        MigrationHelper::dropAllForeignKeysOnTable('{{%wishlist_listtypes}}', $this);
-        MigrationHelper::dropAllForeignKeysOnTable('{{%wishlist_items}}', $this);
-    }
-
     public function dropTables(): void
     {
-        $this->dropTable('{{%wishlist_lists}}');
-        $this->dropTable('{{%wishlist_listtypes}}');
-        $this->dropTable('{{%wishlist_items}}');
+        $this->dropTableIfExists('{{%wishlist_lists}}');
+        $this->dropTableIfExists('{{%wishlist_listtypes}}');
+        $this->dropTableIfExists('{{%wishlist_items}}');
+    }
+
+    public function dropForeignKeys(): void
+    {
+        if ($this->db->tableExists('{{%wishlist_lists}}')) {
+            MigrationHelper::dropAllForeignKeysOnTable('{{%wishlist_lists}}', $this);
+        }
+
+        if ($this->db->tableExists('{{%wishlist_listtypes}}')) {
+            MigrationHelper::dropAllForeignKeysOnTable('{{%wishlist_listtypes}}', $this);
+        }
+
+        if ($this->db->tableExists('{{%wishlist_items}}')) {
+            MigrationHelper::dropAllForeignKeysOnTable('{{%wishlist_items}}', $this);
+        }
     }
 
     public function dropProjectConfig(): void
