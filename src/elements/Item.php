@@ -8,6 +8,7 @@ use verbb\wishlist\records\Item as ItemRecord;
 use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
+use craft\elements\User;
 use craft\elements\actions\Delete;
 use craft\helpers\Json;
 use craft\helpers\UrlHelper;
@@ -136,6 +137,31 @@ class Item extends Element
         parent::init();
 
         $this->updateTitle();
+    }
+
+    public function canView(User $user): bool
+    {
+        return true;
+    }
+
+    public function canSave(User $user): bool
+    {
+        return true;
+    }
+
+    public function canDuplicate(User $user): bool
+    {
+        return true;
+    }
+
+    public function canDelete(User $user): bool
+    {
+        return true;
+    }
+
+    public function canCreateDrafts(User $user): bool
+    {
+        return true;
     }
 
     public function updateTitle(): void

@@ -187,6 +187,31 @@ class ListElement extends Element
         return $this->title;
     }
 
+    public function canView(User $user): bool
+    {
+        return true;
+    }
+
+    public function canSave(User $user): bool
+    {
+        return true;
+    }
+
+    public function canDuplicate(User $user): bool
+    {
+        return true;
+    }
+
+    public function canDelete(User $user): bool
+    {
+        return true;
+    }
+
+    public function canCreateDrafts(User $user): bool
+    {
+        return true;
+    }
+
     public function rules(): array
     {
         $rules = parent::rules();
