@@ -25,7 +25,7 @@ return [
         // PDF
         'pdfFilenameFormat' => 'Wishlist-{id}',
         'pdfPath' => '_pdf/wishlist',
-        'pdfAllowRemoteImages' => false,
+        'pdfAllowRemoteImages' => true,
         'pdfPaperSize' => 'letter',
         'pdfPaperOrientation' => 'portrait',
     ]

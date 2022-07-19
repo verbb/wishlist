@@ -27,7 +27,7 @@ class Settings extends Model
     // PDF
     public string $pdfFilenameFormat = 'Wishlist-{id}';
     public string $pdfPath = '_pdf/wishlist';
-    public bool $pdfAllowRemoteImages = false;
+    public bool $pdfAllowRemoteImages = true;
     public string $pdfPaperSize = 'letter';
     public string $pdfPaperOrientation = 'portrait';
 
