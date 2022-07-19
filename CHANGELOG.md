@@ -1,10 +1,27 @@
 # Changelog
 
-## 2.0.0-beta.1 - 2022-03-10
+## 2.0.0 - 2022-07-20
+
+### Added
+- Add missing translations.
+- Add resave console command for elements.
+- Add checks for registering events for performance.
+- Memoize all services for performance.
+- Rename base plugin methods.
+- Add `archiveTableIfExists()` to install migration.
 
 ### Changed
-- Now requires PHP `^8.0.2`.
-- Now requires Craft `^4.0.0-beta.1`.
+- Now requires PHP `8.0.2+`.
+- Now requires Craft `4.0.0+`.
+- Now supports `dompdf/dompdf:^2.0`.
+- `pdfAllowRemoteImages` is now `true` by default.
+
+### Fixed
+- Fix an error when uninstalling.
+- Fix `project-config/rebuild` support.
+
+### Removed
+- Remove deprecated `item` and `notice` from Ajax responses.
 
 ## 1.4.12 - 2022-03-15
 

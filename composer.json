@@ -2,7 +2,7 @@
     "name": "verbb/wishlist",
     "description": "Allow users to create lists to store favourite entries, save products in a wishlist and more.",
     "type": "craft-plugin",
-    "version": "2.0.0-beta.1",
+    "version": "2.0.0",
     "keywords": [
         "craft",
         "cms",
@@ -26,9 +26,9 @@
     ],
     "require": {
         "php": "^8.0.2",
-        "craftcms/cms": "^4.0.0-beta.1",
-        "dompdf/dompdf": "^0.8.3 || ^1.0.0",
-        "verbb/base": "^2.0.0-beta"
+        "craftcms/cms": "^4.0.0",
+        "dompdf/dompdf": "^1.0.2 || ^2.0.0",
+        "verbb/base": "^2.0.0"
     },
     "autoload": {
         "psr-4": {
