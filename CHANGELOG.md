@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.4.13 - 2022-07-27
+
+### Added
+- Add missing English translations.
+
+### Fixed
+- Fix an error when trying to update list items.
+
 ## 1.4.12 - 2022-03-15
 
 ### Changed
