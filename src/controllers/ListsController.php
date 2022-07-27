@@ -257,7 +257,7 @@ class ListsController extends BaseController
         if ($items = $request->getParam('items')) {
             foreach ($items as $itemId => $item) {
                 $removeItem = $request->getParam("items.{$itemId}.remove");
-                $fields = $request->getParam("items.{$itemId}.fields");
+                $fields = $request->getParam("items.{$itemId}.fields", []);
 
                 $item = Wishlist::getInstance()->getItems()->getItemById($itemId);
                 $item->setFieldValues($fields);
