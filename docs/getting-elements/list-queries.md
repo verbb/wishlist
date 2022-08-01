@@ -16,7 +16,7 @@ $myQuery = \verbb\wishlist\elements\ListElement::find();
 Once you’ve created a list query, you can set parameters on it to narrow down the results, and then execute it by calling `.all()`. An array of [List](docs:developers/list) objects will be returned.
 
 :::tip
-See Introduction to [Element Queries](https://docs.craftcms.com/v3/dev/element-queries/) in the Craft docs to learn about how element queries work.
+See Introduction to [Element Queries](https://craftcms.com/docs/4.x/element-queries/) in the Craft docs to learn about how element queries work.
 :::
 
 ## Example
@@ -53,7 +53,7 @@ List queries support the following parameters:
 
 ### `anyStatus`
 
-Clears out the [status()](https://docs.craftcms.com/api/v3/craft-elements-db-elementquery.html#method-status) and [enabledForSite()](https://docs.craftcms.com/api/v3/craft-elements-db-elementquery.html#method-enabledforsite) parameters.
+Clears out the [status()](https://docs.craftcms.com/api/v4/craft-elements-db-elementquery.html#method-status) and [enabledForSite()](https://docs.craftcms.com/api/v4/craft-elements-db-elementquery.html#method-enabledforsite) parameters.
 
 ::: code
 ```twig Twig
@@ -370,7 +370,7 @@ $lists = \verbb\wishlist\elements\ListElement::find()
 
 Narrows the query results to only lists that match a search query.
 
-See [Searching](https://docs.craftcms.com/v3/searching.html) for a full explanation of how to work with this parameter.
+See [Searching](https://craftcms.com/docs/4.x/searching.html) for a full explanation of how to work with this parameter.
 
 ::: code
 ```twig Twig

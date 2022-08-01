@@ -1,5 +1,5 @@
 # GraphQL
-Wishlist supports accessing [Item](docs:developers/item) and [List](docs:developers/list) objects via GraphQL. Be sure to read about [Craft's GraphQL support](https://docs.craftcms.com/v3/graphql.html).
+Wishlist supports accessing [Item](docs:developers/item) and [List](docs:developers/list) objects via GraphQL. Be sure to read about [Craft's GraphQL support](https://craftcms.com/docs/4.x/graphql.html).
 
 ## Lists
 
