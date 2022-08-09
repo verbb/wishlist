@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.4.14 - 2022-08-09
+
+### Added
+- Add `wishlist/items/cleanup-orphaned-items`.
+- Show list owners with status and thumbnail in list element index view. (thanks @martyspain).
+
+### Fixed
+- Fix items not being removed when pruning lists.
+
 ## 1.4.13 - 2022-07-27
 
 ### Added

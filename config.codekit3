@@ -482,6 +482,14 @@
       "oAP" : "\/src\/base",
       "oF" : 0
     },
+    "\/src\/console\/controllers\/ItemsController.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/console\/controllers\/ItemsController.php",
+      "oF" : 0
+    },
     "\/src\/console\/controllers\/ListsController.php" : {
       "cB" : 0,
       "ft" : 8192,
