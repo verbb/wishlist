@@ -174,15 +174,24 @@ class Lists extends Component
             // Taken from craft\services\Elements::deleteElement(); Using the method directly
             // takes too many resources since it retrieves the list before deleting it.
 
+            // Get element IDs for items first before foreign
+            $itemIds = [];
+
+            foreach ($listIds as $listId) {
+                $itemIds = array_merge($itemIds, Item::find()
+                    ->listId($listId)
+                    ->status(null)
+                    ->ids());
+            }
+
             // Delete the elements' table rows, which will cascade across all other InnoDB tables
-            Craft::$app->getDb()->createCommand()
-                ->delete('{{%elements}}', ['id' => $listIds])
-                ->execute();
+            Db::delete('{{%elements}}', ['id' => $listIds]);
 
             // The searchindex table is probably MyISAM, though
-            Craft::$app->getDb()->createCommand()
-                ->delete('{{%searchindex}}', ['elementId' => $listIds])
-                ->execute();
+            Db::delete('{{%searchindex}}', ['elementId' => $listIds]);
+
+            // Remove all items for lists. `wishlist_items` will take care of itself
+            Db::delete('{{%elements}}', ['id' => $itemIds]);
 
             return count($listIds);
         }

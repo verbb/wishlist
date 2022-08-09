@@ -8,10 +8,11 @@ Events can be used to extend the functionality of Wishlist.
 Plugins can get notified before a list is saved. Event handlers can prevent the list from getting sent by setting `$event->isValid` to false.
 
 ```php
+use craft\events\ModelEvent;
 use verbb\wishlist\elements\ListElement;
 use yii\base\Event;
 
-Event::on(ListElement::class, ListElement::EVENT_BEFORE_SAVE, function(Event $event) {
+Event::on(ListElement::class, ListElement::EVENT_BEFORE_SAVE, function(ModelEvent $event) {
     $list = $event->sender;
     $event->isValid = false;
 });
@@ -22,10 +23,11 @@ Event::on(ListElement::class, ListElement::EVENT_BEFORE_SAVE, function(Event $ev
 Plugins can get notified after a list has been saved
 
 ```php
+use craft\events\ModelEvent;
 use verbb\wishlist\elements\ListElement;
 use yii\base\Event;
 
-Event::on(ListElement::class, ListElement::EVENT_AFTER_SAVE, function(Event $event) {
+Event::on(ListElement::class, ListElement::EVENT_AFTER_SAVE, function(ModelEvent $event) {
     $list = $event->sender;
 });
 ```
@@ -96,10 +98,11 @@ Event::on(ListTypes::class, ListTypes::EVENT_AFTER_SAVE_LISTTYPE, function(ListT
 Plugins can get notified before an item is saved. Event handlers can prevent the item from getting sent by setting `$event->isValid` to false.
 
 ```php
+use craft\events\ModelEvent;
 use verbb\wishlist\elements\Item;
 use yii\base\Event;
 
-Event::on(Item::class, Item::EVENT_BEFORE_SAVE, function(Event $event) {
+Event::on(Item::class, Item::EVENT_BEFORE_SAVE, function(ModelEvent $event) {
     $item = $event->sender;
     $event->isValid = false;
 });
@@ -110,10 +113,11 @@ Event::on(Item::class, Item::EVENT_BEFORE_SAVE, function(Event $event) {
 Plugins can get notified after an item has been saved
 
 ```php
+use craft\events\ModelEvent;
 use verbb\wishlist\elements\Item;
 use yii\base\Event;
 
-Event::on(Item::class, Item::EVENT_AFTER_SAVE, function(Event $event) {
+Event::on(Item::class, Item::EVENT_AFTER_SAVE, function(ModelEvent $event) {
     $item = $event->sender;
 });
 ```

@@ -282,7 +282,10 @@ class ListElement extends Element
             return null;
         }
 
-        return $this->_user = User::find()->id($this->userId)->one();
+        return $this->_user = User::find()
+            ->status(null)
+            ->id($this->userId)
+            ->one();
     }
 
     public function getOwnerId(): int|string|null
@@ -382,11 +385,9 @@ class ListElement extends Element
     {
         switch ($attribute) {
             case 'owner':
-                if ($owner = $this->getOwner()) {
-                    return '<a href="' . $owner->getCpEditUrl() . '">' . $owner . '</a>';
-                }
+                $owner = $this->getOwner();
 
-                return Craft::t('wishlist', 'Guest');
+                return $owner ? Cp::elementHtml($owner) : Craft::t('wishlist', 'Guest');
             case 'type':
                 if ($listType = $this->getType()) {
                     return Craft::t('site', $listType->name);

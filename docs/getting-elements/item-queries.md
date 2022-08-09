@@ -478,7 +478,7 @@ See [Searching](https://craftcms.com/docs/4.x/searching.html) for a full explana
 
 ```php PHP
 // Get the search query from the 'q' query string param
-$searchQuery = \Craft::$app->request->getQueryParam('q');
+$searchQuery = \Craft::$app->getRequest()->getQueryParam('q');
 
 // Fetch all items that match the search query
 $items = \verbb\wishlist\elements\Item::find()
