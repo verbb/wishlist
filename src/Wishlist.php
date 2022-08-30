@@ -263,13 +263,13 @@ class Wishlist extends Plugin
                 'action' => function(): int {
                     $controller = Craft::$app->controller;
 
-                    $query = Item::find();
+                    $criteria = [];
 
                     if ($controller->listId !== null) {
-                        $query->listId(explode(',', $controller->listId));
+                        $criteria['listId'] = explode(',', $controller->listId);
                     }
 
-                    return $controller->resaveElements($query);
+                    return $controller->resaveElements(Item::class, $criteria);
                 },
                 'options' => ['listId'],
                 'helpSummary' => 'Re-saves Wishlist items.',
@@ -281,8 +281,8 @@ class Wishlist extends Plugin
             $event->actions['wishlist-lists'] = [
                 'action' => function(): int {
                     $controller = Craft::$app->controller;
-                    $query = ListElement::find();
-                    return $controller->resaveElements($query);
+                    
+                    return $controller->resaveElements(ListElement::class);
                 },
                 'helpSummary' => 'Re-saves Wishlist lists.',
             ];
