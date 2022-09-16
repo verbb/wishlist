@@ -245,7 +245,7 @@ class ListTypes extends Component
             }
 
             $db->createCommand()
-                ->softDelete('{{%wishlist_listtypes}}', ['id' => $listTypeRecord->id])
+                ->delete('{{%wishlist_listtypes}}', ['id' => $listTypeRecord->id])
                 ->execute();
 
             $transaction->commit();
