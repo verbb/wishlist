@@ -175,12 +175,18 @@ class ListTypes extends Component
                 $listTypeRecord->itemFieldLayoutId = null;
             }
 
-            // // If this was the default make all others not the default.
-            // if ($listType->default) {
-            //     ListTypeRecord::updateAll(['default' => 0], ['not', ['id' => $listTypeRecord->id]]);
-            // }
-
             $listTypeRecord->save(false);
+
+            // If this was the default make all others not the default.
+            if ($listTypeRecord->default) {
+                foreach ($this->getAllListTypes() as $otherListType) {
+                    if ($otherListType->uid !== $listTypeUid) {
+                        $otherListType->default = false;
+
+                        $this->saveListType($otherListType);
+                    }
+                }
+            }
 
             $transaction->commit();
         } catch (Throwable $e) {
