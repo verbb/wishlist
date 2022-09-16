@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.0.1 - 2022-09-17
+
+### Fixed
+- Fix an error when deleting a list type.
+- Fix multiple list types able to be set as the default.
+- Fix an error running `resave` console commands.
+
 ## 2.0.0 - 2022-07-20
 
 ### Added
