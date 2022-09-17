@@ -10,6 +10,7 @@ use Craft;
 use craft\base\Element;
 use craft\elements\User;
 use craft\elements\actions\Delete;
+use craft\helpers\Cp;
 use craft\helpers\UrlHelper;
 use craft\models\FieldLayout;
 use craft\web\UploadedFile;
