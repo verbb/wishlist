@@ -2,6 +2,7 @@
 namespace verbb\wishlist\services;
 
 use verbb\wishlist\Wishlist;
+use verbb\wishlist\elements\Item;
 use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\elements\db\ListQuery;
 use verbb\wishlist\models\Settings;
