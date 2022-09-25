@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.2 - 2022-09-25
+
+### Fixed
+- Fix an error when running Craft's Garbage Collection. (thanks @olivierbon).
+- Fix an error when viewing list owners in the control panel.
+
 ## 2.0.1 - 2022-09-17
 
 ### Fixed
