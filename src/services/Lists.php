@@ -168,31 +168,42 @@ class Lists extends Component
         $doPurge = Wishlist::getInstance()->getSettings()->purgeInactiveLists;
 
         if ($doPurge) {
-            $listIds = $this->_getListsIdsToPurge();
+            // Allow batch processing for large items/lists
+            $limit = 200;
+            $offset = 0;
+            $listCount = 0;
 
-            // Taken from craft\services\Elements::deleteElement(); Using the method directly
-            // takes too much resources since it retrieves the list before deleting it.
+            do {
+                $listIds = $this->_getListsIdsToPurge($limit, $offset);
 
-            // Get element IDs for items first before foreign
-            $itemIds = [];
+                // Taken from craft\services\Elements::deleteElement(); Using the method directly
+                // takes too many resources since it retrieves the list before deleting it.
 
-            foreach ($listIds as $listId) {
-                $itemIds = array_merge($itemIds, Item::find()
-                    ->listId($listId)
-                    ->status(null)
-                    ->ids());
-            }
+                // Get element IDs for items first before foreign
+                $itemIds = [];
 
-            // Delete the elements table rows, which will cascade across all other InnoDB tables
-            Db::delete('{{%elements}}', ['id' => $listIds]);
+                foreach ($listIds as $listId) {
+                    $itemIds = array_merge($itemIds, Item::find()
+                        ->listId($listId)
+                        ->status(null)
+                        ->ids());
+                }
 
-            // The searchindex table is probably MyISAM, though
-            Db::delete('{{%searchindex}}', ['elementId' => $listIds]);
+                // Delete the elements' table rows, which will cascade across all other InnoDB tables
+                Db::delete('{{%elements}}', ['id' => $listIds]);
 
-            // Remove all items for lists. `wishlist_items` will take care of itself
-            Db::delete('{{%elements}}', ['id' => $itemIds]);
+                // The searchindex table is probably MyISAM, though
+                Db::delete('{{%searchindex}}', ['elementId' => $listIds]);
 
-            return \count($listIds);
+                // Remove all items for lists. `wishlist_items` will take care of itself
+                Db::delete('{{%elements}}', ['id' => $itemIds]);
+
+                $offset = $offset + $limit;
+
+                $listCount = $listCount + count($listIds);
+            } while ($listIds);
+
+            return $listCount;
         }
 
         return 0;
@@ -374,7 +385,7 @@ class Lists extends Component
         return $sessionId;
     }
 
-    private function _getListsIdsToPurge(): array
+    private function _getListsIdsToPurge($limit = null, $offset = null): array
     {
         $settings = Wishlist::getInstance()->getSettings();
 
@@ -387,7 +398,9 @@ class Lists extends Component
             ->select(['lists.id'])
             ->from(['{{%wishlist_lists}} lists'])
             ->join('LEFT OUTER JOIN', '{{%wishlist_items}} items', 'lists.id = [[items.listId]]')
-            ->where('[[lists.dateUpdated]] <= :edge', ['edge' => Db::prepareDateForDb($edge)]);
+            ->where('[[lists.dateUpdated]] <= :edge', ['edge' => Db::prepareDateForDb($edge)])
+            ->limit($limit)
+            ->offset($offset);
 
         if ($settings->purgeEmptyListsOnly) {
             $query->andWhere(['is', '[[items.listId]]', null]);
@@ -405,7 +418,9 @@ class Lists extends Component
             ->from(['{{%wishlist_lists}} lists'])
             ->join('LEFT OUTER JOIN', '{{%wishlist_items}} items', 'lists.id = [[items.listId]]')
             ->where('[[lists.dateUpdated]] <= :edge', ['edge' => Db::prepareDateForDb($edge)])
-            ->andWhere(['is', '[[lists.userId]]', null]);
+            ->andWhere(['is', '[[lists.userId]]', null])
+            ->limit($limit)
+            ->offset($offset);
 
         if ($settings->purgeEmptyGuestListsOnly) {
             $query->andWhere(['is', '[[items.listId]]', null]);
