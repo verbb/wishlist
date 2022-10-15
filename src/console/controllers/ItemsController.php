@@ -20,24 +20,34 @@ class ItemsController extends Controller
 
     public function actionCleanupOrphanedItems()
     {
-        $itemElements = (new Query())
-            ->select(['id'])
-            ->from(['{{%elements}}'])
-            ->where(['type' => Item::class])
-            ->column();
+        // Allow batch processing for large items/lists
+        $limit = 200;
+        $offset = 0;
 
-        foreach ($itemElements as $itemElement) {
-            $item = (new Query())
-                ->from(['{{%wishlist_items}}'])
-                ->where(['id' => $itemElement])
-                ->exists();
+        do {
+            $itemElements = (new Query())
+                ->select(['id'])
+                ->from(['{{%elements}}'])
+                ->where(['type' => Item::class])
+                ->limit($limit)
+                ->offset($offset)
+                ->column();
 
-            if (!$item) {
-                $this->stderr('Removed item element ' . $itemElement . '.' . PHP_EOL, Console::FG_GREEN);
+            foreach ($itemElements as $itemElement) {
+                $item = (new Query())
+                    ->from(['{{%wishlist_items}}'])
+                    ->where(['id' => $itemElement])
+                    ->exists();
 
-                Db::delete('{{%elements}}', ['id' => $itemElement]);
+                if (!$item) {
+                    $this->stderr('Removed item element ' . $itemElement . '.' . PHP_EOL, Console::FG_GREEN);
+
+                    Db::delete('{{%elements}}', ['id' => $itemElement]);
+                }
             }
-        }
+
+            $offset = $offset + $limit;
+        } while ($itemElements);
 
         return ExitCode::OK;
     }
