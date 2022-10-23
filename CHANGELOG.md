@@ -36,6 +36,11 @@
 ### Removed
 - Remove deprecated `item` and `notice` from Ajax responses.
 
+## 1.4.15 - 2022-10-23
+
+### Added
+- Add batch processing for purge list/items commands.
+
 ## 1.4.14 - 2022-08-09
 
 ### Added
