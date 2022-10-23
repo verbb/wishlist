@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.3 - 2022-10-23
+
+### Added
+- Add batch processing for purge list/items commands.
+
 ## 2.0.2 - 2022-09-25
 
 ### Fixed
