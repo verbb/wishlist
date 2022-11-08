@@ -67,7 +67,7 @@ class ItemInterface extends Element
             'element' => [
                 'name' => 'element',
                 'type' => Element::getType(),
-                'description' => 'The element the node links to.',
+                'description' => 'The element that the item relates to.',
             ],
         ]), self::getName());
     }
