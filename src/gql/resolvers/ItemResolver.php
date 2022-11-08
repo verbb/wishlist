@@ -4,8 +4,11 @@ namespace verbb\wishlist\gql\resolvers;
 use verbb\wishlist\elements\Item;
 use verbb\wishlist\helpers\Gql as GqlHelper;
 
+use craft\elements\db\ElementQuery;
 use craft\gql\base\ElementResolver;
 use craft\helpers\Db;
+
+use Illuminate\Support\Collection;
 
 class ItemResolver extends ElementResolver
 {
@@ -20,7 +23,7 @@ class ItemResolver extends ElementResolver
             $query = $source->$fieldName;
         }
 
-        if (is_array($query)) {
+        if (!$query instanceof ElementQuery) {
             return $query;
         }
 
@@ -31,7 +34,7 @@ class ItemResolver extends ElementResolver
         $pairs = GqlHelper::extractAllowedEntitiesFromSchema('read');
 
         if (!GqlHelper::canQueryWishlistItems()) {
-            return [];
+            return Collection::empty();
         }
 
         if (!GqlHelper::canSchema('wishlistListTypes.all')) {
