@@ -54,7 +54,7 @@ class Items extends Component
         }
 
         $list = Wishlist::$plugin->getLists()->getList($listId, $forceSave, $listTypeId);
-        $element = Craft::$app->getElements()->getElementById((int)$elementId, $elementSiteId);
+        $element = Craft::$app->getElements()->getElementById((int)$elementId, null, $elementSiteId);
 
         if (!$element || !$list) {
             return null;
