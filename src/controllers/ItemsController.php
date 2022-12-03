@@ -154,6 +154,7 @@ class ItemsController extends BaseController
         $postItems = $request->getParam('items', [
             [
                 'elementId' => $request->getParam('elementId'),
+                'elementSiteId' => $request->getParam('elementSiteId'),
                 'fields' => $request->getParam('fields'),
                 'options' => $request->getParam('options'),
             ],
@@ -165,6 +166,7 @@ class ItemsController extends BaseController
 
         foreach ($postItems as $key => $postItem) {
             $elementId = $postItem['elementId'] ?? '';
+            $elementSiteId = $postItem['elementSiteId'] ?? '';
 
             if (!$elementId) {
                 $errors[$key] = new ItemError('Element ID must be provided.');
@@ -172,7 +174,7 @@ class ItemsController extends BaseController
                 continue;
             }
 
-            $element = Craft::$app->getElements()->getElementById($elementId);
+            $element = Craft::$app->getElements()->getElementById($elementId, null, $elementSiteId);
 
             if (!$element) {
                 $errors[$key] = new ItemError('Unable to find element.');
@@ -180,7 +182,7 @@ class ItemsController extends BaseController
                 continue;
             }
 
-            $item = $this->_setItemFromPost($elementId);
+            $item = $this->_setItemFromPost($elementId, $elementSiteId);
 
             // Check if we're allowed to manage lists
             $this->enforceEnabledList($item->list);
@@ -265,6 +267,7 @@ class ItemsController extends BaseController
             [
                 'itemId' => $request->getParam('itemId'),
                 'elementId' => $request->getParam('elementId'),
+                'elementSiteId' => $request->getParam('elementSiteId'),
                 'options' => $request->getParam('options'),
                 'fields' => $request->getParam('fields'),
             ],
@@ -294,6 +297,10 @@ class ItemsController extends BaseController
 
             if ($elementId) {
                 $query->elementId($elementId);
+            }
+
+            if ($elementSiteId) {
+                $query->elementSiteId($elementSiteId);
             }
 
             $item = $query->one();
@@ -359,6 +366,7 @@ class ItemsController extends BaseController
             [
                 'itemId' => $request->getParam('itemId'),
                 'elementId' => $request->getParam('elementId'),
+                'elementSiteId' => $request->getParam('elementSiteId'),
                 'options' => $request->getParam('options'),
                 'fields' => $request->getParam('fields'),
             ],
@@ -369,6 +377,7 @@ class ItemsController extends BaseController
         foreach ($postItems as $key => $postItem) {
             $itemId = $postItem['itemId'] ?? null;
             $elementId = $postItem['elementId'] ?? null;
+            $elementSiteId = $postItem['elementSiteId'] ?? null;
             $fields = $postItem['fields'] ?? [];
             $options = $postItem['options'] ?? [];
 
@@ -396,6 +405,10 @@ class ItemsController extends BaseController
                 $query->elementId($elementId);
             }
 
+            if ($elementSiteId) {
+                $query->elementSiteId($elementSiteId);
+            }
+
             $item = $query->one();
 
             if ($item) {
@@ -407,7 +420,7 @@ class ItemsController extends BaseController
 
                 $variables['items'][] = array_merge(['action' => 'removed'], $item->toArray());
             } else {
-                $item = $this->_setItemFromPost($elementId);
+                $item = $this->_setItemFromPost($elementId, $elementSiteId);
 
                 // Set any additional options and fields on the item
                 $item->setOptions($options);
@@ -503,10 +516,11 @@ class ItemsController extends BaseController
         $variables['fieldsHtml'] = $form->render();
     }
 
-    private function _setItemFromPost($elementId = null): Item
+    private function _setItemFromPost($elementId = null, $elementSiteId = null): Item
     {
         $request = Craft::$app->getRequest();
         $elementId = $request->getParam('elementId', $elementId);
+        $elementSiteId = $request->getParam('elementSiteId', $elementSiteId);
         $listId = $request->getParam('listId');
 
         $listTypeId = $request->getParam('listTypeId');
@@ -522,7 +536,7 @@ class ItemsController extends BaseController
         }
 
         // Create the item, and force the item's list to also be created if not already
-        $item = WishList::$plugin->getItems()->createItem($elementId, $listId, $listTypeId, true);
+        $item = WishList::$plugin->getItems()->createItem($elementId, $listId, $listTypeId, true, $elementSiteId);
 
         return $item;
     }
