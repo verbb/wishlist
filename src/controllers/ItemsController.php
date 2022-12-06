@@ -276,6 +276,7 @@ class ItemsController extends BaseController
         foreach ($postItems as $key => $postItem) {
             $itemId = $postItem['itemId'] ?? null;
             $elementId = $postItem['elementId'] ?? null;
+            $elementSiteId = $postItem['elementSiteId'] ?? null;
             $options = $postItem['options'] ?? [];
 
             if (!$elementId && !$itemId) {
