@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.16 - 2022-12-07
+
+### Added
+- Add cross-site item management.
+- Add support for `siteId` for `craft.wishlist.item`.
+
 ## 1.4.15 - 2022-10-23
 
 ### Added
