@@ -454,6 +454,7 @@ class ItemsController extends BaseController
     {
         $request = Craft::$app->getRequest();
         $itemId = $request->getParam('itemId');
+        $options = $request->getParam('options');
 
         if (!$itemId) {
             return $this->returnError('Item ID must be provided.');
@@ -469,6 +470,8 @@ class ItemsController extends BaseController
         $this->enforceEnabledList($item->list);
 
         $item->setFieldValuesFromRequest('fields');
+
+        $item->setOptions($options);
 
         if (!Wishlist::$plugin->getItems()->saveElement($item)) {
             return $this->returnError('Unable to update item in list.', ['item' => $item]);
