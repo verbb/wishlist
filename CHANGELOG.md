@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.17 - 2022-12-18
+
+### Added
+- Added support for item options to be updated when managing items. (thanks @bymayo).
+
 ## 1.4.16 - 2022-12-07
 
 ### Added
