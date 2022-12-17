@@ -2,6 +2,11 @@
 
 ## 2.0.4 - 2022-12-18
 
+### Added
+- Added support for item options to be updated when managing items. (thanks @bymayo).
+- Add cross-site item management.
+- Add support for `siteId` for `craft.wishlist.item`.
+
 ### Changed
 - Update `element` GraphQL description.
 
@@ -48,6 +53,17 @@
 
 ### Removed
 - Remove deprecated `item` and `notice` from Ajax responses.
+
+## 1.4.17 - 2022-12-18
+
+### Added
+- Added support for item options to be updated when managing items. (thanks @bymayo).
+
+## 1.4.16 - 2022-12-07
+
+### Added
+- Add cross-site item management.
+- Add support for `siteId` for `craft.wishlist.item`.
 
 ## 1.4.15 - 2022-10-23
 

@@ -42,7 +42,7 @@ class Items extends Component
         return true;
     }
 
-    public function createItem($elementId, $listId, $listTypeId = null, $forceSave = false): ?Item
+    public function createItem($elementId, $listId, $listTypeId = null, $forceSave = false, $elementSiteId = null): ?Item
     {
         // null `listId` is okay - a new list will get created.
         if (!$elementId) {
@@ -50,7 +50,7 @@ class Items extends Component
         }
 
         $list = Wishlist::$plugin->getLists()->getList($listId, $forceSave, $listTypeId);
-        $element = Craft::$app->getElements()->getElementById((int)$elementId);
+        $element = Craft::$app->getElements()->getElementById((int)$elementId, null, $elementSiteId);
 
         if (!$element || !$list) {
             return null;
