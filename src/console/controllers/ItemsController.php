@@ -49,6 +49,28 @@ class ItemsController extends Controller
             $offset = $offset + $limit;
         } while ($itemElements);
 
+        $limit = 200;
+        $offset = 0;
+
+        // Clear any items that no longer reference an element
+        do {
+            $itemElements = (new Query())
+                ->select(['id'])
+                ->from(['{{%wishlist_items}}'])
+                ->where(['elementId' => null])
+                ->limit($limit)
+                ->offset($offset)
+                ->column();
+
+            foreach ($itemElements as $itemElement) {
+                $this->stderr('Removed item element ' . $itemElement . ' due to deleted linked element.' . PHP_EOL, Console::FG_GREEN);
+
+                Db::delete('{{%wishlist_items}}', ['id' => $itemElement]);
+            }
+
+            $offset = $offset + $limit;
+        } while ($itemElements);
+
         return ExitCode::OK;
     }
 }
