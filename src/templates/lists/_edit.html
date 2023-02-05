@@ -87,11 +87,8 @@
                     <nav class="hidden">
                         {% include "_elements/sources" %}
                     </nav>
-            
-                    <a class="customize-sources">
-                        <span class="settings icon"></span>
-                        <span class="label">{{ 'Customize'|t('app') }}</span>
-                    </a>
+
+                    <div id="source-actions" class="buttons"></div>
                 </div>
             </div>
 
@@ -102,7 +99,8 @@
                     context: '{{ context }}',
                     storageKey: 'elementindex.{{ elementType|e("js") }}',
                     criteria: { id: {{ list.items.ids() | json_encode | raw }} },
-                    toolbarSelector: '.element-toolbar'
+                    toolbarSelector: '.element-toolbar',
+                    canHaveDrafts: 'false',
                 });
             {% endjs %}
         {% else %}
