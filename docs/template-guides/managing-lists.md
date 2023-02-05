@@ -52,7 +52,8 @@ You can Add, Delete or Clear lists, and its recommended that these options shoul
 ```twig URL
 <a href="{{ actionUrl('wishlist/lists/update', { title: 'New Title' }) }}">
     Update List
-</a>```
+</a>
+```
 :::
 
 
