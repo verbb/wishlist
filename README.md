@@ -1,6 +1,6 @@
 # Wishlist Plugin for Craft CMS
 
-<img width="500" src="https://verbb.io/uploads/plugins/wishlist/wishlist-social-card.png?v=1">
+<img width="500" src="https://verbb.imgix.net/plugins/wishlist/wishlist-social-card.png?v=1">
 
 Allow your site users to create lists for any element, for a variety of use-cases. Create a favourites list for entries, or create a wishlist for products to easily one-click add to your cart.
 
@@ -15,7 +15,7 @@ All sharable via a unique URL of course.
 - Single-click add to cart for any purchasables in a list.
 - Easy sharing of lists.
 
-<img src="https://verbb.io/uploads/plugins/wishlist/control-panel.png" style="box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-radius: 4px; border: 1px solid rgba(0,0,0,0.12);">
+<img src="https://verbb.imgix.net/plugins/wishlist/control-panel.png" style="box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-radius: 4px; border: 1px solid rgba(0,0,0,0.12);">
 
 ## Documentation
 
