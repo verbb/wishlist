@@ -20,12 +20,13 @@ class m230510_000000_permissions_to_uid extends Migration
             ->pairs();
 
         $relations = [
-            'wishlist-manageListType' => $listTypeMap,
+            // Must be lowercase to match permissions database table
+            'wishlist-managelisttype' => $listTypeMap,
         ];
 
         foreach ($permissions as $id => $permission) {
             if (
-                preg_match('/([\w]+)(:|-)([\d]+)/i', $permission, $matches) &&
+                preg_match('/([\w-]+)(:|-)([\d]+)/i', $permission, $matches) &&
                 array_key_exists(strtolower($matches[1]), $relations) &&
                 !empty($relations[strtolower($matches[1])][$matches[3]])
             ) {
