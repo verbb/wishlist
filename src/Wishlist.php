@@ -52,7 +52,7 @@ class Wishlist extends Plugin
 
     public bool $hasCpSection = true;
     public bool $hasCpSettings = true;
-    public string $schemaVersion = '1.0.4';
+    public string $schemaVersion = '1.0.5';
     public string $minVersionRequired = '1.4.11';
 
 
@@ -191,8 +191,8 @@ class Wishlist extends Plugin
             $listTypes = Wishlist::$plugin->getListTypes()->getAllListTypes();
 
             $listTypePermissions = [];
-            foreach ($listTypes as $id => $listType) {
-                $suffix = ':' . $id;
+            foreach ($listTypes as $listType) {
+                $suffix = ':' . $listType->uid;
                 $listTypePermissions['wishlist-manageListType' . $suffix] = ['label' => Craft::t('wishlist', 'Manage “{type}” lists', ['type' => $listType->name])];
             }
 

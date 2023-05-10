@@ -78,7 +78,7 @@ class ListTypes extends Component
         $userSession = Craft::$app->getUser();
         
         return ArrayHelper::where($this->getAllListTypes(), function(ListType $listType) use ($userSession) {
-            return $userSession->checkPermission("wishlist-manageListType:$listType->id");
+            return $userSession->checkPermission("wishlist-manageListType:$listType->uid");
         }, true, true, false);
     }
 

@@ -73,8 +73,8 @@ class ListElement extends Element
         $sources[] = ['heading' => Craft::t('wishlist', 'List Types')];
 
         foreach ($listTypes as $listType) {
-            $key = 'listType:' . $listType->id;
-            $canEditLists = Craft::$app->getUser()->checkPermission('wishlist-manageListType:' . $listType->id);
+            $key = 'listType:' . $listType->uid;
+            $canEditLists = Craft::$app->getUser()->checkPermission('wishlist-manageListType:' . $listType->uid);
 
             $sources[$key] = [
                 'key' => $key,
@@ -225,7 +225,7 @@ class ListElement extends Element
     public function getIsEditable(): bool
     {
         if ($type = $this->getType()) {
-            return Craft::$app->getUser()->checkPermission('wishlist-manageListType:' . $type->id);
+            return Craft::$app->getUser()->checkPermission('wishlist-manageListType:' . $type->uid);
         }
 
         return false;
