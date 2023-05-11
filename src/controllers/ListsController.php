@@ -64,7 +64,7 @@ class ListsController extends BaseController
             throw new Exception('The list type was not found.');
         }
 
-        $this->requirePermission('wishlist-manageListType:' . $listType->id);
+        $this->requirePermission('wishlist-manageListType:' . $listType->uid);
         $variables['listType'] = $listType;
 
         $this->_prepareVariableArray($variables);
@@ -505,7 +505,7 @@ class ListsController extends BaseController
             return;
         }
 
-        $this->requirePermission('wishlist-manageListType:' . $list->getType()->id);
+        $this->requirePermission('wishlist-manageListType:' . $list->getType()->uid);
     }
 
 
