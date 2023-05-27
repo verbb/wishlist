@@ -44,7 +44,6 @@ We can display lists for a given user by doing the following:
 ```
 
 ## Parameters
-
 List queries support the following parameters:
 
 
@@ -52,7 +51,6 @@ List queries support the following parameters:
 
 
 ### `anyStatus`
-
 Clears out the [status()](https://docs.craftcms.com/api/v4/craft-elements-db-elementquery.html#method-status) and [enabledForSite()](https://docs.craftcms.com/api/v4/craft-elements-db-elementquery.html#method-enabledforsite) parameters.
 
 ::: code
@@ -74,7 +72,6 @@ $lists = \verbb\wishlist\elements\ListElement::find()
 
 
 ### `asArray`
-
 Causes the query to return matching lists as arrays of data, rather than [List](docs:developers/list) objects.
 
 ::: code
@@ -96,7 +93,6 @@ $lists = \verbb\wishlist\elements\ListElement::find()
 
 
 ### `dateCreated`
-
 Narrows the query results based on the lists’ creation dates.
 
 Possible values include:
@@ -132,7 +128,6 @@ $lists = \verbb\wishlist\elements\ListElement::find()
 
 
 ### `dateUpdated`
-
 Narrows the query results based on the lists’ last-updated dates.
 
 Possible values include:
@@ -166,7 +161,6 @@ $lists = \verbb\wishlist\elements\ListElement::find()
 
 
 ### `default`
-
 Fetch the list that is set as the default.
 
 ::: code
@@ -188,7 +182,6 @@ $list = \verbb\wishlist\elements\ListElement::find()
 
 
 ### `fixedOrder`
-
 Causes the query results to be returned in the order specified by [id](#id).
 
 ::: code
@@ -212,7 +205,6 @@ $lists = \verbb\wishlist\elements\ListElement::find()
 
 
 ### `id`
-
 Narrows the query results based on the lists’ IDs.
 
 Possible values include:
@@ -247,7 +239,6 @@ This can be combined with [fixedOrder](#fixedorder) if you want the results to b
 
 
 ### `inReverse`
-
 Causes the query results to be returned in reverse order.
 
 ::: code
@@ -269,7 +260,6 @@ $lists = \verbb\wishlist\elements\ListElement::find()
 
 
 ### `limit`
-
 Determines the number of lists that should be returned.
 
 ::: code
@@ -291,7 +281,6 @@ $lists = \verbb\wishlist\elements\ListElement::find()
 
 
 ### `offset`
-
 Determines how many lists should be skipped in the results.
 
 ::: code
@@ -313,7 +302,6 @@ $lists = \verbb\wishlist\elements\ListElement::find()
 
 
 ### `orderBy`
-
 Determines the order that the lists should be returned in.
 
 ::: code
@@ -335,7 +323,6 @@ $lists = \verbb\wishlist\elements\ListElement::find()
 
 
 ### `reference`
-
 Narrows the query results based on the list reference number.
 
 Possible values include:
@@ -367,7 +354,6 @@ $lists = \verbb\wishlist\elements\ListElement::find()
 
 
 ### `search`
-
 Narrows the query results to only lists that match a search query.
 
 See [Searching](https://craftcms.com/docs/4.x/searching.html) for a full explanation of how to work with this parameter.
@@ -397,7 +383,6 @@ $lists = \verbb\wishlist\elements\ListElement::find()
 
 
 ### `sessionId`
-
 Narrows the query results based on the lists’ owners’ session ID.
 
 ::: code
@@ -419,7 +404,6 @@ $lists = \verbb\wishlist\elements\ListElement::find()
 
 
 ### `status`
-
 Narrows the query results based on the lists’ statuses.
 
 Possible values include:
@@ -451,7 +435,6 @@ $lists = \verbb\wishlist\elements\ListElement::find()
 
 
 ### `type`
-
 Narrows the query results based on the lists’ types.
 
 Possible values include:
@@ -483,7 +466,6 @@ $lists = \verbb\wishlist\elements\ListElement::find()
 
 
 ### `typeId`
-
 Narrows the query results based on the lists’ types, per the types’ IDs.
 
 Possible values include:
@@ -514,7 +496,6 @@ $lists = \verbb\wishlist\elements\ListElement::find()
 
 
 ### `uid`
-
 Narrows the query results based on the lists’ UIDs.
 
 ::: code
@@ -536,7 +517,6 @@ $list = \verbb\wishlist\elements\ListElement::find()
 
 
 ### `userId`
-
 Narrows the query results based on the lists’ users, per the users’ IDs.
 
 Possible values include:

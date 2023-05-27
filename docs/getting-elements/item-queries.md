@@ -20,7 +20,6 @@ See Introduction to [Element Queries](https://craftcms.com/docs/4.x/element-quer
 :::
 
 ## Example
-
 We can display items for a given user by doing the following:
 
 1. Create an item query with `craft.wishlist.items()`.
@@ -45,7 +44,6 @@ We can display items for a given user by doing the following:
 ```
 
 ## Parameters
-
 Item queries support the following parameters:
 
 
@@ -53,7 +51,6 @@ Item queries support the following parameters:
 
 
 ### `anyStatus`
-
 Clears out the [status()](https://docs.craftcms.com/api/v4/craft-elements-db-elementquery.html#method-status) and [enabledForSite()](https://docs.craftcms.com/api/v4/craft-elements-db-elementquery.html#method-enabledforsite) parameters.
 
 ::: code
@@ -75,7 +72,6 @@ $items = \verbb\wishlist\elements\Item::find()
 
 
 ### `asArray`
-
 Causes the query to return matching items as arrays of data, rather than [Item](docs:developers/item) objects.
 
 ::: code
@@ -97,7 +93,6 @@ $items = \verbb\wishlist\elements\Item::find()
 
 
 ### `dateCreated`
-
 Narrows the query results based on the items’ creation dates.
 
 Possible values include:
@@ -133,7 +128,6 @@ $items = \verbb\wishlist\elements\Item::find()
 
 
 ### `dateUpdated`
-
 Narrows the query results based on the items’ last-updated dates.
 
 Possible values include:
@@ -167,7 +161,6 @@ $items = \verbb\wishlist\elements\Item::find()
 
 
 ### `elementId`
-
 Narrows the query results based on the linked element per the provided IDs.
 
 Possible values include:
@@ -198,7 +191,6 @@ $items = \verbb\wishlist\elements\Item::find()
 
 
 ### `elementSiteId`
-
 Narrows the query results based on the site the linked element was saved for, per the site’s ID.
 
 Possible values include:
@@ -229,7 +221,6 @@ $items = \verbb\wishlist\elements\Item::find()
 
 
 ### `elementClass`
-
 Narrows the query results based on the class name the linked element was saved for.
 
 ::: code
@@ -251,7 +242,6 @@ $items = \verbb\wishlist\elements\Item::find()
 
 
 ### `fixedOrder`
-
 Causes the query results to be returned in the order specified by [id](#id).
 
 ::: code
@@ -275,7 +265,6 @@ $items = \verbb\wishlist\elements\Item::find()
 
 
 ### `id`
-
 Narrows the query results based on the items’ IDs.
 
 Possible values include:
@@ -310,7 +299,6 @@ This can be combined with [fixedOrder](#fixedorder) if you want the results to b
 
 
 ### `inReverse`
-
 Causes the query results to be returned in reverse order.
 
 ::: code
@@ -332,7 +320,6 @@ $items = \verbb\wishlist\elements\Item::find()
 
 
 ### `limit`
-
 Determines the number of items that should be returned.
 
 ::: code
@@ -354,7 +341,6 @@ $items = \verbb\wishlist\elements\Item::find()
 
 
 ### `listId`
-
 Narrows the query results based on the items’ List IDs.
 
 Possible values include:
@@ -385,7 +371,6 @@ $item = \verbb\wishlist\elements\Item::find()
 
 
 ### `listTypeId`
-
 Narrows the query results based on the items’ List Type IDs.
 
 Possible values include:
@@ -416,7 +401,6 @@ $item = \verbb\wishlist\elements\Item::find()
 
 
 ### `offset`
-
 Determines how many items should be skipped in the results.
 
 ::: code
@@ -438,7 +422,6 @@ $items = \verbb\wishlist\elements\Item::find()
 
 
 ### `orderBy`
-
 Determines the order that the items should be returned in.
 
 ::: code
@@ -460,7 +443,6 @@ $items = \verbb\wishlist\elements\Item::find()
 
 
 ### `search`
-
 Narrows the query results to only items that match a search query.
 
 See [Searching](https://craftcms.com/docs/4.x/searching.html) for a full explanation of how to work with this parameter.
@@ -490,7 +472,6 @@ $items = \verbb\wishlist\elements\Item::find()
 
 
 ### `status`
-
 Narrows the query results based on the items’ statuses.
 
 Possible values include:
@@ -522,7 +503,6 @@ $items = \verbb\wishlist\elements\Item::find()
 
 
 ### `uid`
-
 Narrows the query results based on the items’ UIDs.
 
 ::: code
