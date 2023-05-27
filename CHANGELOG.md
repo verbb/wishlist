@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.0.5 - 2023-05-27
+
+### Added
+- Add empty linked element checks to `wishlist/items/cleanup-orphaned-items`
+
+### Changed
+- Only admins are now allowed to access plugin settings
+
+### Fixed
+- Fix Wishlist list type permissions not using UIDs.
+- Fix being unable to customise item element index columns in the control panel, when editing a list.
+
 ## 2.0.4 - 2022-12-18
 
 ### Added
