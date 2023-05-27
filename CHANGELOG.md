@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.18 - 2023-05-27
+
+### Added
+- Add support for DomPDF 2.0+ and Commerce 3.4.21+.
+
 ## 1.4.17 - 2022-12-18
 
 ### Added
