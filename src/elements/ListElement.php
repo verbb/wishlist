@@ -358,6 +358,17 @@ class ListElement extends Element
         return UrlHelper::actionUrl('wishlist/lists/add-to-cart', ['listId' => $this->id]);
     }
 
+    public function beforeSave(bool $isNew): bool
+    {
+        if ($this->duplicateOf && $isNew) {
+            // Ensure when duplicating to reset some values
+            $this->reference = Wishlist::$plugin->getLists()->generateReferenceNumber();
+            $this->lastIp = null;
+        }
+
+        return parent::beforeSave($isNew);
+    }
+
     public function afterSave(bool $isNew): void
     {
         if (!$isNew) {
