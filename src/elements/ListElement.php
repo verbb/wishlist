@@ -120,6 +120,7 @@ class ListElement extends Element
             'type' => ['label' => Craft::t('wishlist', 'List Type')],
             'owner' => ['label' => Craft::t('wishlist', 'Owner')],
             'items' => ['label' => Craft::t('wishlist', 'Items')],
+            'reference' => ['label' => Craft::t('wishlist', 'Reference')],
             'dateCreated' => ['label' => Craft::t('app', 'Date Created')],
             'dateUpdated' => ['label' => Craft::t('app', 'Date Updated')],
         ];
