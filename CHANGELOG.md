@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.6 - 2023-07-11
+
+### Added
+- Add `reference` to the List element index columns.
+
+### Fixed
+- Fix when duplicating a list, a new reference wasn’t generated.
+
 ## 2.0.5 - 2023-05-27
 
 ### Added
