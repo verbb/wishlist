@@ -1,5 +1,5 @@
 # Wishlist plugin for Craft CMS
-<img width="500" src="https://verbb.imgix.net/plugins/wishlist/wishlist-social-card.png?v=1">
+<img width="500" src="https://verbb.imgix.net/plugins/wishlist/wishlist-social-card.png?v=2">
 
 Wishlist is a Craft CMS plugin that allows your users to create lists for any element, for a variety of use-cases. Create a favourites list for entries, or create a wishlist for products to easily one-click add to your cart.
 
