@@ -23,7 +23,7 @@
                             {% for item in items %}
                                 <tr>
                                     <td>
-                                        <a href="{{ item.cpEditUrl }}" class="cell-bold">{{ item.title }}</a>
+                                        <a href="{{ item.getCpEditUrl() }}" class="cell-bold">{{ item.title }}</a>
                                     </td>
 
                                     <td>{{ item.getElementDisplay() }}</td>

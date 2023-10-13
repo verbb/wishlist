@@ -4,7 +4,7 @@
 {% set crumbs = [
     { label: craft.wishlist.getPluginName() | t('wishlist'), url: url('wishlist') },
     { label: 'Lists' | t('wishlist'), url: url('wishlist/lists') },
-    { label: list.title | t('wishlist'), url: list.cpEditUrl },
+    { label: list.title | t('wishlist'), url: list.getCpEditUrl() },
 ] %}
 
 {% set title = item.title ?? 'Add item' %}
@@ -40,7 +40,7 @@
                 <hr>
                 <ul>
                     <li>
-                        <a class="formsubmit error" data-action="wishlist/items/delete" data-confirm="{{ 'Are you sure you want to delete this item?' | t('wishlist') }}" data-redirect="{{ list.cpEditUrl | hash }}">
+                        <a class="formsubmit error" data-action="wishlist/items/delete" data-confirm="{{ 'Are you sure you want to delete this item?' | t('wishlist') }}" data-redirect="{{ list.getCpEditUrl() | hash }}">
                             {{ 'Delete' | t('wishlist') }}
                         </a>
                     </li>
@@ -52,7 +52,7 @@
 
 {% block content %}
     <input type="hidden" name="action" value="wishlist/items/save-item">
-    {{ redirectInput(list.cpEditUrl) }}
+    {{ redirectInput(list.getCpEditUrl()) }}
     <input type="hidden" name="listId" value="{{ list.id }}">
     {% if item.id %}<input type="hidden" name="itemId" value="{{ item.id }}">{% endif %}
 

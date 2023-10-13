@@ -474,7 +474,7 @@ class ListsController extends BaseController
 
             $message = Craft::t('wishlist', 'Sent list share notification to {email}.', ['email' => $recipient->email]);
 
-            Wishlist::log($message);
+            Wishlist::info($message);
 
             return $this->returnSuccess($message);
         } catch (Throwable $e) {

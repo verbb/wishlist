@@ -11,13 +11,12 @@ use craft\base\ElementInterface;
 use craft\elements\User;
 use craft\elements\actions\Delete;
 use craft\helpers\Json;
+use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
 use craft\models\FieldLayout;
 use craft\web\UploadedFile;
 
 use yii\base\Exception;
-
-use LitEmoji\LitEmoji;
 
 class Item extends Element
 {
@@ -32,11 +31,6 @@ class Item extends Element
     public static function refHandle(): ?string
     {
         return 'wishlistItem';
-    }
-
-    public static function hasContent(): bool
-    {
-        return true;
     }
 
     public static function hasStatuses(): bool
@@ -213,11 +207,6 @@ class Item extends Element
         return $this->elementClass ? $this->elementClass::displayName() : null;
     }
 
-    public function getCpEditUrl(): ?string
-    {
-        return UrlHelper::cpUrl('wishlist/lists/' . $this->getList()->getType()->handle . '/' . $this->listId . '/items/' . $this->id);
-    }
-
     public function getFieldLayout(): ?FieldLayout
     {
         if ($this->_fieldLayout !== null) {
@@ -262,7 +251,7 @@ class Item extends Element
                 if (is_array($value)) {
                     $cleanEmojiValues($value);
                 } else if (is_string($value)) {
-                    $options[$key] = LitEmoji::unicodeToShortcode($value);
+                    $options[$key] = StringHelper::emojiToShortcodes($value);
                 }
             }
 
@@ -374,5 +363,14 @@ class Item extends Element
         $this->updateTitle();
 
         parent::afterSave($isNew);
+    }
+
+
+    // Protected Methods
+    // =========================================================================
+
+    protected function cpEditUrl(): ?string
+    {
+        return UrlHelper::cpUrl('wishlist/lists/' . $this->getList()->getType()->handle . '/' . $this->listId . '/items/' . $this->id);
     }
 }

@@ -36,18 +36,7 @@ class ListType extends Model
         return (string)$this->handle;
     }
 
-    public function rules(): array
-    {
-        return [
-            [['id', 'fieldLayoutId', 'itemFieldLayoutId'], 'number', 'integerOnly' => true],
-            [['name', 'handle'], 'required'],
-            [['name', 'handle'], 'string', 'max' => 255],
-            [['handle'], UniqueValidator::class, 'targetClass' => ListTypeRecord::class, 'targetAttribute' => ['handle'], 'message' => 'Not Unique'],
-            [['handle'], HandleValidator::class, 'reservedWords' => ['id', 'dateCreated', 'dateUpdated', 'uid', 'title']],
-        ];
-    }
-
-    public function getCpEditUrl(): string
+    public function getCpEditUrl(): ?string
     {
         return UrlHelper::cpUrl('wishlist/list-types/' . $this->id);
     }
@@ -65,22 +54,6 @@ class ListType extends Model
     public function getItemFieldLayout(): FieldLayout
     {
         return $this->getBehavior('itemFieldLayout')->getFieldLayout();
-    }
-
-    public function behaviors(): array
-    {
-        return [
-            'listFieldLayout' => [
-                'class' => FieldLayoutBehavior::class,
-                'elementType' => ListElement::class,
-                'idAttribute' => 'fieldLayoutId',
-            ],
-            'itemFieldLayout' => [
-                'class' => FieldLayoutBehavior::class,
-                'elementType' => Item::class,
-                'idAttribute' => 'itemFieldLayoutId',
-            ],
-        ];
     }
 
     public function getConfig(): array
@@ -112,5 +85,39 @@ class ListType extends Model
         $config['itemFieldLayouts'] = $generateLayoutConfig($this->getItemFieldLayout());
 
         return $config;
+    }
+
+
+    // Protected Methods
+    // =========================================================================
+
+    protected function defineRules(): array
+    {
+        return [
+            [['id', 'fieldLayoutId', 'itemFieldLayoutId'], 'number', 'integerOnly' => true],
+            [['name', 'handle'], 'required'],
+            [['name', 'handle'], 'string', 'max' => 255],
+            [['handle'], UniqueValidator::class, 'targetClass' => ListTypeRecord::class, 'targetAttribute' => ['handle'], 'message' => 'Not Unique'],
+            [['handle'], HandleValidator::class, 'reservedWords' => ['id', 'dateCreated', 'dateUpdated', 'uid', 'title']],
+        ];
+    }
+
+    protected function defineBehaviors(): array
+    {
+        $behaviors = parent::defineBehaviors();
+
+        $behaviors['listFieldLayout'] = [
+            'class' => FieldLayoutBehavior::class,
+            'elementType' => ListElement::class,
+            'idAttribute' => 'fieldLayoutId',
+        ];
+
+        $behaviors['itemFieldLayout'] = [
+            'class' => FieldLayoutBehavior::class,
+            'elementType' => Item::class,
+            'idAttribute' => 'itemFieldLayoutId',
+        ];
+
+        return $behaviors;
     }
 }

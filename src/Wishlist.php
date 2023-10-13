@@ -71,13 +71,11 @@ class Wishlist extends Plugin
 
         self::$plugin = $this;
 
-        $this->_registerComponents();
-        $this->_registerLogTarget();
         $this->_registerSessionEventListeners();
         $this->_registerEmailMessages();
         $this->_registerVariables();
         $this->_registerElementTypes();
-        $this->_registerProjectConfigEventListeners();
+        $this->_registerProjectConfigEventHandlers();
         $this->_registerGarbageCollection();
         $this->_registerTemplateHooks();
         $this->_registerGraphQl();
@@ -108,32 +106,32 @@ class Wishlist extends Plugin
 
     public function getCpNavItem(): ?array
     {
-        $navItems = parent::getCpNavItem();
+        $nav = parent::getCpNavItem();
 
-        $navItems['label'] = $this->getPluginName();
+        $nav['label'] = $this->getPluginName();
 
         if (Craft::$app->getUser()->checkPermission('wishlist-manageLists')) {
-            $navItems['subnav']['lists'] = [
+            $nav['subnav']['lists'] = [
                 'label' => Craft::t('wishlist', 'Lists'),
                 'url' => 'wishlist/lists',
             ];
         }
 
         if (Craft::$app->getUser()->checkPermission('wishlist-manageListTypes')) {
-            $navItems['subnav']['listTypes'] = [
+            $nav['subnav']['listTypes'] = [
                 'label' => Craft::t('wishlist', 'List Types'),
                 'url' => 'wishlist/list-types',
             ];
         }
 
         if (Craft::$app->getUser()->getIsAdmin() && Craft::$app->getConfig()->getGeneral()->allowAdminChanges) {
-            $navItems['subnav']['settings'] = [
+            $nav['subnav']['settings'] = [
                 'label' => Craft::t('wishlist', 'Settings'),
                 'url' => 'wishlist/settings',
             ];
         }
 
-        return $navItems;
+        return $nav;
     }
 
 
@@ -221,7 +219,7 @@ class Wishlist extends Plugin
         });
     }
 
-    private function _registerProjectConfigEventListeners(): void
+    private function _registerProjectConfigEventHandlers(): void
     {
         $projectConfigService = Craft::$app->getProjectConfig();
 

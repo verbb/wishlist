@@ -1,6 +1,7 @@
 <?php
 namespace verbb\wishlist\services;
 
+use verbb\wishlist\Wishlist;
 use verbb\wishlist\elements\Item;
 use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\events\ListTypeEvent;
@@ -100,7 +101,7 @@ class ListTypes extends Component
         }
 
         if ($runValidation && !$listType->validate()) {
-            Craft::info('List type not saved due to validation error.', __METHOD__);
+            Wishlist::info('List type not saved due to validation error.');
 
             return false;
         }

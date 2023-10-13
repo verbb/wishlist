@@ -6,35 +6,39 @@ use verbb\wishlist\services\Lists;
 use verbb\wishlist\services\ListTypes;
 use verbb\wishlist\services\Items;
 use verbb\wishlist\services\Pdf;
-use verbb\base\BaseHelper;
 
-use Craft;
-
-use yii\log\Logger;
+use verbb\base\LogTrait;
+use verbb\base\helpers\Plugin;
 
 trait PluginTrait
 {
     // Properties
     // =========================================================================
 
-    public static Wishlist $plugin;
+    public static ?Wishlist $plugin = null;
 
+
+    // Traits
+    // =========================================================================
+
+    use LogTrait;
+    
 
     // Static Methods
     // =========================================================================
 
-    public static function log(string $message, array $params = []): void
+    public static function config(): array
     {
-        $message = Craft::t('wishlist', $message, $params);
+        Plugin::bootstrapPlugin('wishlist');
 
-        Craft::getLogger()->log($message, Logger::LEVEL_INFO, 'wishlist');
-    }
-
-    public static function error(string $message, array $params = []): void
-    {
-        $message = Craft::t('wishlist', $message, $params);
-
-        Craft::getLogger()->log($message, Logger::LEVEL_ERROR, 'wishlist');
+        return [
+            'components' => [
+                'lists' => Lists::class,
+                'listTypes' => ListTypes::class,
+                'items' => Items::class,
+                'pdf' => Pdf::class,
+            ],
+        ];
     }
 
 
@@ -59,27 +63,6 @@ trait PluginTrait
     public function getPdf(): Pdf
     {
         return $this->get('pdf');
-    }
-
-
-    // Private Methods
-    // =========================================================================
-
-    private function _registerComponents(): void
-    {
-        $this->setComponents([
-            'lists' => Lists::class,
-            'listTypes' => ListTypes::class,
-            'items' => Items::class,
-            'pdf' => Pdf::class,
-        ]);
-
-        BaseHelper::registerModule();
-    }
-
-    private function _registerLogTarget(): void
-    {
-        BaseHelper::setFileLogging('wishlist');
     }
 
 }

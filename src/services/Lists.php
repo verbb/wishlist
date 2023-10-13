@@ -243,7 +243,7 @@ class Lists extends Component
                 ->update('{{%wishlist_lists}}', ['userId' => $user->id], ['sessionId' => $sessionId, 'userId' => null])
                 ->execute();
 
-            Wishlist::log('Moving guest lists for session "' . $sessionId . '" to user "' . $user->id . '"');
+            Wishlist::info('Moving guest lists for session "' . $sessionId . '" to user "' . $user->id . '"');
 
             if ($settings->mergeLastListOnLogin) {
                 // Check if we've now got multiple lists for a logged-in user. We need to merge them

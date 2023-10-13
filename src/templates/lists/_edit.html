@@ -148,7 +148,7 @@
 
             {% if list.user %}
                 <div class="input ltr">
-                    <a href="{{ list.user.cpEditUrl }}">{{ list.user }}</a>
+                    <a href="{{ list.user.getCpEditUrl() }}">{{ list.user }}</a>
                 </div>
             {% else %}
                 <div class="input ltr">

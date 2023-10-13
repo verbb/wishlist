@@ -27,11 +27,6 @@ class ListElement extends Element
         return Craft::t('wishlist', 'Wishlist List');
     }
 
-    public static function hasContent(): bool
-    {
-        return true;
-    }
-
     public static function hasTitles(): bool
     {
         return true;
@@ -214,15 +209,6 @@ class ListElement extends Element
         return true;
     }
 
-    public function rules(): array
-    {
-        $rules = parent::rules();
-
-        $rules[] = [['typeId'], 'required'];
-
-        return $rules;
-    }
-
     public function getIsEditable(): bool
     {
         if ($type = $this->getType()) {
@@ -230,15 +216,6 @@ class ListElement extends Element
         }
 
         return false;
-    }
-
-    public function getCpEditUrl(): ?string
-    {
-        if ($listType = $this->getType()) {
-            return UrlHelper::cpUrl('wishlist/lists/' . $listType->handle . '/' . $this->id);
-        }
-
-        return null;
     }
 
     public function getFieldLayout(): ?FieldLayout
@@ -295,10 +272,6 @@ class ListElement extends Element
         return $this->userId ?? $this->sessionId ?? null;
     }
 
-
-    // URLs
-    // -------------------------------------------------------------------------
-
     public function getOwner(): ?User
     {
         if ($this->_owner !== null) {
@@ -311,10 +284,6 @@ class ListElement extends Element
 
         return $this->_owner = $this->getUser();
     }
-
-
-    // Events
-    // -------------------------------------------------------------------------
 
     public function setFieldValuesFromRequest(string $paramNamespace = ''): void
     {
@@ -338,10 +307,6 @@ class ListElement extends Element
             $this->normalizeFieldValue($field->handle);
         }
     }
-
-
-    // Protected methods
-    // =========================================================================
 
     public function getPdfUrl(): string
     {
@@ -394,23 +359,44 @@ class ListElement extends Element
         parent::afterSave($isNew);
     }
 
-    protected function tableAttributeHtml(string $attribute): string
+
+    // Protected methods
+    // =========================================================================
+
+    protected function defineRules(): array
     {
-        switch ($attribute) {
-            case 'owner':
-                $owner = $this->getOwner();
+        $rules = parent::rules();
 
-                return $owner ? Cp::elementHtml($owner) : Craft::t('wishlist', 'Guest');
-            case 'type':
-                if ($listType = $this->getType()) {
-                    return Craft::t('site', $listType->name);
-                }
+        $rules[] = [['typeId'], 'required'];
 
-                return '';
-            case 'items':
-                return $this->getItems()->count();
-            default:
-                return parent::tableAttributeHtml($attribute);
+        return $rules;
+    }
+
+    protected function attributeHtml(string $attribute): string
+    {
+        if ($attribute == 'owner') {
+            $owner = $this->getOwner();
+
+            return $owner ? Cp::elementChipHtml($owner) : Craft::t('wishlist', 'Guest');
+        } else if ($attribute == 'type') {
+            if ($listType = $this->getType()) {
+                return Craft::t('site', $listType->name);
+            }
+
+            return '';
+        } else if ($attribute == 'items') {
+            return $this->getItems()->count();
         }
+
+        return parent::attributeHtml($attribute);
+    }
+
+    protected function cpEditUrl(): ?string
+    {
+        if ($listType = $this->getType()) {
+            return UrlHelper::cpUrl('wishlist/lists/' . $listType->handle . '/' . $this->id);
+        }
+
+        return null;
     }
 }

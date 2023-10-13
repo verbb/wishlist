@@ -10,7 +10,8 @@ use Craft;
 use craft\db\Migration;
 use craft\helpers\Db;
 use craft\helpers\MigrationHelper;
-use craft\records\FieldLayout;
+use craft\models\FieldLayout;
+use craft\models\FieldLayoutTab;
 
 class Install extends Migration
 {
@@ -109,25 +110,21 @@ class Install extends Migration
     public function insertDefaultData(): void
     {
         // Don't make the same config changes twice
-        $installed = (Craft::$app->projectConfig->get('plugins.wishlist', true) !== null);
-        $configExists = (Craft::$app->projectConfig->get('wishlist', true) !== null);
+        $installed = (Craft::$app->getProjectConfig()->get('plugins.wishlist', true) !== null);
+        $configExists = (Craft::$app->getProjectConfig()->get('wishlist', true) !== null);
 
         if (!$installed && !$configExists) {
-            $this->insert(FieldLayout::tableName(), ['type' => ListElement::class]);
-            $listFieldLayoutId = $this->db->getLastInsertID(FieldLayout::tableName());
+            $listFieldLayout = $this->_saveFieldLayout(ListElement::class);
+            $itemFieldLayout = $this->_saveFieldLayout(Item::class);
 
-            $this->insert(FieldLayout::tableName(), ['type' => Item::class]);
-            $itemFieldLayoutId = $this->db->getLastInsertID(FieldLayout::tableName());
-
-            $data = [
+            $listType = new ListType([
                 'name' => 'Wishlist',
                 'handle' => 'wishlist',
                 'default' => true,
-                'fieldLayoutId' => $listFieldLayoutId,
-                'itemFieldLayoutId' => $itemFieldLayoutId,
-            ];
+                'fieldLayoutId' => $listFieldLayout->id,
+                'itemFieldLayoutId' => $itemFieldLayout->id,
+            ]);
 
-            $listType = new ListType($data);
             Wishlist::$plugin->getListTypes()->saveListType($listType);
         }
     }
@@ -156,6 +153,18 @@ class Install extends Migration
 
     public function dropProjectConfig(): void
     {
-        Craft::$app->projectConfig->remove('wishlist');
+        Craft::$app->getProjectConfig()->remove('wishlist');
+    }
+
+    private function _saveFieldLayout(string $type): FieldLayout
+    {
+        $fieldLayout = Craft::$app->getFields()->getLayoutByType($type) ?? new FieldLayout();
+        $tab1 = new FieldLayoutTab(['name' => Craft::t('app', 'Content')]);
+        $tab1->setLayout($fieldLayout);
+        $fieldLayout->setTabs([$tab1]);
+
+        Craft::$app->getFields()->saveLayout($fieldLayout);
+
+        return $fieldLayout;
     }
 }
