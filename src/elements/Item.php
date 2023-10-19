@@ -34,6 +34,11 @@ class Item extends Element
         return 'wishlistItem';
     }
 
+    public static function trackChanges(): bool
+    {
+        return true;
+    }
+
     public static function hasContent(): bool
     {
         return true;
