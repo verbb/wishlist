@@ -20,7 +20,7 @@ return [
         'purgeInactiveGuestListsDuration' => 'P1D', // 1 day
         'purgeEmptyListsOnly' => true,
         'purgeEmptyGuestListsOnly' => true,
-        'cookieExpiry' => 'P1Y', // 1 year
+        'cookieExpiry' => 0, // Session-based
 
         // PDF
         'pdfFilenameFormat' => 'Wishlist-{id}',
@@ -44,7 +44,7 @@ return [
 - `purgeInactiveGuestListsDuration` - If purging inactive lists is enabled, after this duration only guest lists will be purged.
 - `purgeEmptyListsOnly` - Whether to purge user lists only if they have no items.
 - `purgeEmptyGuestListsOnly` - Whether to purge guest lists only if they have no items.
-- `cookieExpiry` - Set how long of an expiry guest users' lists should have, before being forgotten.
+- `cookieExpiry` - Set how long of an expiry guest users' lists should have, before being forgotten. Provide as `0` to be session-based, or a [DateInterval](https://www.php.net/manual/en/dateinterval.format.php) string.
 
 ### PDF
 - `pdfPath` - Set the path to your PDF.
