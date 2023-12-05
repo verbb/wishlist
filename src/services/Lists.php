@@ -239,9 +239,7 @@ class Lists extends Component
             // Try and find the default list for the guest
             $sessionId = $this->getSessionId();
 
-            $db->createCommand()
-                ->update('{{%wishlist_lists}}', ['userId' => $user->id], ['sessionId' => $sessionId, 'userId' => null])
-                ->execute();
+            Db::update('{{%wishlist_lists}}', ['userId' => $user->id], ['sessionId' => $sessionId, 'userId' => null]);
 
             Wishlist::info('Moving guest lists for session "' . $sessionId . '" to user "' . $user->id . '"');
 
@@ -264,14 +262,10 @@ class Lists extends Component
                         foreach ($userLists as $userList) {
                             // Ensure that we check against the title - they should be the same to merge
                             if ($oldestList->id != $userList->id && $oldestList->title == $userList->title) {
-                                $db->createCommand()
-                                    ->update('{{%wishlist_items}}', ['listId' => $oldestList->id], ['listId' => $userList->id])
-                                    ->execute();
+                                Db::update('{{%wishlist_items}}', ['listId' => $oldestList->id], ['listId' => $userList->id]);
 
                                 // Delete the newer list, now the items have been moved off
-                                $db->createCommand()
-                                    ->delete('{{%elements}}', ['id' => $userList->id])
-                                    ->execute();
+                                Db::delete('{{%elements}}', ['id' => $userList->id]);
                             }
 
                             // Now, check if there are any duplicates, and we should check. We ditch the oldest item(s).
@@ -312,9 +306,7 @@ class Lists extends Component
                                     // Soft-delete the element, just for safety
                                     $now = new DateTime();
 
-                                    $db->createCommand()
-                                        ->update('{{%elements}}', ['dateDeleted' => Db::prepareDateForDb($now)], ['id' => $duplicateItem['id']])
-                                        ->execute();
+                                    Db::update('{{%elements}}', ['dateDeleted' => Db::prepareDateForDb($now)], ['id' => $duplicateItem['id']]);
                                 }
                             }
                         }
@@ -322,7 +314,7 @@ class Lists extends Component
                 }
             }
         } catch (Throwable $e) {
-            Wishlist::error(Craft::t('app', '{e} - {f}: {l}.', ['e' => $e->getMessage(), 'f' => $e->getFile(), 'l' => $e->getLine()]));
+            Wishlist::error('{e} - {f}: {l}.', ['e' => $e->getMessage(), 'f' => $e->getFile(), 'l' => $e->getLine()]);
         }
 
         return true;

@@ -245,9 +245,7 @@ class ListTypes extends Component
                 $fieldsService->deleteLayoutById($listTypeRecord->itemFieldLayoutId);
             }
 
-            $db->createCommand()
-                ->delete('{{%wishlist_listtypes}}', ['id' => $listTypeRecord->id])
-                ->execute();
+            Db::delete('{{%wishlist_listtypes}}', ['id' => $listTypeRecord->id]);
 
             $transaction->commit();
         } catch (Throwable $e) {
