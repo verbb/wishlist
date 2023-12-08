@@ -51,16 +51,16 @@
     </div>
 
     <div id="list-fields" class="hidden">
-        {% include '_includes/fieldlayoutdesigner' with {
+        {{ forms.fieldLayoutDesignerField({
             fieldLayout: listType.getListFieldLayout(),
-        } only %}
+        }) }}
     </div>
 
     <div id="item-fields" class="hidden">
         {% namespace 'item-layout' %}
-            {% include '_includes/fieldlayoutdesigner' with {
+            {{ forms.fieldLayoutDesignerField({
                 fieldLayout: listType.getItemFieldLayout(),
-            } only %}
+            }) }}
         {% endnamespace %}
     </div>
 
