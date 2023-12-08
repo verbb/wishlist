@@ -75,19 +75,48 @@
             first: true,
         }) }}
 
-        {# Not sure the best way to handle this for new entries... #}
-        {% set elementType = item.elementClass ?? 'craft\\elements\\Entry' %}
+        {% set elementTypeOptions = [] %}
 
-        {{ forms.elementSelectField({
-            label: 'Element' | t('wishlist'),
-            id: 'elementId',
-            name: 'elementId',
-            elementType: elementType,
-            elements: (item.element is defined and item.element ? [item.element]),
-            selectionLabel: "Choose" | t('app'),
-            limit: 1,
-            errors: item ? item.getErrors('elementId'),
+        {% for elementType in craft.wishlist.plugin.items.getSupportedElementTypes() %}
+            {% set elementTypeOptions = elementTypeOptions | merge([{ label: displayName(elementType), value: elementType | kebab }]) %}
+        {% endfor %}
+
+        {% set itemElements = item.element ? [item.element] %}
+        {% set itemElementType = (item.element ? className(item.element) : 'craft\\elements\\Entry') | kebab %}
+
+        {{ forms.selectField({
+            label: 'Element Type' | t('wishlist'),
+            name: 'elementType',
+            toggle: true,
+            targetPrefix: '.element-type-',
+            value: itemElementType,
+            options: elementTypeOptions,
         }) }}
+
+        {% for elementType in craft.wishlist.plugin.items.getSupportedElementTypes() %}
+            {% set elementTypeId = elementType | kebab %}
+
+            <div class="field element-type-{{ elementTypeId }} {{ itemElementType != elementType ? 'hidden' }}" data-attribute="{{ elementTypeId }}">
+                <div class="heading">
+                    <label id="{{ elementTypeId }}-label" for="{{ elementTypeId }}">
+                        {{ 'Element' | t('wishlist') }}
+                    </label>
+                </div>
+
+                <div class="input ltr">
+                    {{ forms.elementSelect({
+                        label: 'Element' | t('wishlist'),
+                        id: elementTypeId,
+                        name: 'elementId[' ~ (elementTypeId) ~ ']',
+                        elementType: elementType,
+                        elements: itemElementType == elementTypeId ? itemElements,
+                        selectionLabel: "Choose" | t('app'),
+                        limit: 1,
+                        errors: item ? item.getErrors('elementId'),
+                    }) }}
+                </div>
+            </div>
+        {% endfor %}
     </div>
 
     {% if item.id %}
@@ -106,3 +135,7 @@
         </div>
     {% endif %}
 {% endblock %}
+
+{% js %}
+
+{% endjs %}

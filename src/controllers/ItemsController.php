@@ -68,8 +68,11 @@ class ItemsController extends BaseController
         }
 
         $item->listId = $request->getParam('listId');
-        $item->elementId = $request->getParam('elementId')[0];
         $item->setFieldValuesFromRequest('fields');
+
+        // Element is a little special to cater for multiple types
+        $elementType = $request->getParam('elementType');
+        $item->elementId = $request->getParam('elementId')[$elementType][0] ?? null;
 
         if (!Wishlist::$plugin->getItems()->saveElement($item)) {
             if ($request->getAcceptsJson()) {
