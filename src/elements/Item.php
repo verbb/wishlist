@@ -2,6 +2,7 @@
 namespace verbb\wishlist\elements;
 
 use verbb\wishlist\Wishlist;
+use verbb\wishlist\helpers\UrlHelper;
 use verbb\wishlist\elements\db\ItemQuery;
 use verbb\wishlist\records\Item as ItemRecord;
 
@@ -12,7 +13,6 @@ use craft\elements\User;
 use craft\elements\actions\Delete;
 use craft\helpers\Json;
 use craft\helpers\StringHelper;
-use craft\helpers\UrlHelper;
 use craft\models\FieldLayout;
 use craft\web\UploadedFile;
 
@@ -220,17 +220,20 @@ class Item extends Element
         return $this->_fieldLayout = parent::getFieldLayout();
     }
 
-    public function getInList(): bool
+    public function getInList(ListElement $list = null): bool
     {
-        if ($this->id && $list = $this->getList()) {
-            if (!$this->_listItemIds) {
-                $this->_listItemIds = $list->getItems()->ids();
-            }
+        // Default to searching in the same list
+        $list = $list ?? $this->getList();
 
-            return in_array($this->id, $this->_listItemIds);
-        }
+        // Find the exact matching item
+        $existingItem = Item::find()
+            ->elementId($this->elementId)
+            ->elementSiteId($this->elementSiteId)
+            ->listId($list->id)
+            ->optionsSignature($this->getOptionsSignature())
+            ->one();
 
-        return false;
+        return (bool)$existingItem;
     }
 
     public function getOptions(): array
@@ -304,34 +307,22 @@ class Item extends Element
         return static::gqlTypeNameByContext($this);
     }
 
-
-    // URLs
-    // -------------------------------------------------------------------------
-
-    public function getAddUrl($params = []): string
+    public function getAddUrl(array $params = []): string
     {
-        $params = array_merge(['elementId' => $this->elementId, 'listId' => $this->listId], $params);
-
-        return UrlHelper::actionUrl('wishlist/items/add', $params);
+        return UrlHelper::addUrl($this->getElement(), $params);
     }
 
-    public function getRemoveUrl($params = []): string
+    public function getToggleUrl(array $params = []): string
     {
-        $params = array_merge(['elementId' => $this->elementId, 'listId' => $this->listId], $params);
-
-        return UrlHelper::actionUrl('wishlist/items/remove', $params);
+        return UrlHelper::toggleUrl($this->getElement(), $params);
     }
 
-    public function getToggleUrl($params = []): string
+    public function getRemoveUrl(array $params = []): string
     {
-        $params = array_merge(['elementId' => $this->elementId, 'listId' => $this->listId], $params);
-
-        return UrlHelper::actionUrl('wishlist/items/toggle', $params);
+        $params = array_merge(['itemId' => $this->id], $params);
+        
+        return UrlHelper::removeUrl($this->getElement(), $params);
     }
-
-
-    // Events
-    // -------------------------------------------------------------------------
 
     public function afterSave(bool $isNew): void
     {

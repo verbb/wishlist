@@ -3,15 +3,17 @@ namespace verbb\wishlist\elements;
 
 use verbb\wishlist\Wishlist;
 use verbb\wishlist\elements\db\ListQuery;
+use verbb\wishlist\helpers\UrlHelper;
 use verbb\wishlist\models\ListType;
 use verbb\wishlist\records\ListRecord;
 
 use Craft;
 use craft\base\Element;
+use craft\base\ElementInterface;
 use craft\elements\User;
 use craft\elements\actions\Delete;
+use craft\helpers\ArrayHelper;
 use craft\helpers\Cp;
-use craft\helpers\UrlHelper;
 use craft\models\FieldLayout;
 use craft\web\UploadedFile;
 
@@ -209,6 +211,15 @@ class ListElement extends Element
         return true;
     }
 
+    public function isEmpty(): bool
+    {
+        if ($items = $this->getItems()) {
+            return $items->count() ? false : true;
+        }
+
+        return true;
+    }
+
     public function getIsEditable(): bool
     {
         if ($type = $this->getType()) {
@@ -220,7 +231,7 @@ class ListElement extends Element
 
     public function getFieldLayout(): ?FieldLayout
     {
-        if ($this->_fieldLayout !== null) {
+        if ($this->_fieldLayout) {
             return $this->_fieldLayout;
         }
 
@@ -233,22 +244,51 @@ class ListElement extends Element
         return $this->_fieldLayout = $listType->getListFieldLayout();
     }
 
-    public function getType(): ?ListType
+    public function getType(): ListType
     {
-        if ($this->_listType !== null) {
+        if ($this->_listType) {
             return $this->_listType;
         }
 
-        if ($this->typeId === null) {
-            return null;
+        $listTypeService = Wishlist::$plugin->getListTypes();
+
+        if ($this->typeId && $listType = $listTypeService->getListTypeById($this->typeId)) {
+            return $this->_listType = $listType;
         }
 
-        return $this->_listType = Wishlist::$plugin->getListTypes()->getListTypeById($this->typeId);
+        return $this->_listType = $listTypeService->getDefaultListType();
+    }
+
+    public function setType(ListType $listType): void
+    {
+        $this->_listType = $listType;
+        $this->typeId = $listType->id;
     }
 
     public function getItems(): ?db\ItemQuery
     {
         return $this->id ? Item::find()->listId($this->id) : null;
+    }
+
+    public function getItem(ElementInterface $element, array $params = []): ?Item
+    {
+        if ($this->id) {
+            $query = Item::find()
+                ->listId($this->id)
+                ->elementId($element->id)
+                ->elementSiteId($element->siteId);
+
+            Craft::configure($query, $params);
+
+            return $query->one();
+        }
+
+        return null;
+    }
+
+    public function getHasItem(Item $item): bool
+    {
+        return $item->getInList($this);
     }
 
     public function getUser(): ?User
@@ -285,27 +325,25 @@ class ListElement extends Element
         return $this->_owner = $this->getUser();
     }
 
-    public function setFieldValuesFromRequest(string $paramNamespace = ''): void
+    public function getAddItemUrl(ElementInterface $element, array $params = []): string
     {
-        $this->setFieldParamNamespace($paramNamespace);
-        $values = Craft::$app->getRequest()->getParam($paramNamespace, []);
+        $params = array_merge(['listType' => $this->getType()->handle], $params);
 
-        foreach ($this->fieldLayoutFields() as $field) {
-            // Do we have any post data for this field?
-            if (isset($values[$field->handle])) {
-                $value = $values[$field->handle];
-            } else if (!empty($this->getFieldParamNamespace()) && UploadedFile::getInstancesByName($this->getFieldParamNamespace() . '.' . $field->handle)) {
-                // A file was uploaded for this field
-                $value = null;
-            } else {
-                continue;
-            }
+        return UrlHelper::addUrl($element, $params);
+    }
 
-            $this->setFieldValue($field->handle, $value);
+    public function getToggleItemUrl(ElementInterface $element, array $params = []): string
+    {
+        $params = array_merge(['listType' => $this->getType()->handle], $params);
+        
+        return UrlHelper::toggleUrl($element, $params);
+    }
 
-            // Normalize it now in case the system language changes later
-            $this->normalizeFieldValue($field->handle);
-        }
+    public function getRemoveItemUrl(ElementInterface $element, array $params = []): string
+    {
+        $params = array_merge(['listType' => $this->getType()->handle], $params);
+        
+        return UrlHelper::removeUrl($element, $params);
     }
 
     public function getPdfUrl(): string
@@ -365,7 +403,7 @@ class ListElement extends Element
 
     protected function defineRules(): array
     {
-        $rules = parent::rules();
+        $rules = parent::defineRules();
 
         $rules[] = [['typeId'], 'required'];
 

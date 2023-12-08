@@ -5,9 +5,11 @@ use verbb\wishlist\Wishlist;
 use verbb\wishlist\elements\Item;
 use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\errors\ItemError;
+use verbb\wishlist\helpers\UrlHelper;
 use verbb\wishlist\models\Settings;
 
 use Craft;
+use craft\base\ElementInterface;
 
 use yii\base\Exception;
 use yii\web\Response;
@@ -147,71 +149,39 @@ class ItemsController extends BaseController
     {
         /* @var Settings $settings */
         $settings = Wishlist::$plugin->getSettings();
-        $request = Craft::$app->getRequest();
+        $postItems = $this->_setItemsFromPost();
 
         $errors = [];
-
-        // By default, handle multi-items, but if not - set them up as one
-        $postItems = $request->getParam('items', [
-            [
-                'elementId' => $request->getParam('elementId'),
-                'elementSiteId' => $request->getParam('elementSiteId'),
-                'fields' => $request->getParam('fields'),
-                'options' => $request->getParam('options'),
-            ],
-        ]);
-
-        $variables = [
-            'items' => [],
-        ];
+        $variables = [];
 
         foreach ($postItems as $key => $postItem) {
-            $elementId = $postItem['elementId'] ?? '';
-            $elementSiteId = $postItem['elementSiteId'] ?? '';
+            // Get the element we're trying to action
+            $element = $this->_getElementForItem($postItem);
 
-            if (!$elementId) {
-                $errors[$key] = new ItemError('Element ID must be provided.');
-
-                continue;
-            }
-
-            $element = Craft::$app->getElements()->getElementById($elementId, null, $elementSiteId);
-
-            if (!$element) {
-                $errors[$key] = new ItemError('Unable to find element.');
+            if ($element instanceof ItemError) {
+                $errors[$key] = $element;
 
                 continue;
             }
 
-            $item = $this->_setItemFromPost($elementId, $elementSiteId);
+            // Get the existing list (either passed in, or the users default), or create it
+            $list = $this->_getOrCreateList($postItem);
 
-            // Check if we're allowed to manage lists
-            $this->enforceEnabledList($item->getList());
+            if ($list instanceof ItemError) {
+                $errors[$key] = $list;
 
-            // Set any additional options on the item
-            $options = $postItem['options'] ?? [];
+                continue;
+            }
 
-            // Clear any empty options
-            $options = array_filter($options);
-
-            $item->setOptions($options);
+            // Create the item for the list and element, with additional attributes
+            $item = $this->_getOrCreateItem($list, $element, $postItem);
 
             // Check if this is in the list
-            $existingItem = Item::find()
-                ->elementId($elementId)
-                ->listId($item->listId)
-                ->optionsSignature($item->getOptionsSignature())
-                ->one();
-
-            if ($existingItem && !$settings->allowDuplicates) {
+            if ($list->getHasItem($item) && !$settings->allowDuplicates) {
                 $errors[$key] = new ItemError('Item already in list.');
 
                 continue;
             }
-
-            // Add custom fields
-            $fields = $postItem['fields'] ?? [];
-            $item->setFieldValues($fields);
 
             if (!Wishlist::$plugin->getItems()->saveElement($item)) {
                 $errors[$key] = new ItemError('Unable to save item to list.', ['item' => $item]);
@@ -228,184 +198,43 @@ class ItemsController extends BaseController
             }
         }
 
-        return $this->returnSuccess('Item' . (((is_countable($postItems) ? count($postItems) : 0) > 1) ? 's' : '') . ' added to list.', $variables);
-    }
-
-    public function actionRemove(): ?Response
-    {
-        $request = Craft::$app->getRequest();
-        $listId = $request->getParam('listId');
-
-        $listTypeId = $request->getParam('listTypeId');
-        $listTypeHandle = $request->getParam('listTypeHandle');
-
-        if (!$listTypeId && $listTypeHandle) {
-            // Always take the ID first. If both are sent, Handle is ignored.
-            $listType = WishList::$plugin->getListTypes()->getListTypeByHandle($listTypeHandle);
-
-            if ($listType) {
-                $listTypeId = $listType->id;
-            }
-        }
-
-        $list = Wishlist::$plugin->getLists()->getList($listId, true, $listTypeId);
-
-        // Check if we're allowed to manage lists
-        $this->enforceEnabledList($list);
-
-        $errors = [];
-
-        $variables = [
-            'items' => [],
-        ];
-
-        // By default, handle multi-items, but if not - set them up as one
-        $postItems = $request->getParam('items', [
-            [
-                'itemId' => $request->getParam('itemId'),
-                'elementId' => $request->getParam('elementId'),
-                'elementSiteId' => $request->getParam('elementSiteId'),
-                'options' => $request->getParam('options'),
-                'fields' => $request->getParam('fields'),
-            ],
+        $message = Craft::t('wishlist', '{count, number} {count, plural, =1{item} other{items}} added to list.', [
+            'count' => count($postItems),
         ]);
 
-        foreach ($postItems as $key => $postItem) {
-            $itemId = $postItem['itemId'] ?? null;
-            $elementId = $postItem['elementId'] ?? null;
-            $elementSiteId = $postItem['elementSiteId'] ?? null;
-            $options = $postItem['options'] ?? [];
-
-            if (!$elementId && !$itemId) {
-                $errors[$key] = new ItemError('Element ID or Item ID must be provided.');
-
-                continue;
-            }
-
-            $query = Item::find()->listId($list->id);
-
-            if ($itemId) {
-                $query->id($itemId);
-            }
-
-            if ($options) {
-                $optionsSignature = Wishlist::$plugin->getItems()->getOptionsSignature($options);
-                $query->optionsSignature($optionsSignature);
-            }
-
-            if ($elementId) {
-                $query->elementId($elementId);
-            }
-
-            if ($elementSiteId) {
-                $query->elementSiteId($elementSiteId);
-            }
-
-            $item = $query->one();
-
-            if (!$item) {
-                $errors[$key] = new ItemError('Unable to find item in list.');
-
-                continue;
-            }
-
-            if (!Craft::$app->getElements()->deleteElement($item)) {
-                $errors[$key] = new ItemError('Unable to delete item from list.', ['item' => $item]);
-
-                continue;
-            }
-
-            $variables['items'][] = $item;
-        }
-
-        if ($errors) {
-            foreach ($errors as $itemError) {
-                return $this->returnError($itemError->message, $itemError->params);
-            }
-        }
-
-        return $this->returnSuccess('Items removed from list.', $variables);
+        return $this->returnSuccess($message, $variables);
     }
 
     public function actionToggle(): ?Response
     {
-        $request = Craft::$app->getRequest();
-        $listId = $request->getParam('listId');
-
-        $listTypeId = $request->getParam('listTypeId');
-        $listTypeHandle = $request->getParam('listTypeHandle');
-
-        if (!$listTypeId && $listTypeHandle) {
-            // Always take the ID first. If both are sent, Handle is ignored.
-            $listType = WishList::$plugin->getListTypes()->getListTypeByHandle($listTypeHandle);
-
-            if ($listType) {
-                $listTypeId = $listType->id;
-            }
-        }
-
-        $list = Wishlist::$plugin->getLists()->getList($listId, true, $listTypeId);
-
-        // Check if we're allowed to manage lists
-        $this->enforceEnabledList($list);
+        $postItems = $this->_setItemsFromPost();
 
         $errors = [];
-
-        $variables = [
-            'items' => [],
-        ];
-
-        // By default, handle multi-items, but if not - set them up as one
-        $postItems = $request->getParam('items', [
-            [
-                'itemId' => $request->getParam('itemId'),
-                'elementId' => $request->getParam('elementId'),
-                'elementSiteId' => $request->getParam('elementSiteId'),
-                'options' => $request->getParam('options'),
-                'fields' => $request->getParam('fields'),
-            ],
-        ]);
-
-        $actions = [];
+        $variables = [];
 
         foreach ($postItems as $key => $postItem) {
-            $itemId = $postItem['itemId'] ?? null;
-            $elementId = $postItem['elementId'] ?? null;
-            $elementSiteId = $postItem['elementSiteId'] ?? null;
-            $fields = $postItem['fields'] ?? [];
-            $options = $postItem['options'] ?? [];
+            // Get the element we're trying to action
+            $element = $this->_getElementForItem($postItem);
 
-            // Clear any empty options
-            $options = array_filter($options);
-
-            if (!$elementId && !$itemId) {
-                $errors[$key] = new ItemError('Element ID or Item ID must be provided.');
+            if ($element instanceof ItemError) {
+                $errors[$key] = $element;
 
                 continue;
             }
 
-            $query = Item::find()->listId($list->id);
+            // Get the existing list (either passed in, or the users default), or create it
+            $list = $this->_getOrCreateList($postItem);
 
-            if ($itemId) {
-                $query->id($itemId);
+            if ($list instanceof ItemError) {
+                $errors[$key] = $list;
+
+                continue;
             }
 
-            if ($options) {
-                $optionsSignature = Wishlist::$plugin->getItems()->getOptionsSignature($options);
-                $query->optionsSignature($optionsSignature);
-            }
+            // Create the item for the list and element, with additional attributes
+            $item = $this->_getOrCreateItem($list, $element, $postItem);
 
-            if ($elementId) {
-                $query->elementId($elementId);
-            }
-
-            if ($elementSiteId) {
-                $query->elementSiteId($elementSiteId);
-            }
-
-            $item = $query->one();
-
-            if ($item) {
+            if ($item->id) {
                 if (!Craft::$app->getElements()->deleteElement($item)) {
                     $errors[$key] = new ItemError('Unable to delete item from list.', ['item' => $item]);
 
@@ -414,12 +243,6 @@ class ItemsController extends BaseController
 
                 $variables['items'][] = array_merge(['action' => 'removed'], $item->toArray());
             } else {
-                $item = $this->_setItemFromPost($elementId, $elementSiteId);
-
-                // Set any additional options and fields on the item
-                $item->setOptions($options);
-                $item->setFieldValues($fields);
-
                 if (!Wishlist::$plugin->getItems()->saveElement($item)) {
                     $errors[$key] = new ItemError('Unable to save item to list.', ['item' => $item]);
 
@@ -436,37 +259,120 @@ class ItemsController extends BaseController
             }
         }
 
-        return $this->returnSuccess('Items toggled in list.', $variables);
+        $message = Craft::t('wishlist', '{count, number} {count, plural, =1{item} other{items}} toggled in list.', [
+            'count' => count($postItems),
+        ]);
+
+        return $this->returnSuccess($message, $variables);
+    }
+
+    public function actionRemove(): ?Response
+    {
+        $postItems = $this->_setItemsFromPost();
+
+        $errors = [];
+        $variables = [];
+
+        foreach ($postItems as $key => $postItem) {
+            // Get the element we're trying to action
+            $element = $this->_getElementForItem($postItem);
+
+            if ($element instanceof ItemError) {
+                $errors[$key] = $element;
+
+                continue;
+            }
+
+            // Get the existing list (either passed in, or the users default), or create it
+            $list = $this->_getOrCreateList($postItem);
+
+            if ($list instanceof ItemError) {
+                $errors[$key] = $list;
+
+                continue;
+            }
+
+            // Create the item for the list and element, with additional attributes
+            $item = $this->_getOrCreateItem($list, $element, $postItem);
+
+            if ($item->id) {
+                if (!Craft::$app->getElements()->deleteElement($item)) {
+                    $errors[$key] = new ItemError('Unable to delete item from list.', ['item' => $item]);
+
+                    continue;
+                }
+
+                $variables['items'][] = array_merge(['action' => 'removed'], $item->toArray());
+            } else {
+                $errors[$key] = new ItemError('Unable to delete item from list.', ['item' => $item]);
+            }
+        }
+
+        if ($errors) {
+            foreach ($errors as $itemError) {
+                return $this->returnError($itemError->message, $itemError->params);
+            }
+        }
+
+        $message = Craft::t('wishlist', '{count, number} {count, plural, =1{item} other{items}} removed from list.', [
+            'count' => count($postItems),
+        ]);
+
+        return $this->returnSuccess($message, $variables);
     }
 
     public function actionUpdate(): ?Response
     {
-        $request = Craft::$app->getRequest();
-        $itemId = $request->getParam('itemId');
-        $options = $request->getParam('options');
+        $postItems = $this->_setItemsFromPost();
 
-        if (!$itemId) {
-            return $this->returnError('Item ID must be provided.');
+        $errors = [];
+        $variables = [];
+
+        foreach ($postItems as $key => $postItem) {
+            $itemId = $postItem['itemId'] ?? null;
+            $fields = $postItem['fields'] ?? [];
+            $options = $postItem['options'] ?? [];
+
+            if (!$itemId) {
+                $errors[$key] = new ItemError('Item ID must be provided.');
+
+                continue;
+            }
+
+            $item = Wishlist::$plugin->getItems()->getItemById($itemId);
+
+            if (!$item) {
+                $errors[$key] = new ItemError('Unable to find item in list.');
+
+                continue;
+            }
+
+            // Check if we're allowed to manage lists
+            $this->enforceEnabledList($item->getList());
+
+            $item->setFieldValues($fields);
+            $item->setOptions($options);
+
+            if (!Wishlist::$plugin->getItems()->saveElement($item)) {
+                $errors[$key] = new ItemError('Unable to update item to list.', ['item' => $item]);
+
+                continue;
+            }
+
+            $variables['items'][] = $item;
         }
 
-        $item = Craft::$app->getElements()->getElementById($itemId);
-
-        if (!$item) {
-            return $this->returnError('Unable to find item.');
+        if ($errors) {
+            foreach ($errors as $itemError) {
+                return $this->returnError($itemError->message, $itemError->params);
+            }
         }
 
-        // Check if we're allowed to manage lists
-        $this->enforceEnabledList($item->getList());
+        $message = Craft::t('wishlist', '{count, number} {count, plural, =1{item} other{items}} updated in list.', [
+            'count' => count($postItems),
+        ]);
 
-        $item->setFieldValuesFromRequest('fields');
-
-        $item->setOptions($options);
-
-        if (!Wishlist::$plugin->getItems()->saveElement($item)) {
-            return $this->returnError('Unable to update item in list.', ['item' => $item]);
-        }
-
-        return $this->returnSuccess('Item updated in list.');
+        return $this->returnSuccess($message, $variables);
     }
 
 
@@ -509,27 +415,110 @@ class ItemsController extends BaseController
         $variables['fieldsHtml'] = $form->render();
     }
 
-    private function _setItemFromPost($elementId = null, $elementSiteId = null): Item
+    private function _setItemsFromPost(): array
     {
-        $request = Craft::$app->getRequest();
-        $elementId = $request->getParam('elementId', $elementId);
-        $elementSiteId = $request->getParam('elementSiteId', $elementSiteId);
-        $listId = $request->getParam('listId');
+        // If the request is coming through via a URL, params are encoded for easy URLs (that can't be easily tampered with)
+        $urlPayload = $this->request->getParam('wl', []);
 
-        $listTypeId = $request->getParam('listTypeId');
-        $listTypeHandle = $request->getParam('listTypeHandle');
+        if ($urlPayload) {
+            $urlPayload = UrlHelper::decodeUrlParams($urlPayload);
+        }
 
-        if (!$listTypeId && $listTypeHandle) {
-            // Always take the ID first. If both are sent, Handle is ignored.
-            $listType = WishList::$plugin->getListTypes()->getListTypeByHandle($listTypeHandle);
+        // By default, handle multi-items, but if not - set them up as one
+        return $this->request->getParam('items', [
+            array_merge([
+                'itemId' => $this->request->getParam('itemId'),
+                'listId' => $this->request->getParam('listId'),
+                'listType' => $this->request->getParam('listType'),
+                'elementId' => $this->request->getParam('elementId'),
+                'elementSiteId' => $this->request->getParam('elementSiteId'),
+                'newList' => $this->request->getParam('newList', false),
+                'fields' => $this->request->getParam('fields', []),
+                'options' => $this->request->getParam('options', []),
+            ], $urlPayload),
+        ]);
+    }
 
-            if ($listType) {
-                $listTypeId = $listType->id;
+    private function _getElementForItem(array $postItem): ElementInterface|ItemError
+    {
+        $elementId = $postItem['elementId'] ?? null;
+        $elementSiteId = $postItem['elementSiteId'] ?? null;
+
+        if (!$elementId) {
+            return new ItemError('Element ID must be provided.');
+        }
+
+        $element = Craft::$app->getElements()->getElementById($elementId, null, $elementSiteId);
+
+        if (!$element) {
+            return new ItemError('Unable to find element.');
+        }
+
+        return $element;
+    }
+
+    private function _getOrCreateList(array $postItem): ListElement|ItemError
+    {
+        $listId = $postItem['listId'] ?? null;
+        $listType = $postItem['listType'] ?? null;
+        $newList = $postItem['newList'] ?? false;
+        
+        // Get the specific list passed in, unless we specifically want to create a new list
+        if ($listId && !$newList) {
+            $list = Wishlist::$plugin->getLists()->getListById($listId);
+
+            if (!$list) {
+                return new ItemError('Invalid List ID "' . $listId . '".');
+            }
+        } else {
+            // Ensure that we resolve the list type correctly
+            $listParams = array_filter(['listType' => $listType]);
+
+            // Either get the current user's list, or create a new one - unless we want a new list always created
+            if ($newList) {
+                $list = Wishlist::$plugin->getLists()->createList($listParams);
+            } else {
+                $list = Wishlist::$plugin->getLists()->getUserList($listParams);
+            }
+
+            if (!Wishlist::$plugin->getLists()->saveElement($list)) {
+                return new ItemError('Unable to save list.', ['list' => $list]);
             }
         }
 
-        // Create the item, and force the item's list to also be created if not already
-        return WishList::$plugin->getItems()->createItem($elementId, $listId, $listTypeId, true, $elementSiteId);
+        // Check if we're allowed to manage lists
+        $this->enforceEnabledList($list);
+
+        return $list;
+    }
+
+    private function _getOrCreateItem(ListElement $list, ElementInterface $element, array $postItem): Item
+    {
+        $itemId = $postItem['itemId'] ?? null;
+        $fields = $postItem['fields'] ?? [];
+        $options = $postItem['options'] ?? [];
+
+        // Check if we're passing in an itemId - that's easy
+        if ($itemId) {
+            return Wishlist::$plugin->getItems()->getItemById($itemId);
+        }
+
+        // Try and find an existing item for the list, with all the appropriate params
+        $query = Item::find()
+            ->listId($list->id)
+            ->elementId($element->id)
+            ->elementSiteId($element->siteId)
+            ->id($itemId)
+            ->options($options);
+
+        if ($item = $query->one()) {
+            return $item;
+        }
+
+        $itemParams = array_filter(['options' => $options, 'fields' => $fields]);
+        $item = WishList::$plugin->getItems()->createItem($list, $element, $itemParams);
+
+        return $item;
     }
 
 }

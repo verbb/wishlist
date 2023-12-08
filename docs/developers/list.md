@@ -13,3 +13,14 @@ Attribute | Description
 `default` | Whether this list is marked as the default list for users.
 `title` | The title of this list.
 `lastIp` | A record of the last known IP for the guest or user of this list.
+
+## Methods
+
+Method | Description
+--- | ---
+`getItems()` | Returns an [Item](docs:getting-elements/item-queries) query.
+`getItem(element, params)` | Returns an [Item](docs:developers/item) object for the given element, and query params.
+`hasItem(item)` | Whether the provided item is in this list.
+`getAddItemUrl(element, params)` | Returns the URL to add an item to the list.
+`getToggleItemUrl(element, params)` | Returns the URL to remove an item from the list.
+`getRemoveItemUrl(element, params)` | Returns the URL to toggle an item in the list.

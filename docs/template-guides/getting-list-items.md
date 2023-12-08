@@ -1,14 +1,13 @@
 # Getting List Items
 No doubt you'll want to display the contents of a user's list at some point. To do this, you'll need to first fetch the list first, which will be for the current user, and then loop through the contained items.
 
-Be sure to check if the list exists first. Lists are only created when you add something to it for the first time.
+## Single List
+If you're after just a single list, the `getUserList()` method will return the default list for the current user. This includes whether the user is logged in, or a guest. `getUserList()` will always return a List element, even if the user hasn't added any items to their list, as it will be their empty, but default list.
 
 ```twig
-{# Get the list #}
-{% set list = craft.wishlist.lists().default(true).one() %}
+{% set list = craft.wishlist.getUserList() %}
 
-{# Display list items #}
-{% if list %}
+{% if list.items %}
     <ul>
         {% for item in list.items.all() %}
             <li>{{ item.title }}</li>
@@ -17,14 +16,12 @@ Be sure to check if the list exists first. Lists are only created when you add s
 {% endif %}
 ```
 
-You could also display items for different list types, rather than just the default list.
+You can also pass in a specific list type:
 
 ```twig
-{# Get the list #}
-{% set list = craft.wishlist.lists().type('favourite').one() %}
+{% set list = craft.wishlist.getUserList({ listType: 'favourite' }) %}
 
-{# Display list items #}
-{% if list %}
+{% if list.items %}
     <ul>
         {% for item in list.items.all() %}
             <li>{{ item.title }}</li>
@@ -33,15 +30,31 @@ You could also display items for different list types, rather than just the defa
 {% endif %}
 ```
 
-What you **don't** want to do is fetch just the items, as this will return all the items across your site for all users, as below
+## Multiple Lists
+As Wishlist can support multiple lists, and multiple list types, you can also loop through those multiple lists. You can do this with a more general query for lists with `craft.wishlist.lists()`.
 
 ```twig
-{# Again - Don't do this! #}
-{% set items = craft.wishlist.items().all() %}
+{% for list in craft.wishlist.lists().all() %}
+    <p>#{{ list.id }} - {{ list.title }} - {{ list.type }}</p>
 
-<ul>
-    {% for item in items %}
-        <li>{{ item.title }}</li>
-    {% endfor %}
-</ul>
+    <ul>
+        {% for item in list.items.all() %}
+            <li>{{ item.title }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+```
+
+Note that by default, this will still only return lists for the current user. You can change this be passing `false` into `lists()`.
+
+```twig
+{% for list in craft.wishlist.lists(false).all() %}
+    <p>#{{ list.id }} - {{ list.title }} - {{ list.type }} - {{ list.user }}</p>
+
+    <ul>
+        {% for item in list.items.all() %}
+            <li>{{ item.title }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
 ```

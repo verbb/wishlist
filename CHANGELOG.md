@@ -1,5 +1,34 @@
 # Changelog
 
+## 3.0.0
+
+### Added
+- Add the ability to create a list when adding or toggling an item in one request.
+- Add `newList` parameter when managing items, to force-create a new list, even if one for the chosen type exists (and add the items to that list).
+- Add `craft.wishlist.getUserList(params)` to quickly get the current users list. Using `params` allows you to specify other list types, and more.
+- Add `list.addItemUrl(element, params)` `list.toggleItemUrl(element, params)` `list.removeItemUrl(element, params)`.
+- Add `craft.wishlist.addItemUrl(element, params)` `craft.wishlist.toggleItemUrl(element, params)` `craft.wishlist.removeItemUrl(element, params)`.
+- Add support to update multiple items at once.
+- Add `List::isEmpty()` to check if there are any items in the list.
+- Add `List::getItem(element, params)` to get a specific item, based on a given element and any additional query params.
+- Add `List::hasItem(item)` to check if a list has a specific item.
+- Add support for `Item::getInList(list)` to pass in a specific list to check.
+
+### Changed
+- All URL-based actions now have their query parameters encoded to prevent tampering with.
+- `craft.wishlist.getInUserLists()` now accepts an element as its parameter, not just an elementId.
+- Change `listTypeHandle` parameter for managing items to `listType`.
+
+### Removed
+- Remove `listTypeId` parameter for managing items. Use `listType` instead.
+- Remove `listTypeHandle` parameter for managing items. Use `listType` instead.
+- Remove `\verbb\wishlist\services\Items::getItemsForList()`.
+- Remove `\verbb\wishlist\services\Lists::getList()`.
+- Remove `forceSave` parameter on `craft.wishlist.lists()`. Lists are now created when items are added, rather than when calling this tag.
+
+### Deprecated
+- Deprecated `craft.wishlist.item()`. Use `craft.wishlist.items(params)` to find items, or `craft.wishlist.addItemUrl/toggleItemUrl/removeItemUrl` to manage items.
+
 ## 2.0.6 - 2023-07-11
 
 ### Added

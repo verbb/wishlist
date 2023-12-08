@@ -6,9 +6,9 @@ To get started, ensure you've set up the **PDF Template** under the [Configurati
 Then, you'll want to fetch the list you want to generate the PDF for.
 
 ```twig
-{% set list = craft.wishlist.lists().default(true).one() %}
+{% set list = craft.wishlist.getUserList() %}
 
-{% if list %}
+{% if list.id %}
     <a href="{{ list.getPdfUrl() }}">Download your wishlist</a>
 {% endif %}
 ```

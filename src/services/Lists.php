@@ -5,6 +5,7 @@ use verbb\wishlist\Wishlist;
 use verbb\wishlist\elements\Item;
 use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\elements\db\ListQuery;
+use verbb\wishlist\models\ListType;
 use verbb\wishlist\models\Settings;
 
 use Craft;
@@ -12,6 +13,7 @@ use craft\base\Component;
 use craft\base\ElementInterface;
 use craft\db\Query;
 use craft\elements\User as UserElement;
+use craft\helpers\ArrayHelper;
 use craft\helpers\ConfigHelper;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
@@ -30,7 +32,6 @@ class Lists extends Component
     // =========================================================================
 
     protected string $listName = 'wishlist_list';
-    private array $_lists = [];
 
 
     // Public Methods
@@ -38,7 +39,6 @@ class Lists extends Component
 
     public function getListById(int $id, $siteId = null): ?ListElement
     {
-        /* @noinspection PhpIncompatibleReturnTypeInspection */
         return Craft::$app->getElements()->getElementById($id, ListElement::class, $siteId);
     }
 
@@ -49,77 +49,23 @@ class Lists extends Component
         return Craft::$app->getElements()->saveElement($element, $runValidation, $propagate, $updateListSearchIndexes);
     }
 
-    public function getList($id = null, $forceSave = false, $listTypeId = null): ElementInterface
+    public function getUserList(array $params = []): ListElement
     {
-        $session = Craft::$app->getSession();
+        // Ensure that the params are populated with the correct list type
+        $params['type'] = $this->_getListType($params);
 
-        $cacheKey = $id . ':' . $listTypeId;
+        // Returns the current users list (logged-in or guest).
+        $query = $this->getListQueryForUser($params);
 
-        if ($id) {
-            $this->_lists[$cacheKey] = Wishlist::$plugin->getLists()->getListById($id);
-
-            if ($this->_lists[$cacheKey]) {
-                return $this->_lists[$cacheKey];
-            }
+        if ($list = $query->one()) {
+            return $list;
         }
 
-        // We need maintain potential different lists in our cache
-        if (!isset($this->_lists[$cacheKey])) {
-            $this->_lists[$cacheKey] = null;
-        }
-
-        if ($this->_lists[$cacheKey] === null) {
-            if ($listTypeId) {
-                // Get the first list of the typeId we find for the user.  If it needs to be more precise, use id.
-                $this->_lists[$cacheKey] = $this->getListQueryForOwner()->typeId($listTypeId)->one();
-            } else {
-                $this->_lists[$cacheKey] = $this->getListQueryForOwner()->default(true)->one();
-            }
-
-            if (!$this->_lists[$cacheKey]) {
-                $listType = null;
-
-                if ($listTypeId) {
-                    // If this list type is new for the user, let's create a new list for it.
-                    $listType = Wishlist::$plugin->getListTypes()->getListTypeById($listTypeId);
-                }
-
-                if ($listType === null) {
-                    // If we still don't have a valid list type, let's get the default one.
-                    $listType = Wishlist::$plugin->getListTypes()->getDefaultListType();
-                }
-
-                $this->_lists[$cacheKey] = new ListElement();
-                $this->_lists[$cacheKey]->reference = $this->generateReferenceNumber();
-                $this->_lists[$cacheKey]->typeId = $listType->id;
-                $this->_lists[$cacheKey]->title = $listType->name;
-                $this->_lists[$cacheKey]->default = $listType->default;
-                $this->_lists[$cacheKey]->sessionId = $this->getSessionId();
-            }
-        }
-
-        $originalIp = $this->_lists[$cacheKey]->lastIp;
-        $originalUserId = $this->_lists[$cacheKey]->userId;
-
-        // These values should always be kept up to date when a list is retrieved from session.
-        $this->_lists[$cacheKey]->lastIp = Craft::$app->getRequest()->userIP;
-        $this->_lists[$cacheKey]->userId = Craft::$app->getUser()->getIdentity()->id ?? null;
-
-        $changedIp = $originalIp != $this->_lists[$cacheKey]->lastIp;
-        $changedUserId = $originalUserId != $this->_lists[$cacheKey]->userId;
-
-        if ($this->_lists[$cacheKey]->id) {
-            if ($changedIp || $changedUserId) {
-                Wishlist::$plugin->getLists()->saveElement($this->_lists[$cacheKey], false);
-            }
-        } else if ($forceSave) {
-            Wishlist::$plugin->getLists()->saveElement($this->_lists[$cacheKey], false);
-        }
-
-        return $this->_lists[$cacheKey];
+        // Otherwise, create a new list (unsaved) so we can action things with.
+        return $this->createList($params);
     }
 
-    public function getListQueryForOwner(): ListQuery
+    public function getListQueryForUser(array $params = []): ListQuery
     {
         $query = ListElement::find();
 
@@ -132,7 +78,43 @@ class Lists extends Component
             $query->userId(':empty:');
         }
 
+        Craft::configure($query, $params);
+
         return $query;
+    }
+
+    public function createList(array $params = []): ListElement
+    {
+        $listType = $params['type'] ?? $this->_getListType($params);
+
+        $list = new ListElement();
+        $list->reference = $this->generateReferenceNumber();
+        $list->typeId = $listType->id;
+        $list->title = $listType->name;
+        $list->sessionId = $this->getSessionId();
+
+        $list->lastIp = Craft::$app->getRequest()->userIP;
+        $list->userId = Craft::$app->getUser()->getIdentity()->id ?? null;
+
+        Craft::configure($list, $params);
+
+        return $list;
+    }
+
+    public function getInUserLists(ElementInterface $element): bool
+    {
+        // Get all lists for the current user (session).
+        $userListIds = $this->getListQueryForUser()->ids();
+
+        if (!$userListIds) {
+            return false;
+        }
+
+        return Item::find()
+            ->elementId($element->id)
+            ->elementSiteId($element->siteId)
+            ->listId($userListIds)
+            ->exists();
     }
 
     public function isListOwner($list): bool
@@ -147,22 +129,6 @@ class Lists extends Component
         }
 
         return (int)$list->getOwnerId() === (int)$id;
-    }
-
-    public function createList(): ListElement
-    {
-        $listType = Wishlist::$plugin->getListTypes()->getDefaultListType();
-
-        $list = new ListElement();
-        $list->reference = $this->generateReferenceNumber();
-        $list->typeId = $listType->id;
-        $list->title = $listType->name;
-        $list->sessionId = $this->getSessionId();
-
-        $list->lastIp = Craft::$app->getRequest()->userIP;
-        $list->userId = Craft::$app->getUser()->getIdentity()->id ?? null;
-
-        return $list;
     }
 
     public function purgeInactiveLists(): int
@@ -379,6 +345,19 @@ class Lists extends Component
         }
 
         return $sessionId;
+    }
+
+    private function _getListType(array &$params = []): ListType
+    {
+        // Normalize from templates, where `listType` is more user-friendly and unambiguous to `type``.
+        $typeHandle = ArrayHelper::remove($params, 'listType');
+
+        // Ensure that we resolve the list type correctly
+        if ($typeHandle) {
+            return WishList::$plugin->getListTypes()->getListTypeByHandle($typeHandle);
+        }
+
+        return Wishlist::$plugin->getListTypes()->getDefaultListType();
     }
 
     private function _getListsIdsToPurge($limit = null, $offset = null): array

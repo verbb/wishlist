@@ -5,8 +5,11 @@ use verbb\wishlist\Wishlist;
 use verbb\wishlist\elements\Item;
 use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\elements\db\ListQuery;
-
 use verbb\wishlist\elements\db\ItemQuery;
+use verbb\wishlist\helpers\UrlHelper;
+
+use Craft;
+use craft\base\ElementInterface;
 
 class WishlistVariable
 {
@@ -23,14 +26,15 @@ class WishlistVariable
         return Wishlist::$plugin->getPluginName();
     }
 
-    public function lists($forUser = true, $forceSave = false): ListQuery
+    public function getUserList(array $params = []): ListElement
+    {
+        return Wishlist::$plugin->getLists()->getUserList($params);
+    }
+
+    public function lists(bool $forUser = true): ListQuery
     {
         if ($forUser) {
-            if ($forceSave) {
-                Wishlist::$plugin->getLists()->getList(null, true);
-            }
-
-            return Wishlist::$plugin->getLists()->getListQueryForOwner();
+            return Wishlist::$plugin->getLists()->getListQueryForUser();
         }
 
         return ListElement::find();
@@ -41,46 +45,70 @@ class WishlistVariable
         return Item::find();
     }
 
-    public function item($elementId, $listId = null, $listType = null, $elementSiteId = null): ?Item
+    public function getAddItemUrl(ElementInterface $element, array $params = []): string
     {
-        $item = null;
-        $listTypeId = null;
+        return UrlHelper::addUrl($element, $params);
+    }
+
+    public function getToggleItemUrl(ElementInterface $element, array $params = []): string
+    {
+        return UrlHelper::toggleUrl($element, $params);
+    }
+
+    public function getRemoveItemUrl(ElementInterface $element, array $params = []): string
+    {
+        return UrlHelper::removeUrl($element, $params);
+    }
+
+    public function getInUserLists(ElementInterface $element): bool
+    {
+        return Wishlist::$plugin->getLists()->getInUserLists($element);
+    }
+
+
+    // Deprecated Methods
+    // =========================================================================
+
+    public function item(?int $elementId, ?int $listId = null, ?string $listTypeHandle = null, ?int $elementSiteId = null): ?Item
+    {
+        Craft::$app->getDeprecator()->log(__METHOD__, '`craft.wishlist.item()` has been deprecated. Use `craft.wishlist.items(params)` to find items, or `craft.wishlist.addItemUrl/toggleItemUrl/removeItemUrl` to manage items.');
 
         if (!$elementId) {
             return null;
         }
 
-        if ($listType && $listType = Wishlist::$plugin->getListTypes()->getListTypeByHandle($listType)) {
-            $listTypeId = $listType->id;
+        $params = array_filter([
+            'elementId' => $elementId,
+            'elementSiteId' => $elementSiteId,
+            'listId' => $listId,
+        ]);
+
+        if ($listTypeHandle && $listType = Wishlist::$plugin->getListTypes()->getListTypeByHandle($listTypeHandle)) {
+            $params['typeId'] = $listType->id;
         }
 
-        // Get the list, don't force it to be created yet
-        $list = Wishlist::$plugin->getLists()->getList($listId, false, $listTypeId);
+        $query = Item::find();
+        Craft::configure($query, $params);
 
-        if ($list->id) {
-            $item = Item::find()->elementId($elementId)->elementSiteId($elementSiteId)->listId($list->id)->listTypeId($listTypeId)->one();
+        if ($item = $query->one()) {
+            return $item;
         }
 
-        if (!$item) {
-            $item = WishList::$plugin->getItems()->createItem($elementId, $listId, $listTypeId, false, $elementSiteId);
+        if ($listId) {
+            $list = Wishlist::$plugin->getLists()->getListById($listId);
+        } 
+
+        if (!isset($list)) {
+            $list = Wishlist::$plugin->getLists()->getUserList();
         }
 
-        return $item;
-    }
+        $element = Craft::$app->getElements()->getElementById($elementId, null, $elementSiteId);
 
-    public function getInUserLists($elementId): bool
-    {
-        // Get all lists for the current user (session).
-        $userListIds = Wishlist::$plugin->getLists()->getListQueryForOwner()->ids();
-
-        if (!$userListIds) {
-            return false;
+        if (!$element || !$list) {
+            return null;
         }
 
-        return Item::find()
-            ->elementId($elementId)
-            ->listId($userListIds)
-            ->exists();
+        return WishList::$plugin->getItems()->createItem($list, $element, $params);
     }
 
 }

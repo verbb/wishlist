@@ -4,7 +4,7 @@ Lists are simply that - a list of elements for a particular user. Any element on
 Lists are session-based, and are populated as long as the current session is active. For guests, as soon as their session ends – such as they close their browser – their list items will be gone. For registered and logged-in users, lists will be persisted against their account, so It's important to prompt your users to log in or register to save their list contents. In fact, it works pretty similar to a typical Cart!
 
 ## Sharing Lists
-A benefit of creating lists is being able to share them, be is a wishlist of items for a Commerce store, or even just to share bits of content a user has liked. It's easy to create and share lists and their contents publicly via a URL.
+A benefit of creating lists is being able to share them, be it a wishlist of items for a Commerce store, or even just to share bits of content a user has liked. It's easy to create and share lists and their contents publicly via a URL.
 
 See the [Template Guide](docs:template-guides/sharing-lists).
 

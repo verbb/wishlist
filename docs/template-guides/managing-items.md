@@ -1,6 +1,8 @@
 # Managing Items
 You can Add, Remove, Update or Toggle items in any list. You have the option of either using a `<form>` element or simply via a URL, depending on your templating needs.
 
+The following examples demonstrate a common use-case for Wishlist, where you'll loop through a collection of entries (`news` entries), and adding buttons to add the entry to your wishlist, toggle it, or remove it.
+
 ## Add Item
 
 ::: code
@@ -10,13 +12,14 @@ You can Add, Remove, Update or Toggle items in any list. You have the option of 
         <input type="hidden" name="action" value="wishlist/items/add">
         {{ csrfInput() }}
 
-        <input type="text" name="elementId" value="{{ entry.id }}">
+        <input type="hidden" name="elementId" value="{{ entry.id }}">
+        <input type="hidden" name="elementSiteId" value="{{ entry.siteId }}">
 
         {# Optional: Pass content for custom fields #}
-        <input type="text" name="fields[myField]" value="My Value">
+        <input type="hidden" name="fields[myField]" value="My Value">
 
         {# Optional: Pass specific list type handle #}
-        <input type="text" name="listTypeHandle" value="favourites">
+        <input type="hidden" name="listType" value="favourites">
 
         <input type="submit" value="Add to List">
     </form>
@@ -25,15 +28,13 @@ You can Add, Remove, Update or Toggle items in any list. You have the option of 
 
 ```twig URL
 {% for entry in craft.entries.section('news').all() %}
-    {% set item = craft.wishlist.item(entry.id) %}
-
-    <a href="{{ item.addUrl() }}">Add to List</a>
+    <a href="{{ craft.wishlist.addItemUrl(entry) }}">Add to List</a>
 
     {# Optional: Pass content for custom fields #}
-    <a href="{{ item.addUrl({ fields: { myField: 'My Value' } }) }}">Add to List</a>
+    <a href="{{ craft.wishlist.addItemUrl(entry, { fields: { myField: 'My Value' } }) }}">Add to List</a>
 
     {# Optional: Pass specific list type handle #}
-    <a href="{{ item.addUrl({ listTypeHandle: 'favourites' }) }}">Add to List</a>
+    <a href="{{ craft.wishlist.addItemUrl(entry, { listType: 'favourites' }) }}">Add to List</a>
 {% endfor %}
 ```
 :::
@@ -48,7 +49,8 @@ You can Add, Remove, Update or Toggle items in any list. You have the option of 
         <input type="hidden" name="action" value="wishlist/items/remove">
         {{ csrfInput() }}
 
-        <input type="text" name="elementId" value="{{ entry.id }}">
+        <input type="hidden" name="elementId" value="{{ entry.id }}">
+        <input type="hidden" name="elementSiteId" value="{{ entry.siteId }}">
 
         <input type="submit" value="Remove from List">
     </form>
@@ -57,9 +59,7 @@ You can Add, Remove, Update or Toggle items in any list. You have the option of 
 
 ```twig URL
 {% for entry in craft.entries.section('news').all() %}
-    {% set item = craft.wishlist.item(entry.id) %}
-
-    <a href="{{ item.removeUrl() }}">Remove from List</a>
+    <a href="{{ craft.wishlist.removeItemUrl(entry) }}">Remove from List</a>
 {% endfor %}
 ```
 :::
@@ -74,7 +74,8 @@ You can Add, Remove, Update or Toggle items in any list. You have the option of 
         <input type="hidden" name="action" value="wishlist/items/toggle">
         {{ csrfInput() }}
 
-        <input type="text" name="elementId" value="{{ entry.id }}">
+        <input type="hidden" name="elementId" value="{{ entry.id }}">
+        <input type="hidden" name="elementSiteId" value="{{ entry.siteId }}">
 
         <input type="submit" value="Toggle in List">
     </form>
@@ -83,60 +84,47 @@ You can Add, Remove, Update or Toggle items in any list. You have the option of 
 
 ```twig URL
 {% for entry in craft.entries.section('news').all() %}
-    {% set item = craft.wishlist.item(entry.id) %}
-
-    <a href="{{ item.toggleUrl() }}">Toggle</a>
+    <a href="{{ craft.wishlist.toggleItemUrl(entry) }}">Toggle</a>
 {% endfor %}
 ```
 :::
 
 ## Update Item
 
-::: code
-```twig Form
-{% for entry in craft.entries.section('news').all() %}
-    <form method="POST">
-        <input type="hidden" name="action" value="wishlist/items/update">
-        {{ csrfInput() }}
+```twig
+<form method="POST">
+    <input type="hidden" name="action" value="wishlist/items/update">
+    {{ csrfInput() }}
 
-        {% set item = craft.wishlist.item(324) %}
+    {# Get a specific item #}
+    {% set item = craft.wishlist.items().id(123).one() %}
 
-        {% if item %}
-            <input type="hidden" name="itemId" value="{{ item.id }}">
-        {% endif %}
+    {% if item %}
+        <input type="hidden" name="itemId" value="{{ item.id }}">
+    {% endif %}
 
-        <input type="text" name="fields[plainText]" value="Updated Value">
+    <input type="hidden" name="fields[plainText]" value="Updated Value">
 
-        <input type="submit" value="Update">
-    </form>
-{% endfor %}
+    <input type="submit" value="Update">
+</form>
 ```
 
-```twig URL
-{% for entry in craft.entries.section('news').all() %}
-    {% set item = craft.wishlist.item(entry.id) %}
-
-    <a href="{{ item.toggleUrl() }}">Toggle</a>
-{% endfor %}
-```
-:::
-
-Any of the above actions will be made on the users' default list. You can also target a specific list, by using its ID.
+Any of the above actions will be made on the user's default list. If the list doesn't already exist, Wishlist will create it. You can also target a specific list, by using its ID.
 
 ::: code
 ```twig Form
-<input type="text" name="listId" value="1234">
+<input type="hidden" name="listId" value="1234">
 ```
 
 ```twig URL
-<a href="{{ item.addUrl({ listId: 1234 }) }}">Add to List</a>
+<a href="{{ craft.wishlist.addItemUrl(entry, { listId: 1234 }) }}">Add to List</a>
 ```
 :::
 
 ## List Types
 The above actions will all be actioned on the default list. It's common to specify another list type to manage items on. You might have a list type called 'Favourites', which you want to add/delete/toggle on.
 
-To make use of this, you need to supply either the `listTypeHandle` or `listTypeId` in your actions.
+To make use of this, you need to supply the `listType` in your actions.
 
 ::: code
 ```twig Form
@@ -145,8 +133,9 @@ To make use of this, you need to supply either the `listTypeHandle` or `listType
         <input type="hidden" name="action" value="wishlist/items/add">
         {{ csrfInput() }}
 
-        <input type="text" name="elementId" value="{{ entry.id }}">
-        <input type="text" name="listTypeHandle" value="favourites">
+        <input type="hidden" name="elementId" value="{{ entry.id }}">
+        <input type="hidden" name="elementSiteId" value="{{ entry.siteId }}">
+        <input type="hidden" name="listType" value="favourites">
 
         <input type="submit" value="Add to Favourites">
     </form>
@@ -155,9 +144,38 @@ To make use of this, you need to supply either the `listTypeHandle` or `listType
 
 ```twig URL
 {% for entry in craft.entries.section('news').all() %}
-    {% set item = craft.wishlist.item(entry.id) %}
+    <a href="{{ craft.wishlist.addItemUrl(entry, { listType: 'favourites' }) }}">Add to Favourites</a>
+{% endfor %}
+```
+:::
 
-    <a href="{{ item.addUrl({ listTypeHandle: 'favourites' }) }}">Add to Favourites</a>
+## New Lists
+As Wishlist supports having multiple lists and multiple list types, when adding or toggling items for a given list type, the assumption is to deal with a single list of that type. For example, your default list type might be "Wishlist", and you have two more types called "Favourites" and "Public".
+
+When adding an element to the list type of your choice, Wishlist will create the list if it doesn't exist, or fetch that list and add the item to that list.
+
+There are cases where you may want a new list created when adding an item. You could have multiple "Favourites" lists, each with their own purpose. You can pass in `newList` as a parameter to force a new list to be created, rather than just using the first available one for the user.
+
+::: code
+```twig Form
+{% for entry in craft.entries.section('news').all() %}
+    <form method="POST">
+        <input type="hidden" name="action" value="wishlist/items/add">
+        {{ csrfInput() }}
+
+        <input type="hidden" name="elementId" value="{{ entry.id }}">
+        <input type="hidden" name="elementSiteId" value="{{ entry.siteId }}">
+        <input type="hidden" name="listType" value="favourites">
+        <input type="hidden" name="newList" value="1">
+
+        <input type="submit" value="Add to Favourites">
+    </form>
+{% endfor %}
+```
+
+```twig URL
+{% for entry in craft.entries.section('news').all() %}
+    <a href="{{ craft.wishlist.addItemUrl(entry, { listType: 'favourites', newList: true }) }}">Add to Favourites</a>
 {% endfor %}
 ```
 :::
@@ -171,10 +189,11 @@ You can also manage multiple items at a time, for example, adding multiple items
     {{ csrfInput() }}
 
     {% for entry in craft.entries.section('news').all() %}
-        <input type="text" name="items[{{ loop.index }}][elementId]" value="{{ entry.id }}">
+        <input type="hidden" name="items[{{ loop.index0 }}][elementId]" value="{{ entry.id }}">
+        <input type="hidden" name="items[{{ loop.index0 }}][elementSiteId]" value="{{ entry.siteId }}">
 
         {# Optional: Pass content for custom fields #}
-        <input type="text" name="items[{{ loop.index }}][fields][myField]" value="My Value">
+        <input type="hidden" name="items[{{ loop.index0 }}][fields][myField]" value="My Value">
     {% endfor %}
 
     <input type="submit" value="Add to List">
@@ -185,13 +204,14 @@ You can also manage multiple items at a time, for example, adding multiple items
 You can also check to see if an item is already in the list, which is useful for changing the layout based on that fact.
 
 ```twig
-{% for entry in craft.entries.section('news').all() %}
-    {% set item = craft.wishlist.item(entry.id) %}
+{# Get the default list for the user #}
+{% set list = craft.wishlist.getUserList() %}
 
-    {% if item.getInList() %}
-        <a href="{{ item.removeUrl() }}">Remove from List</a>
+{% for entry in craft.entries.section('news').all() %}
+    {% if list.getItem(entry) %}
+        <a href="{{ craft.wishlist.removeItemUrl(entry) }}">Remove from List</a>
     {% else %}
-        <a href="{{ item.addUrl() }}">Add to List</a>
+        <a href="{{ craft.wishlist.addItemUrl(entry) }}">Add to List</a>
     {% endif %}
 {% endfor %}
 ```
@@ -199,13 +219,14 @@ You can also check to see if an item is already in the list, which is useful for
 You can also check if an item is in a list that isn't the default one. For instance, checking if the item is in your `Favourites` list.
 
 ```twig
-{% for entry in craft.entries.section('news').all() %}
-    {% set item = craft.wishlist.item(entry.id, null, 'favourites') %}
+{# Get the Favourites list for the user #}
+{% set list = craft.wishlist.getUserList({ listType: 'favourites' }) %}
 
-    {% if item.getInList() %}
-        <a href="{{ item.removeUrl() }}">Remove from List</a>
+{% for entry in craft.entries.section('news').all() %}
+    {% if list.getItem(entry) %}
+        <a href="{{ craft.wishlist.removeItemUrl(entry) }}">Remove from List</a>
     {% else %}
-        <a href="{{ item.addUrl() }}">Add to List</a>
+        <a href="{{ craft.wishlist.addItemUrl(entry) }}">Add to List</a>
     {% endif %}
 {% endfor %}
 ```
@@ -224,7 +245,7 @@ You can also manage the list items in a provided list. The example below shows a
         <input type="checkbox" name="items[{{ item.id }}][remove]" value="1"> Remove Item
 
         {# Optional: Pass content for custom fields #}
-        <input type="text" name="items[{{ item.id }}][fields][myField]" value="{{ item.myField }}">
+        <input type="hidden" name="items[{{ item.id }}][fields][myField]" value="{{ item.myField }}">
     {% endfor %}
 
     <input type="submit" value="Update List">
@@ -234,24 +255,52 @@ You can also manage the list items in a provided list. The example below shows a
 ## Item Options
 You can also store additional, arbitrary content alongside a Wishlist item in the form of item options. This content won't be visible to users, unless you decide to output it. It will be visible in the control panel, when editing an item.
 
- ```twig
+::: code
+```twig Form
 {% for entry in craft.entries.section('news').all() %}
     <form method="POST">
         <input type="hidden" name="action" value="wishlist/items/add">
         {{ csrfInput() }}
 
-        <input type="text" name="elementId" value="{{ entry.id }}">
+        <input type="hidden" name="elementId" value="{{ entry.id }}">
+        <input type="hidden" name="elementSiteId" value="{{ entry.siteId }}">
 
         {# Store a custom field from the entry into our item #}
-        <input type="text" name="options[myCustomField]" value="{{ entry.myCustomField }}">
+        <input type="hidden" name="options[myCustomField]" value="{{ entry.myCustomField }}">
 
         {# Store an arbitrary value #}
-        <input type="text" name="options[someOption]" value="Some Value">
+        <input type="hidden" name="options[someOption]" value="Some Value">
 
         <input type="submit" value="Add to List">
     </form>
 {% endfor %}
 ```
+
+```twig URL
+{% for entry in craft.entries.section('news').all() %}
+    {% set options = { myCustomField: entry.myCustomField, someOption: 'Some Value' } %}
+    
+    <a href="{{ craft.wishlist.addItemUrl(entry, { options: options }) }}">Add to List</a>
+{% endfor %}
+```
+:::
+
+When using item options, you should always ensure that you pass in the same options when managing items. For example, the above shows adding a news entry to your list, with the provided options. We should check to see if that entry with the options set exists, and remove it with the same options.
+
+```twig
+{# Get the default list for the user #}
+{% set list = craft.wishlist.getUserList() %}
+
+{% for entry in craft.entries.section('news').all() %}
+    {% set options = { myCustomField: entry.myCustomField, someOption: 'Some Value' } %}
+
+    {% if list.getItem(entry, { options: options }) %}
+        <a href="{{ craft.wishlist.removeItemUrl(entry, { options: options }) }}">Remove from List</a>
+    {% endif %}
+{% endfor %}
+```
+
+Without this, Wishlist would find _any_ entry in the list, and would remove the first occurence of that entry in the list, which is likely undesired behaviour.
 
 ## Submit with JavaScript (Ajax)
 You can also trigger any of the above actions through JavaScript.
@@ -307,6 +356,7 @@ If you're unable to use `FormData` or `serialize()`, or you're constructing the 
 let data = {
     action: 'wishlist/items/add',
     elementId: 1234,
+    elementSiteId: 1,
     fields: {
         myField: 'My Value',
     },
@@ -327,6 +377,7 @@ When performing any of the above actions a "Flash message" will appear based on 
     {{ csrfInput() }}
 
     <input type="text" name="elementId" value="{{ entry.id }}">
+    <input type="text" name="elementSiteId" value="{{ entry.siteId }}">
 
     <input type="submit" value="Add to List">
 </form>

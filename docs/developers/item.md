@@ -20,7 +20,7 @@ Attribute | Description
 
 Method | Description
 --- | ---
-`getAddUrl()` | Returns the URL to add an item to a list.
-`getRemoveUrl()` | Returns the URL to remove an item from a list.
-`getToggleUrl()` | Returns the URL to toggle an item in a list.
-`getInList()` | Whether this item is in the list (default list or otherwise).
+`getAddUrl(params)` | Returns the URL to add an item to a list.
+`getRemoveUrl(params)` | Returns the URL to remove an item from a list.
+`getToggleUrl(params)` | Returns the URL to toggle an item in a list.
+`getInList(list)` | Whether this item is in the list (default list or otherwise).

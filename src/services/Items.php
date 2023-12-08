@@ -3,10 +3,12 @@ namespace verbb\wishlist\services;
 
 use verbb\wishlist\Wishlist;
 use verbb\wishlist\elements\Item;
+use verbb\wishlist\elements\ListElement;
 
 use Craft;
 use craft\base\Component;
 use craft\base\ElementInterface;
+use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
 
 class Items extends Component
@@ -14,21 +16,19 @@ class Items extends Component
     // Public Methods
     // =========================================================================
 
-    public function getItemById(int $id, $siteId = null): ?Item
+    public function getItemById(int $id, ?int $siteId = null): ?Item
     {
-        /* @noinspection PhpIncompatibleReturnTypeInspection */
         return Craft::$app->getElements()->getElementById($id, Item::class, $siteId);
     }
 
-    public function getItemsForList(int $listId, $siteId = null): array
+    public function saveElement(ElementInterface $element, bool $runValidation = true, bool $propagate = true): bool
     {
-        return Item::find()
-            ->listId($listId)
-            ->status(null)
-            ->all();
+        $updateItemSearchIndexes = Wishlist::$plugin->getSettings()->updateItemSearchIndexes;
+
+        return Craft::$app->getElements()->saveElement($element, $runValidation, $propagate, $updateItemSearchIndexes);
     }
 
-    public function deleteItemsForList(int $listId, $siteId = null): bool
+    public function deleteItemsForList(int $listId, ?int $siteId = null): bool
     {
         $items = Item::find()
             ->listId($listId)
@@ -42,39 +42,26 @@ class Items extends Component
         return true;
     }
 
-    public function createItem($elementId, $listId, $listTypeId = null, $forceSave = false, $elementSiteId = null): ?Item
+    public function createItem(ListElement $list, ElementInterface $element, array $params = []): Item
     {
-        // null `listId` is okay - a new list will get created.
-        if (!$elementId) {
-            return null;
-        }
-
-        $list = Wishlist::$plugin->getLists()->getList($listId, $forceSave, $listTypeId);
-        $element = Craft::$app->getElements()->getElementById((int)$elementId, null, $elementSiteId);
-
-        if (!$element || !$list) {
-            return null;
-        }
-
         $item = new Item();
         $item->listId = $list->id;
         $item->elementId = $element->id;
         $item->elementSiteId = $element->siteId;
         $item->elementClass = $element::class;
 
-        $item->setFieldValuesFromRequest('fields');
+        $fields = ArrayHelper::remove($params, 'fields');
+
+        if ($fields) {
+            $item->setFieldValues($fields);
+        }
+
+        Craft::configure($item, $params);
 
         return $item;
     }
 
-    public function saveElement(ElementInterface $element, bool $runValidation = true, bool $propagate = true): bool
-    {
-        $updateItemSearchIndexes = Wishlist::$plugin->getSettings()->updateItemSearchIndexes;
-
-        return Craft::$app->getElements()->saveElement($element, $runValidation, $propagate, $updateItemSearchIndexes);
-    }
-
-    public function getOptionsSignature($options): string
+    public function getOptionsSignature(array $options = []): string
     {
         ksort($options);
 

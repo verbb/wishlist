@@ -1,6 +1,8 @@
 <?php
 namespace verbb\wishlist\elements\db;
 
+use verbb\wishlist\Wishlist;
+
 use craft\elements\db\ElementQuery;
 use craft\helpers\Db;
 
@@ -15,7 +17,6 @@ class ItemQuery extends ElementQuery
     public mixed $elementClass = null;
     public mixed $listId = null;
     public mixed $listTypeId = null;
-    public mixed $options = null;
     public mixed $optionsSignature = null;
     public bool $enabled = true;
 
@@ -24,6 +25,17 @@ class ItemQuery extends ElementQuery
 
     // Public Methods
     // =========================================================================
+
+    public function __set($name, $value)
+    {
+        switch ($name) {
+            case 'options':
+                $this->optionsSignature($value);
+                break;
+            default:
+                parent::__set($name, $value);
+        }
+    }
 
     public function elementId($value): static
     {
@@ -57,12 +69,16 @@ class ItemQuery extends ElementQuery
 
     public function options($value): static
     {
-        $this->options = $value;
+        $this->optionsSignature($value);
         return $this;
     }
 
     public function optionsSignature($value): static
     {
+        if (is_array($value)) {
+            $value = Wishlist::$plugin->getItems()->getOptionsSignature($value);
+        }
+
         $this->optionsSignature = $value;
         return $this;
     }
@@ -105,10 +121,6 @@ class ItemQuery extends ElementQuery
 
         if ($this->listId) {
             $this->subQuery->andWhere(Db::parseParam('wishlist_items.listId', $this->listId));
-        }
-
-        if ($this->options) {
-            $this->subQuery->andWhere(Db::parseParam('wishlist_items.options', $this->options));
         }
 
         if ($this->optionsSignature) {
