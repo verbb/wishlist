@@ -4,6 +4,7 @@ namespace verbb\wishlist\services;
 use verbb\wishlist\Wishlist;
 use verbb\wishlist\elements\Item;
 use verbb\wishlist\elements\ListElement;
+use verbb\wishlist\events\ModifySupportedElementTypesEvent;
 
 use Craft;
 use craft\base\Component;
@@ -13,6 +14,12 @@ use craft\helpers\Json;
 
 class Items extends Component
 {
+    // Constants
+    // =========================================================================
+
+    public const EVENT_MODIFY_SUPPORTED_ELEMENT_TYPES = 'modifySupportedElementTypes';
+    
+
     // Public Methods
     // =========================================================================
 
@@ -66,5 +73,20 @@ class Items extends Component
         ksort($options);
 
         return md5(Json::encode($options));
+    }
+
+    public function getSupportedElementTypes(): array
+    {
+        $elementTypes = Craft::$app->getElements()->getAllElementTypes();
+
+        ArrayHelper::removeValue($elementTypes, Item::class);
+        ArrayHelper::removeValue($elementTypes, ListElement::class);
+
+        $event = new ModifySupportedElementTypesEvent([
+            'types' => $elementTypes,
+        ]);
+        $this->trigger(self::EVENT_MODIFY_SUPPORTED_ELEMENT_TYPES, $event);
+
+        return $event->types;
     }
 }
