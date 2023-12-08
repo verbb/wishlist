@@ -1,8 +1,9 @@
 <?php
 namespace verbb\wishlist\events;
 
-use yii\base\Event;
 use verbb\wishlist\models\ListType;
+
+use yii\base\Event;
 
 class ListTypeEvent extends Event
 {

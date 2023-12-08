@@ -1,8 +1,9 @@
 <?php
 namespace verbb\wishlist\events;
 
-use yii\base\Event;
 use verbb\wishlist\elements\ListElement;
+
+use yii\base\Event;
 
 class PdfEvent extends Event
 {
