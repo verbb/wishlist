@@ -31,6 +31,7 @@ return [
 
         // Email
         'templateEmail' => null,
+        'attachPdfToEmail' => false,
     ]
 ];
 ```
@@ -58,6 +59,7 @@ return [
 
 ### Email
 - `templateEmail` - The template Wishlist will use for HTML emails.
+- `attachPdfToEmail` - Whether to attach the PDF to the email. See PDF settings for generating the PDF.
 
 ## Control Panel
 You can also manage configuration settings through the Control Panel by visiting Settings → Wishlist.
