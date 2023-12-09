@@ -420,9 +420,6 @@ class Item extends Element
 
         $this->id = $record->id;
 
-        // Refresh the title on-save
-        $this->updateTitle();
-
         parent::afterSave($isNew);
     }
 
