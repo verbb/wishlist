@@ -10,6 +10,7 @@ use verbb\wishlist\models\Settings;
 use Craft;
 use craft\elements\User;
 use craft\helpers\Assets;
+use craft\helpers\Json;
 use craft\mail\Message;
 use craft\web\View;
 
@@ -429,7 +430,6 @@ class ListsController extends BaseController
         $settings = Wishlist::$plugin->getSettings();
         
         $listId = $this->request->getRequiredParam('listId');
-
         $list = ListElement::findOne($listId);
 
         if (!$list) {
@@ -507,6 +507,71 @@ class ListsController extends BaseController
 
             return $this->returnError($message);
         }
+    }
+
+    public function actionDuplicateList(): ?Response
+    {
+        $this->requirePostRequest();
+
+        $list = null;
+        $listId = $this->request->getParam('listId');
+        $reference = $this->request->getParam('reference');
+
+        if (!$listId && !$reference) {
+            $message = Craft::t('wishlist', 'Must provide either “listId” or “reference”.');
+
+            Wishlist::error($message);
+
+            return $this->returnError($message);
+        }
+
+        if ($listId) {
+            $list = ListElement::find()->id($listId)->one();
+        }
+
+        if ($reference) {
+            $list = ListElement::find()->reference($reference)->one();
+        }
+
+        if (!$list) {
+            $message = Craft::t('wishlist', 'No list exists with the ID “{id}”.', ['id' => $listId]);
+
+            Wishlist::error($message);
+
+            return $this->returnError($message);
+        }
+
+        // Check if we're allowed to manage lists
+        $this->enforceEnabledList($list);
+        $this->enforceListPermissions($list);
+
+        $currentUser = Craft::$app->getUser()->getIdentity();
+
+        if (!$currentUser) {
+            $message = Craft::t('wishlist', 'Only logged-in users can duplicate a list');
+
+            Wishlist::error($message);
+
+            return $this->returnError($message);
+        }
+        
+        $newList = Craft::$app->getElements()->duplicateElement($list, [
+            'userId' => $currentUser->id,
+        ]);
+
+        if ($newList->getErrors()) {
+            $message = Craft::t('wishlist', 'Unable to duplicate list “{errors}”.', ['errors' => Json::encode($newList->getErrors())]);
+
+            Wishlist::error($message);
+
+            return $this->returnError($message);
+        }
+        
+        $message = Craft::t('wishlist', 'Wishlist duplicated.');
+
+        Wishlist::info($message);
+
+        return $this->returnSuccess($message);
     }
 
 
