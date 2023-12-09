@@ -19,6 +19,7 @@ class ItemQuery extends ElementQuery
     public mixed $listTypeId = null;
     public mixed $optionsSignature = null;
     public bool $enabled = true;
+    public bool $trashedElement = false;
 
     protected array $defaultOrderBy = ['wishlist_items.dateCreated' => SORT_DESC];
 
