@@ -532,7 +532,7 @@ class ListsController extends BaseController
     // Private Methods
     // =========================================================================
 
-    private function _prepareVariableArray(&$variables): void
+    private function _prepareVariableArray(array &$variables): void
     {
         // List related checks
         if (empty($variables['list'])) {

@@ -2,6 +2,7 @@
 namespace verbb\wishlist\elements;
 
 use verbb\wishlist\Wishlist;
+use verbb\wishlist\elements\db\ItemQuery;
 use verbb\wishlist\elements\db\ListQuery;
 use verbb\wishlist\helpers\UrlHelper;
 use verbb\wishlist\models\ListType;
@@ -265,7 +266,7 @@ class ListElement extends Element
         $this->typeId = $listType->id;
     }
 
-    public function getItems(): ?db\ItemQuery
+    public function getItems(): ?ItemQuery
     {
         return $this->id ? Item::find()->listId($this->id) : null;
     }

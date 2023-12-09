@@ -5,8 +5,7 @@ use verbb\wishlist\Wishlist;
 
 use Craft;
 use craft\web\Controller;
-
-use yii\console\Response;
+use craft\web\Response;
 
 class PdfController extends Controller
 {
@@ -19,7 +18,7 @@ class PdfController extends Controller
     // Public Methods
     // =========================================================================
 
-    public function actionIndex(): \craft\web\Response|string|Response
+    public function actionIndex(): Response|string
     {
         $listId = $this->request->getRequiredParam('listId');
         $list = Wishlist::$plugin->getLists()->getListById($listId);

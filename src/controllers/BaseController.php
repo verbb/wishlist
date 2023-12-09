@@ -2,6 +2,7 @@
 namespace verbb\wishlist\controllers;
 
 use verbb\wishlist\Wishlist;
+use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\models\Settings;
 
 use Craft;
@@ -16,7 +17,7 @@ class BaseController extends Controller
     // Protected Methods
     // =========================================================================
 
-    protected function enforceEnabledList($list): void
+    protected function enforceEnabledList(?ListElement $list): void
     {
         /* @var Settings $settings */
         $settings = Wishlist::$plugin->getSettings();
@@ -27,7 +28,7 @@ class BaseController extends Controller
         }
     }
 
-    protected function returnSuccess($message, $params = [], $object = null): Response
+    protected function returnSuccess(string $message, array $params = [], ?object $object = null): Response
     {
         // Try and determine the action automatically
         $action = debug_backtrace()[1]['function'] ?? '';
@@ -55,7 +56,7 @@ class BaseController extends Controller
         return $this->redirect($this->request->referrer);
     }
 
-    protected function returnError($message, $params = []): ?Response
+    protected function returnError(string $message, array $params = []): ?Response
     {
         $error = Craft::t('wishlist', $message);
 

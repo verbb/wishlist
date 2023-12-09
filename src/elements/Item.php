@@ -178,7 +178,7 @@ class Item extends Element
         return $this->_element = Craft::$app->getElements()->getElementById($this->elementId, $this->elementClass, $this->elementSiteId);
     }
 
-    public function setElement($element = null): void
+    public function setElement(?ElementInterface $element = null): void
     {
         $this->_element = $element;
     }
@@ -241,7 +241,7 @@ class Item extends Element
         return $this->_options;
     }
 
-    public function setOptions($options): void
+    public function setOptions(string|array $options): void
     {
         $options = Json::decodeIfJson($options);
 

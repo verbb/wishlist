@@ -37,7 +37,7 @@ class Lists extends Component
     // Public Methods
     // =========================================================================
 
-    public function getListById(int $id, $siteId = null): ?ListElement
+    public function getListById(int $id, ?int $siteId = null): ?ListElement
     {
         return Craft::$app->getElements()->getElementById($id, ListElement::class, $siteId);
     }
@@ -117,7 +117,7 @@ class Lists extends Component
             ->exists();
     }
 
-    public function isListOwner($list): bool
+    public function isListOwner(ListElement $list): bool
     {
         $id = false;
         $currentUser = Craft::$app->getUser()->getIdentity();

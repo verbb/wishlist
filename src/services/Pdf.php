@@ -2,6 +2,7 @@
 namespace verbb\wishlist\services;
 
 use verbb\wishlist\Wishlist;
+use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\events\PdfEvent;
 use verbb\wishlist\models\Settings;
 
@@ -27,7 +28,7 @@ class Pdf extends Component
     // Public Methods
     // =========================================================================
 
-    public function renderPdf($list): string
+    public function renderPdf(ListElement $list): string
     {
         /* @var Settings $settings */
         $settings = Wishlist::$plugin->getSettings();
