@@ -128,40 +128,6 @@
             on: list.enabled,
             first: true,
         }) }}
-
-        <div class="field">
-            <div class="heading">
-                <label>{{ 'Reference' | t('wishlist') }}</label>
-            </div>
-
-            <div class="input ltr">
-                <code>{{ list.reference }}</code>
-            </div>
-        </div>
-
-        <div class="field">
-            <div class="heading">
-                <label>{{ 'IP Address' | t('wishlist') }}</label>
-            </div>
-
-            <div class="input ltr">
-                <code>{{ list.lastIp }}</code>
-            </div>
-        </div>
-        
-        <div class="field">
-            <div class="heading">
-                <label>{{ 'Owner Type' | t('wishlist') }}</label>
-            </div>
-
-            <div class="input ltr">
-                {% if list.user %}
-                    {{ 'User' | t('wishlist') }}
-                {% else %}
-                    {{ 'Guest' | t('wishlist') }}
-                {% endif %}
-            </div>
-        </div>
     
         {{ forms.elementSelectField({
             label: 'User' | t('wishlist'),
@@ -175,6 +141,41 @@
 
     {% if list.id %}
         <hr>
+
+        <div class="meta read-only">
+            <div class="data">
+                <h5 class="heading">{{ 'List Type' | t('wishlist') }}</h5>
+                <div class="value"><code>{{ list.type.name }}</code></div>
+            </div>
+        </div>
+
+        <div class="meta read-only">
+            <div class="data">
+                <h5 class="heading">{{ 'Reference' | t('wishlist') }}</h5>
+                <div class="value"><code>{{ list.reference }}</code></div>
+            </div>
+        </div>
+
+        <div class="meta read-only">
+            <div class="data">
+                <h5 class="heading">{{ 'IP Address' | t('wishlist') }}</h5>
+                <div class="value"><code>{{ list.lastIp }}</code></div>
+            </div>
+        </div>
+        
+        <div class="meta read-only">
+            <div class="data">
+                <h5 class="heading">{{ 'Owner Type' | t('wishlist') }}</h5>
+
+                <div class="value">
+                    {% if list.user %}
+                        {{ 'User' | t('wishlist') }}
+                    {% else %}
+                        {{ 'Guest' | t('wishlist') }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
 
         <div class="meta read-only">
             <div class="data">
