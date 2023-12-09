@@ -307,21 +307,39 @@ class Item extends Element
         return static::gqlTypeNameByContext($this);
     }
 
-    public function getAddUrl(array $params = []): string
+    public function getAddUrl(array $params = []): ?string
     {
-        return UrlHelper::addUrl($this->getElement(), $params);
+        $element = $this->getElement();
+
+        if (!$element) {
+            return null;
+        }
+
+        return UrlHelper::addUrl($element, $params);
     }
 
-    public function getToggleUrl(array $params = []): string
+    public function getToggleUrl(array $params = []): ?string
     {
-        return UrlHelper::toggleUrl($this->getElement(), $params);
+        $element = $this->getElement();
+
+        if (!$element) {
+            return null;
+        }
+
+        return UrlHelper::toggleUrl($element, $params);
     }
 
-    public function getRemoveUrl(array $params = []): string
+    public function getRemoveUrl(array $params = []): ?string
     {
+        $element = $this->getElement();
+
+        if (!$element) {
+            return null;
+        }
+
         $params = array_merge(['itemId' => $this->id], $params);
         
-        return UrlHelper::removeUrl($this->getElement(), $params);
+        return UrlHelper::removeUrl($element, $params);
     }
 
     public function afterSave(bool $isNew): void
