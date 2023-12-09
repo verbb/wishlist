@@ -26,7 +26,7 @@
 
                 {% if list.id %}
                     <li>
-                        <a class="formsubmit" data-param="listId" data-value="" data-redirect="{{ continueEditingUrl | hash }}">
+                        <a class="formsubmit" data-action="elements/duplicate" data-params="{{ { elementId: list.id } | json_encode }}" data-redirect="{{ continueEditingUrl | hash }}">
                             {{ 'Save as a new list' | t('wishlist') }}
                         </a>
                     </li>

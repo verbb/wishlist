@@ -2,7 +2,6 @@
 namespace verbb\wishlist\elements;
 
 use verbb\wishlist\Wishlist;
-use verbb\wishlist\elements\actions\DuplicateList;
 use verbb\wishlist\elements\db\ItemQuery;
 use verbb\wishlist\elements\db\ListQuery;
 use verbb\wishlist\helpers\UrlHelper;
@@ -103,8 +102,6 @@ class ListElement extends Element
     protected static function defineActions(string $source = null): array
     {
         $actions = [];
-
-        $actions[] = DuplicateList::class;
 
         $actions[] = Craft::$app->getElements()->createAction([
             'type' => Delete::class,
@@ -437,6 +434,17 @@ class ListElement extends Element
         $listRecord->default = $this->default;
 
         $listRecord->save(false);
+
+        $this->id = $listRecord->id;
+
+        $elementsService = Craft::$app->getElements();
+
+        // If duplicating a list, then duplicate the items
+        if ($this->duplicateOf && $isNew) {
+            foreach ($this->duplicateOf->getItems() as $item) {
+                $elementsService->duplicateElement($item, ['listId' => $this->id]);
+            }
+        }
 
         parent::afterSave($isNew);
     }
