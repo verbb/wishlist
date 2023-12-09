@@ -2,6 +2,7 @@
 namespace verbb\wishlist\elements;
 
 use verbb\wishlist\Wishlist;
+use verbb\wishlist\elements\actions\DuplicateList;
 use verbb\wishlist\elements\db\ItemQuery;
 use verbb\wishlist\elements\db\ListQuery;
 use verbb\wishlist\helpers\UrlHelper;
@@ -102,6 +103,8 @@ class ListElement extends Element
     protected static function defineActions(string $source = null): array
     {
         $actions = [];
+
+        $actions[] = DuplicateList::class;
 
         $actions[] = Craft::$app->getElements()->createAction([
             'type' => Delete::class,
