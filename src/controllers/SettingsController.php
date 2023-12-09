@@ -26,11 +26,9 @@ class SettingsController extends Controller
     {
         $this->requirePostRequest();
 
-        $request = Craft::$app->getRequest();
-
         /* @var Settings $settings */
         $settings = Wishlist::$plugin->getSettings();
-        $settings->setAttributes($request->getParam('settings'), false);
+        $settings->setAttributes($this->request->getParam('settings'), false);
 
         if (!$settings->validate()) {
             Craft::$app->getSession()->setError(Craft::t('wishlist', 'Couldn’t save settings.'));

@@ -87,8 +87,7 @@ class ListTypesController extends Controller
         if (!$currentUser->can('manageWishlist')) {
             throw new HttpException(403, Craft::t('wishlist', 'This action is not allowed for the current user.'));
         }
-
-        $request = Craft::$app->getRequest();
+        
         $this->requirePostRequest();
 
         $listType = new ListType();

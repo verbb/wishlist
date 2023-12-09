@@ -21,9 +21,7 @@ class PdfController extends Controller
 
     public function actionIndex(): \craft\web\Response|string|Response
     {
-        $request = Craft::$app->getRequest();
-
-        $listId = $request->getRequiredParam('listId');
+        $listId = $this->request->getRequiredParam('listId');
         $list = Wishlist::$plugin->getLists()->getListById($listId);
 
         $pdf = Wishlist::$plugin->getPdf()->renderPdf($list);
@@ -39,8 +37,8 @@ class PdfController extends Controller
             'mimeType' => 'application/pdf',
         ];
 
-        $format = $request->getParam('format');
-        $attach = $request->getParam('attach');
+        $format = $this->request->getParam('format');
+        $attach = $this->request->getParam('attach');
 
         if ($attach) {
             $options['inline'] = true;

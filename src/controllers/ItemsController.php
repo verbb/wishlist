@@ -54,8 +54,7 @@ class ItemsController extends BaseController
     {
         $this->requirePostRequest();
 
-        $request = Craft::$app->getRequest();
-        $itemId = $request->getParam('itemId');
+        $itemId = $this->request->getParam('itemId');
 
         if ($itemId) {
             $item = Wishlist::$plugin->getItems()->getItemById($itemId);
@@ -67,15 +66,15 @@ class ItemsController extends BaseController
             $item = new Item();
         }
 
-        $item->listId = $request->getParam('listId');
+        $item->listId = $this->request->getParam('listId');
         $item->setFieldValuesFromRequest('fields');
 
         // Element is a little special to cater for multiple types
-        $elementType = $request->getParam('elementType');
-        $item->elementId = $request->getParam('elementId')[$elementType][0] ?? null;
+        $elementType = $this->request->getParam('elementType');
+        $item->elementId = $this->request->getParam('elementId')[$elementType][0] ?? null;
 
         if (!Wishlist::$plugin->getItems()->saveElement($item)) {
-            if ($request->getAcceptsJson()) {
+            if ($this->request->getAcceptsJson()) {
                 return $this->asJson([
                     'success' => false,
                     'errors' => $item->getErrors(),
@@ -92,7 +91,7 @@ class ItemsController extends BaseController
             return null;
         }
 
-        if ($request->getAcceptsJson()) {
+        if ($this->request->getAcceptsJson()) {
             return $this->asJson([
                 'success' => true,
                 'id' => $item->id,
@@ -112,8 +111,7 @@ class ItemsController extends BaseController
     {
         $this->requirePostRequest();
 
-        $request = Craft::$app->getRequest();
-        $itemId = $request->getParam('itemId');
+        $itemId = $this->request->getParam('itemId');
         $item = Wishlist::$plugin->getItems()->getItemById($itemId);
 
         if (!$item) {
@@ -121,7 +119,7 @@ class ItemsController extends BaseController
         }
 
         if (!Craft::$app->getElements()->deleteElement($item)) {
-            if ($request->getAcceptsJson()) {
+            if ($this->request->getAcceptsJson()) {
                 return $this->asJson(['success' => false]);
             }
 
@@ -135,7 +133,7 @@ class ItemsController extends BaseController
             return null;
         }
 
-        if ($request->getAcceptsJson()) {
+        if ($this->request->getAcceptsJson()) {
             return $this->asJson(['success' => true]);
         }
 

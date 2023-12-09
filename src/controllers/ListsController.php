@@ -90,10 +90,10 @@ class ListsController extends BaseController
     public function actionDeleteList(): ?Response
     {
         $this->requirePostRequest();
-        $request = Craft::$app->getRequest();
+        
         $session = Craft::$app->getSession();
 
-        $listId = $request->getRequiredParam('listId');
+        $listId = $this->request->getRequiredParam('listId');
         $list = ListElement::findOne($listId);
 
         if (!$list) {
@@ -103,7 +103,7 @@ class ListsController extends BaseController
         $this->enforceListPermissions($list);
 
         if (!Craft::$app->getElements()->deleteElement($list)) {
-            if ($request->getAcceptsJson()) {
+            if ($this->request->getAcceptsJson()) {
                 $this->asJson(['success' => false]);
             }
 
@@ -116,7 +116,7 @@ class ListsController extends BaseController
             return null;
         }
 
-        if ($request->getAcceptsJson()) {
+        if ($this->request->getAcceptsJson()) {
             $this->asJson(['success' => true]);
         }
 
@@ -129,14 +129,12 @@ class ListsController extends BaseController
     {
         $this->requirePostRequest();
 
-        $request = Craft::$app->getRequest();
-
         $list = $this->_setListFromPost();
 
         $this->enforceListPermissions($list);
 
         if (!Wishlist::$plugin->getLists()->saveElement($list)) {
-            if ($request->getAcceptsJson()) {
+            if ($this->request->getAcceptsJson()) {
                 return $this->asJson([
                     'success' => false,
                     'errors' => $list->getErrors(),
@@ -153,7 +151,7 @@ class ListsController extends BaseController
             return null;
         }
 
-        if ($request->getAcceptsJson()) {
+        if ($this->request->getAcceptsJson()) {
             return $this->asJson([
                 'success' => true,
                 'id' => $list->id,
@@ -175,8 +173,6 @@ class ListsController extends BaseController
 
     public function actionCreate(): ?Response
     {
-        $request = Craft::$app->getRequest();
-
         $list = $this->_setListFromPost();
         $list->enabled = true;
 
@@ -202,8 +198,7 @@ class ListsController extends BaseController
 
     public function actionUpdate(): ?Response
     {
-        $request = Craft::$app->getRequest();
-        $listId = $request->getParam('listId');
+        $listId = $this->request->getParam('listId');
 
         if (!$listId) {
             return $this->returnError('List ID must be provided.');
@@ -229,8 +224,7 @@ class ListsController extends BaseController
 
     public function actionUpdateItems(): ?Response
     {
-        $request = Craft::$app->getRequest();
-        $listId = $request->getParam('listId');
+        $listId = $this->request->getParam('listId');
 
         if (!$listId) {
             return $this->returnError('List ID must be provided.');
@@ -250,10 +244,10 @@ class ListsController extends BaseController
         $variables = [];
         $errors = [];
 
-        if ($items = $request->getParam('items')) {
+        if ($items = $this->request->getParam('items')) {
             foreach ($items as $itemId => $item) {
-                $removeItem = $request->getParam("items.{$itemId}.remove");
-                $fields = $request->getParam("items.{$itemId}.fields", []);
+                $removeItem = $this->request->getParam("items.{$itemId}.remove");
+                $fields = $this->request->getParam("items.{$itemId}.fields", []);
 
                 $item = Wishlist::$plugin->getItems()->getItemById($itemId);
                 $item->setFieldValues($fields);
@@ -281,8 +275,7 @@ class ListsController extends BaseController
 
     public function actionDelete(): ?Response
     {
-        $request = Craft::$app->getRequest();
-        $listId = $request->getRequiredParam('listId');
+        $listId = $this->request->getRequiredParam('listId');
 
         $list = ListElement::findOne($listId);
 
@@ -310,8 +303,7 @@ class ListsController extends BaseController
 
     public function actionClear(): ?Response
     {
-        $request = Craft::$app->getRequest();
-        $listId = $request->getRequiredParam('listId');
+        $listId = $this->request->getRequiredParam('listId');
 
         $list = ListElement::findOne($listId);
 
@@ -343,8 +335,7 @@ class ListsController extends BaseController
             return null;
         }
 
-        $request = Craft::$app->getRequest();
-        $listId = $request->getRequiredParam('listId');
+        $listId = $this->request->getRequiredParam('listId');
 
         $list = ListElement::findOne($listId);
 
@@ -359,7 +350,7 @@ class ListsController extends BaseController
         $cart = Commerce::getInstance()->getCarts()->getCart(true);
 
         // Check to see if we want to add all the items in the list, or just specific ones
-        $addingPurchasables = $request->getParam('purchasables');
+        $addingPurchasables = $this->request->getParam('purchasables');
 
         foreach ($list->getItems()->indexBy('id')->all() as $key => $item) {
             if (is_a($item->getElement(), Purchasable::class)) {
@@ -368,16 +359,16 @@ class ListsController extends BaseController
                 // Check if we're trying to add specific purchasables - default to adding all
                 if ($addingPurchasables) {
                     // If there's no supplied data for this item, don't add it to the cart
-                    $itemData = $request->getParam("purchasables.{$key}", '');
+                    $itemData = $this->request->getParam("purchasables.{$key}", '');
 
                     if (!$itemData) {
                         continue;
                     }
                 }
 
-                $note = $request->getParam("purchasables.{$key}.note", '');
-                $options = $request->getParam("purchasables.{$key}.options") ?: [];
-                $qty = (int)$request->getParam("purchasables.{$key}.qty", 1);
+                $note = $this->request->getParam("purchasables.{$key}.note", '');
+                $options = $this->request->getParam("purchasables.{$key}.options") ?: [];
+                $qty = (int)$this->request->getParam("purchasables.{$key}.qty", 1);
 
                 // Ignore zero value qty for multi-add forms https://github.com/craftcms/commerce/issues/330#issuecomment-384533139
                 if ($qty > 0) {
@@ -394,7 +385,7 @@ class ListsController extends BaseController
                     $cart->addLineItem($lineItem);
 
                     // Should we remove it from the list?
-                    $removeFromList = $request->getParam("purchasables.{$key}.removeFromList", false);
+                    $removeFromList = $this->request->getParam("purchasables.{$key}.removeFromList", false);
 
                     if ($removeFromList) {
                         Craft::$app->getElements()->deleteElementById($item->id);
@@ -410,7 +401,7 @@ class ListsController extends BaseController
         }
 
         // Should we remove all items from the list after adding?
-        $clearList = $request->getParam('clearList');
+        $clearList = $this->request->getParam('clearList');
 
         if ($clearList) {
             Wishlist::$plugin->getItems()->deleteItemsForList($listId);
@@ -421,8 +412,7 @@ class ListsController extends BaseController
 
     public function actionShareByEmail(): ?Response
     {
-        $request = Craft::$app->getRequest();
-        $listId = $request->getRequiredParam('listId');
+        $listId = $this->request->getRequiredParam('listId');
 
         $list = ListElement::findOne($listId);
 
@@ -438,8 +428,8 @@ class ListsController extends BaseController
         $this->enforceEnabledList($list);
         $this->enforceListPermissions($list);
 
-        $sender = $request->getRequiredParam('sender');
-        $recipient = $request->getRequiredParam('recipient');
+        $sender = $this->request->getRequiredParam('sender');
+        $recipient = $this->request->getRequiredParam('recipient');
 
         if (!$sender || !$recipient) {
             $message = Craft::t('wishlist', 'You must supply and sender and recipient');
@@ -457,18 +447,18 @@ class ListsController extends BaseController
             'list' => $list,
             'sender' => $sender,
             'recipient' => $recipient,
-            'fields' => $request->getParam('fields'),
+            'fields' => $this->request->getParam('fields'),
         ];
 
         try {
             $mail = $this->_renderEmail('wishlist_share_list', $variables)
                 ->setTo($recipient);
 
-            if ($cc = $request->getParam('cc')) {
+            if ($cc = $this->request->getParam('cc')) {
                 $mail->setCc(explode(',', $cc));
             }
 
-            if ($bcc = $request->getParam('bcc')) {
+            if ($bcc = $this->request->getParam('bcc')) {
                 $mail->setBcc(explode(',', $bcc));
             }
 
@@ -546,8 +536,7 @@ class ListsController extends BaseController
 
     private function _setListFromPost(): ListElement
     {
-        $request = Craft::$app->getRequest();
-        $listId = $request->getParam('listId');
+        $listId = $this->request->getParam('listId');
 
         if ($listId) {
             $list = Wishlist::$plugin->getLists()->getListById($listId);
@@ -559,9 +548,9 @@ class ListsController extends BaseController
             $list = Wishlist::$plugin->getLists()->createList();
         }
 
-        $list->typeId = $request->getParam('typeId', $list->typeId);
-        $list->enabled = (bool)$request->getParam('enabled', $list->enabled);
-        $list->title = $request->getParam('title', $list->title);
+        $list->typeId = $this->request->getParam('typeId', $list->typeId);
+        $list->enabled = (bool)$this->request->getParam('enabled', $list->enabled);
+        $list->title = $this->request->getParam('title', $list->title);
 
         $list->setFieldValuesFromRequest('fields');
 

@@ -29,8 +29,6 @@ class BaseController extends Controller
 
     protected function returnSuccess($message, $params = [], $object = null): Response
     {
-        $request = Craft::$app->getRequest();
-
         // Try and determine the action automatically
         $action = debug_backtrace()[1]['function'] ?? '';
         $action = str_replace('action', '', $action);
@@ -40,7 +38,7 @@ class BaseController extends Controller
             $params['action'] = $action;
         }
 
-        if ($request->getAcceptsJson()) {
+        if ($this->request->getAcceptsJson()) {
             $params['success'] = true;
 
             return $this->asJson($params);
@@ -48,19 +46,17 @@ class BaseController extends Controller
 
         $this->setSuccessFlash(Craft::t('wishlist', $message));
 
-        if ($request->getIsPost()) {
+        if ($this->request->getIsPost()) {
 
             // Pass object to redirect for URL variables
             return $this->redirectToPostedUrl($object);
         }
 
-        return $this->redirect($request->referrer);
+        return $this->redirect($this->request->referrer);
     }
 
     protected function returnError($message, $params = []): ?Response
     {
-        $request = Craft::$app->getRequest();
-
         $error = Craft::t('wishlist', $message);
 
         // Try and determine the action automatically
@@ -72,7 +68,7 @@ class BaseController extends Controller
             $params['action'] = $action;
         }
 
-        if ($request->getAcceptsJson()) {
+        if ($this->request->getAcceptsJson()) {
             $params['error'] = $error;
 
             return $this->asJson($params);
@@ -80,7 +76,7 @@ class BaseController extends Controller
 
         $this->setFailFlash($error);
 
-        if ($request->getIsPost()) {
+        if ($this->request->getIsPost()) {
             if ($params) {
                 Craft::$app->getUrlManager()->setRouteParams($params);
             }
@@ -88,6 +84,6 @@ class BaseController extends Controller
             return null;
         }
 
-        return $this->redirect($request->referrer);
+        return $this->redirect($this->request->referrer);
     }
 }
