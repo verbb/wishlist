@@ -84,6 +84,13 @@ class ItemQuery extends ElementQuery
         return $this;
     }
 
+    public function trashedElement($value): static
+    {
+        $this->trashedElement($value);
+        return $this;
+    }
+
+
     // Protected Methods
     // =========================================================================
 
@@ -134,6 +141,12 @@ class ItemQuery extends ElementQuery
 
         if ($this->listTypeId) {
             $this->subQuery->andWhere(Db::parseParam('wishlist_lists.typeId', $this->listTypeId));
+        }
+
+        if (!$this->trashedElement) {
+            // And join the element table for the linked element, in order to fetch non-deleted linked elements
+            $this->query->leftJoin('{{%elements}} element_item', '[[wishlist_items.elementId]] = [[element_item.id]]');
+            $this->query->andWhere(['element_item.dateDeleted' => null]);
         }
 
         return parent::beforePrepare();
