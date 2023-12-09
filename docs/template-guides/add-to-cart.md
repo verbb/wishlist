@@ -39,6 +39,25 @@ Once variants are in your list, you can add all of them to your cart in a single
 
 This will look through any Purchasable objects in the list, and add it to your cart.
 
+You can even tell Wishlist to use the values in your List or Item custom fields as Line Item Options for the added line item in the cart.
+
+```twig
+{% set list = craft.wishlist.getUserList() %}
+
+<form method="POST">
+    <input type="hidden" name="action" value="wishlist/lists/add-to-cart">
+    {{ csrfInput() }}
+    {{ redirectInput('/shop/cart') }}
+
+    <input type="hidden" name="listId" value="{{ list.id }}">
+    <input type="hidden" name="populateListFieldOptions" value="true">
+    <input type="hidden" name="populateItemFieldOptions" value="true">
+
+    <input type="submit" value="Add to Cart">
+</form>
+```
+
+
 For even greater flexibility, you can include a few other useful bits of information, such as quantity or line item options. You might even have these saved as custom fields on the Item object.
 
 ```twig

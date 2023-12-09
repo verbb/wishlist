@@ -349,6 +349,9 @@ class ListsController extends BaseController
 
         $cart = Commerce::getInstance()->getCarts()->getCart(true);
 
+        $populateListFieldOptions = $this->request->getParam('populateListFieldOptions');
+        $populateItemFieldOptions = $this->request->getParam('populateItemFieldOptions');
+
         // Check to see if we want to add all the items in the list, or just specific ones
         $addingPurchasables = $this->request->getParam('purchasables');
 
@@ -369,6 +372,15 @@ class ListsController extends BaseController
                 $note = $this->request->getParam("purchasables.{$key}.note", '');
                 $options = $this->request->getParam("purchasables.{$key}.options") ?: [];
                 $qty = (int)$this->request->getParam("purchasables.{$key}.qty", 1);
+
+                // Check if we should populate using the List/Item custom fields
+                if ($populateListFieldOptions) {
+                    $options = array_merge($options, $list->getFieldValues());
+                }
+
+                if ($populateItemFieldOptions) {
+                    $options = array_merge($options, $item->getFieldValues());
+                }
 
                 // Ignore zero value qty for multi-add forms https://github.com/craftcms/commerce/issues/330#issuecomment-384533139
                 if ($qty > 0) {
