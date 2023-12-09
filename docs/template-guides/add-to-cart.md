@@ -70,7 +70,7 @@ For even greater flexibility, you can include a few other useful bits of informa
 
     <input type="hidden" name="listId" value="{{ list.id }}">
 
-    {% for item in list.items.all() %}
+    {% for item in list.getItems() %}
         <input type="hidden" name="purchasables[{{ item.id }}][qty]" value="10">
         <input type="hidden" name="purchasables[{{ item.id }}][options][test]" value="Some Value">
     {% endfor %}
@@ -84,7 +84,7 @@ The above will add only the purchasables you supply to the cart. For example, yo
 ```twig
 {% set list = craft.wishlist.getUserList() %}
 
-{% for item in list.items.all() %}
+{% for item in list.getItems() %}
     <form method="POST">
         <input type="hidden" name="action" value="wishlist/lists/add-to-cart">
         {{ csrfInput() }}
@@ -129,7 +129,7 @@ Similarly, if you were adding items individually to the cart:
 ```twig
 {% set list = craft.wishlist.getUserList() %}
 
-{% for item in list.items.all() %}
+{% for item in list.getItems() %}
     <form method="POST">
         <input type="hidden" name="action" value="wishlist/lists/add-to-cart">
         {{ csrfInput() }}

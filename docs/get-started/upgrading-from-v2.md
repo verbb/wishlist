@@ -22,7 +22,7 @@ In addition, when calling `getUserList()`, you don't need to check if it returns
 {% set list = craft.wishlist.getUserList() %}
 
 <ul>
-    {% for item in list.items.all() %}
+    {% for item in list.getItems() %}
         <li>{{ item.title }}</li>
     {% endfor %}
 </ul>
@@ -36,6 +36,38 @@ You can also pass in any [List](docs:getting-elements/list-queries) query params
 ```
 
 You can still use `craft.wishlist.lists()` to fetch lists for the current user, so `craft.wishlist.getUserList()` is mostly a shortcut that will always return a list element. If you continue to use the former, ensure you retain any checks that the `list` exists.
+
+### List Items
+A lists `items` or `getItems()` function previously returned a `\verbb\wishlist\elements\db\ItemQuery`, but in order to support eager-loading, this has been changed to return a collection of `\verbb\wishlist\elements\Item` objects.
+
+You would have previously used `list.items.all()`, which is now `list.getItems()`.
+
+```twig
+{# Wishlist v2 #}
+{% set list = craft.wishlist.lists().default(true).one() %}
+
+{% for item in list.items.all() %}
+    {{ item.title }}
+{% endfor %}
+
+{# Wishlist v3 #}
+{% set list = craft.wishlist.getUserList() %}
+
+{% for item in list.getItems() %}
+    {{ item.title }}
+{% endfor %}
+```
+
+If you would like to continue using a `ItemQuery`, then call your own `craft.wishlist.items()` call.
+
+```twig
+{% set list = craft.wishlist.getUserList() %}
+{% set items = craft.wishlist.items().listId(list.id).all() %}
+
+{% for item in items %}
+    {{ item.title }}
+{% endfor %}
+```
 
 ### In List
 You can now easily determine if an element is in a list. Rather than fetching an item and using that, you can pass in the element itself, and any additional query params.

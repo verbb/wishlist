@@ -57,7 +57,7 @@ Below is an extremely basic example, we encourage you to get creative to make gr
 </head>
 
 <body>
-{% for item in list.items.all() %}
+{% for item in list.getItems() %}
     <div>
         <p>
             <strong>Name:</strong> {{ item.title }}<br>

@@ -9,7 +9,7 @@ If you're after just a single list, the `getUserList()` method will return the d
 
 {% if list.items %}
     <ul>
-        {% for item in list.items.all() %}
+        {% for item in list.getItems() %}
             <li>{{ item.title }}</li>
         {% endfor %}
     </ul>
@@ -23,7 +23,7 @@ You can also pass in a specific list type:
 
 {% if list.items %}
     <ul>
-        {% for item in list.items.all() %}
+        {% for item in list.getItems() %}
             <li>{{ item.title }}</li>
         {% endfor %}
     </ul>
@@ -38,7 +38,7 @@ As Wishlist can support multiple lists, and multiple list types, you can also lo
     <p>#{{ list.id }} - {{ list.title }} - {{ list.type }}</p>
 
     <ul>
-        {% for item in list.items.all() %}
+        {% for item in list.getItems() %}
             <li>{{ item.title }}</li>
         {% endfor %}
     </ul>
@@ -52,7 +52,7 @@ Note that by default, this will still only return lists for the current user. Yo
     <p>#{{ list.id }} - {{ list.title }} - {{ list.type }} - {{ list.user }}</p>
 
     <ul>
-        {% for item in list.items.all() %}
+        {% for item in list.getItems() %}
             <li>{{ item.title }}</li>
         {% endfor %}
     </ul>
