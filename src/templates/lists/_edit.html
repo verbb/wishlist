@@ -68,25 +68,27 @@
 
         {% if list.id and list.items.count() %}
             <div id="elementindex-items" class="elementindex">
-                {% set elementType = 'verbb\\wishlist\\elements\\Item' %}
-                {% set elementInstance = craft.app.elements.createElement(elementType) %}
-                {% set context = 'index' %}
-                {% set sources = craft.app.elementSources.getSources(elementType, 'index') %}
+                <div class="main">
+                    {% set elementType = 'verbb\\wishlist\\elements\\Item' %}
+                    {% set elementInstance = craft.app.elements.createElement(elementType) %}
+                    {% set context = 'index' %}
+                    {% set sources = craft.app.elementSources.getSources(elementType, 'index') %}
 
-                <div class="element-toolbar flex flex-nowrap">
-                    {% include '_elements/toolbar' with {
-                        showSiteMenu: false,
-                    } %}
-                </div>
-                
-                <div class="content-pane" style="margin-top: 24px; box-shadow: none; border: 1px #cdd8e4 solid;">
-                    <div class="elements"></div>
-                </div>
+                    <div class="element-toolbar flex flex-nowrap">
+                        {% include '_elements/toolbar' with {
+                            showSiteMenu: false,
+                        } %}
+                    </div>
+                    
+                    <div class="content-pane" style="margin-top: 24px; box-shadow: none; border: 1px #cdd8e4 solid;">
+                        <div class="elements"></div>
+                    </div>
 
-                <div class="sidebar">
-                    <nav class="hidden">
-                        {% include "_elements/sources" %}
-                    </nav>
+                    <div class="sidebar">
+                        <nav class="hidden">
+                            {% include "_elements/sources" %}
+                        </nav>
+                    </div>
                 </div>
             </div>
 
