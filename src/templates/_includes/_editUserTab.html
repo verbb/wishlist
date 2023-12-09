@@ -7,7 +7,7 @@
         {% for list in lists %}
             <h3>{{ list.name }}</h3>
 
-            {% set items = list.items.all() %}
+            {% set items = list.getItems() %}
 
             {% if items %}
                 <div class="tableview">

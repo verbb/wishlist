@@ -66,7 +66,13 @@
     <div id="items" class="">
         <h2>{{ 'List Items' | t('comments') }}</h2>
 
-        {% if list.id and list.items.count() %}
+        {% set itemIds = [] %}
+
+        {% for item in list.getItems() %}
+            {% set itemIds = itemIds | merge([item.id]) %}
+        {% endfor %}
+
+        {% if list.id and itemIds %}
             <div id="elementindex-items" class="elementindex">
                 <div class="main">
                     {% set elementType = 'verbb\\wishlist\\elements\\Item' %}
@@ -98,7 +104,7 @@
                     elementTypePluralName: '{{ elementInstance.pluralDisplayName()|e("js") }}',
                     context: '{{ context }}',
                     storageKey: 'elementindex.{{ elementType|e("js") }}',
-                    criteria: { id: {{ list.items.ids() | json_encode | raw }} },
+                    criteria: { id: {{ itemIds | json_encode | raw }} },
                     toolbarSelector: '.element-toolbar',
                     canHaveDrafts: 'false',
                 });
