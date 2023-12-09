@@ -126,6 +126,14 @@
             warning: macros.configWarning('templateEmail', 'wishlist'),
         }) }}
 
+        {{ forms.lightswitchField({
+            label: 'Attach PDF to Email' | t('wishlist'),
+            instructions: 'Whether to attach the PDF to the email. See PDF settings for generating the PDF.' | t('wishlist'),
+            name: 'attachPdfToEmail',
+            on: settings.attachPdfToEmail,
+            warning: macros.configWarning('attachPdfToEmail', 'wishlist'),
+        }) }}
+
     {% endnamespace %}
 
     <hr>

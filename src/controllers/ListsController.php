@@ -9,6 +9,7 @@ use verbb\wishlist\models\Settings;
 
 use Craft;
 use craft\elements\User;
+use craft\helpers\Assets;
 use craft\mail\Message;
 use craft\web\View;
 
@@ -424,6 +425,9 @@ class ListsController extends BaseController
 
     public function actionShareByEmail(): ?Response
     {
+        /* @var Settings $settings */
+        $settings = Wishlist::$plugin->getSettings();
+        
         $listId = $this->request->getRequiredParam('listId');
 
         $list = ListElement::findOne($listId);
@@ -472,6 +476,18 @@ class ListsController extends BaseController
 
             if ($bcc = $this->request->getParam('bcc')) {
                 $mail->setBcc(explode(',', $bcc));
+            }
+
+            if ($settings->attachPdfToEmail) {
+                $pdf = Wishlist::$plugin->getPdf()->renderPdf($list);
+
+                $pdfPath = Assets::tempFilePath('pdf');
+                file_put_contents($pdfPath, $pdf);
+
+                $filenameFormat = Wishlist::$plugin->getSettings()->pdfFilenameFormat;
+                $filename = $this->getView()->renderObjectTemplate($filenameFormat, $list);
+
+                $mail->attach($pdfPath, ['fileName' => $filename . '.pdf', 'contentType' => 'application/pdf']);
             }
 
             $mail->send();
