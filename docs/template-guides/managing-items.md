@@ -376,8 +376,8 @@ When performing any of the above actions a "Flash message" will appear based on 
     <input type="hidden" name="failMessage" value="{{ 'Unable to add to your list' | hash }}">
     {{ csrfInput() }}
 
-    <input type="text" name="elementId" value="{{ entry.id }}">
-    <input type="text" name="elementSiteId" value="{{ entry.siteId }}">
+    <input type="hidden" name="elementId" value="{{ entry.id }}">
+    <input type="hidden" name="elementSiteId" value="{{ entry.siteId }}">
 
     <input type="submit" value="Add to List">
 </form>

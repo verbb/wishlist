@@ -124,9 +124,9 @@ We've also renamed `listTypeHandle` and removed `listTypeId` when using the form
     <input type="hidden" name="action" value="wishlist/items/add">
     {{ csrfInput() }}
 
-    <input type="text" name="elementId" value="{{ entry.id }}">
-    <input type="text" name="elementSiteId" value="{{ entry.siteId }}">
-    <input type="text" name="listTypeHandle" value="favourites">
+    <input type="hidden" name="elementId" value="{{ entry.id }}">
+    <input type="hidden" name="elementSiteId" value="{{ entry.siteId }}">
+    <input type="hidden" name="listTypeHandle" value="favourites">
 
     <input type="submit" value="Add to List">
 </form>
@@ -136,9 +136,9 @@ We've also renamed `listTypeHandle` and removed `listTypeId` when using the form
     <input type="hidden" name="action" value="wishlist/items/add">
     {{ csrfInput() }}
 
-    <input type="text" name="elementId" value="{{ entry.id }}">
-    <input type="text" name="elementSiteId" value="{{ entry.siteId }}">
-    <input type="text" name="listType" value="favourites">
+    <input type="hidden" name="elementId" value="{{ entry.id }}">
+    <input type="hidden" name="elementSiteId" value="{{ entry.siteId }}">
+    <input type="hidden" name="listType" value="favourites">
 
     <input type="submit" value="Add to List">
 </form>

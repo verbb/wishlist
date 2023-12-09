@@ -12,8 +12,8 @@ First, you'll want to add some purchasables to your list - commonly Commerce var
             <input type="hidden" name="action" value="wishlist/items/add">
             {{ csrfInput() }}
 
-            <input type="text" name="elementId" value="{{ variant.id }}">
-            <input type="text" name="elementSiteId" value="{{ variant.siteId }}">
+            <input type="hidden" name="elementId" value="{{ variant.id }}">
+            <input type="hidden" name="elementSiteId" value="{{ variant.siteId }}">
 
             <input type="submit" value="Add {{ variant.title }} to List">
         </form>
@@ -31,7 +31,7 @@ Once variants are in your list, you can add all of them to your cart in a single
     {{ csrfInput() }}
     {{ redirectInput('/shop/cart') }}
 
-    <input type="text" name="listId" value="{{ list.id }}">
+    <input type="hidden" name="listId" value="{{ list.id }}">
 
     <input type="submit" value="Add to Cart">
 </form>
@@ -49,11 +49,11 @@ For even greater flexibility, you can include a few other useful bits of informa
     {{ csrfInput() }}
     {{ redirectInput('/shop/cart') }}
 
-    <input type="text" name="listId" value="{{ list.id }}">
+    <input type="hidden" name="listId" value="{{ list.id }}">
 
     {% for item in list.items.all() %}
-        <input type="text" name="purchasables[{{ item.id }}][qty]" value="10">
-        <input type="text" name="purchasables[{{ item.id }}][options][test]" value="Some Value">
+        <input type="hidden" name="purchasables[{{ item.id }}][qty]" value="10">
+        <input type="hidden" name="purchasables[{{ item.id }}][options][test]" value="Some Value">
     {% endfor %}
 
     <input type="submit" value="Add to Cart">
@@ -71,10 +71,10 @@ The above will add only the purchasables you supply to the cart. For example, yo
         {{ csrfInput() }}
         {{ redirectInput('/shop/cart') }}
 
-        <input type="text" name="listId" value="{{ list.id }}">
+        <input type="hidden" name="listId" value="{{ list.id }}">
 
-        <input type="text" name="purchasables[{{ item.id }}][qty]" value="1">
-        <input type="text" name="purchasables[{{ item.id }}][options][test]" value="Some Value">
+        <input type="hidden" name="purchasables[{{ item.id }}][qty]" value="1">
+        <input type="hidden" name="purchasables[{{ item.id }}][options][test]" value="Some Value">
 
         <input type="submit" value="Add to Cart">
     </form>
@@ -96,7 +96,7 @@ When adding the entire list to the cart, you can clear all items from the list.
     {{ csrfInput() }}
     {{ redirectInput('/shop/cart') }}
 
-    <input type="text" name="listId" value="{{ list.id }}">
+    <input type="hidden" name="listId" value="{{ list.id }}">
     <input type="checkbox" name="clearList" value="true" checked>
 
     <input type="submit" value="Add to Cart">
@@ -116,10 +116,10 @@ Similarly, if you were adding items individually to the cart:
         {{ csrfInput() }}
         {{ redirectInput('/shop/cart') }}
 
-        <input type="text" name="listId" value="{{ list.id }}">
+        <input type="hidden" name="listId" value="{{ list.id }}">
 
-        <input type="text" name="purchasables[{{ item.id }}][qty]" value="1">
-        <input type="text" name="purchasables[{{ item.id }}][options][test]" value="Some Value {{ item.id }}">
+        <input type="hidden" name="purchasables[{{ item.id }}][qty]" value="1">
+        <input type="hidden" name="purchasables[{{ item.id }}][options][test]" value="Some Value {{ item.id }}">
         <input type="checkbox" name="purchasables[{{ item.id }}][removeFromList]" value="true" checked>
 
         <input type="submit" value="Add to Cart">

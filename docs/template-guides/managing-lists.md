@@ -10,13 +10,13 @@ You can Add, Delete or Clear lists, and its recommended that these options shoul
     {{ csrfInput() }}
 
     {# Optional: Pass a custom title #}
-    <input type="text" name="title" value="Favourites">
+    <input type="hidden" name="title" value="Favourites">
 
     {# Optional: Pass content for custom fields #}
-    <input type="text" name="fields[myField]" value="My Value">
+    <input type="hidden" name="fields[myField]" value="My Value">
 
     {# Optional: Pass a specific list type ID #}
-    <input type="text" name="typeId" value="2">
+    <input type="hidden" name="typeId" value="2">
 
     <input type="submit" value="Create New List">
 </form>
@@ -40,10 +40,10 @@ You can Add, Delete or Clear lists, and its recommended that these options shoul
     <input type="hidden" name="listId" value="234">
 
     {# Optional: Pass a custom title #}
-    <input type="text" name="title" value="New Title">
+    <input type="hidden" name="title" value="New Title">
 
     {# Optional: Pass a specific list type ID #}
-    <input type="text" name="typeId" value="2">
+    <input type="hidden" name="typeId" value="2">
 
     <input type="submit" value="Update">
 </form>
@@ -68,10 +68,10 @@ You can Add, Delete or Clear lists, and its recommended that these options shoul
         <input type="hidden" name="action" value="wishlist/lists/delete">
         {{ csrfInput() }}
 
-        <input type="text" name="listId" value="{{ list.id }}">
+        <input type="hidden" name="listId" value="{{ list.id }}">
 
         {# Optional: Pass a specific list type ID #}
-        <input type="text" name="typeId" value="2">
+        <input type="hidden" name="typeId" value="2">
 
         <input type="submit" value="Delete List">
     </form>
@@ -97,10 +97,10 @@ You can Add, Delete or Clear lists, and its recommended that these options shoul
         <input type="hidden" name="action" value="wishlist/lists/clear">
         {{ csrfInput() }}
 
-        <input type="text" name="listId" value="{{ list.id }}">
+        <input type="hidden" name="listId" value="{{ list.id }}">
 
         {# Optional: Pass a specific list type ID #}
-        <input type="text" name="typeId" value="2">
+        <input type="hidden" name="typeId" value="2">
 
         <input type="submit" value="Clear List">
     </form>

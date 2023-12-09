@@ -48,15 +48,15 @@ You can also email your lists directly via a form.
     <input type="hidden" name="action" value="wishlist/lists/share-by-email">
     {{ csrfInput() }}
 
-    <input type="text" name="listId" value="{{ list.id }}">
+    <input type="hidden" name="listId" value="{{ list.id }}">
 
-    <input type="text" name="sender[firstName]" value="Sender">
-    <input type="text" name="sender[lastName]" value="Person">
-    <input type="text" name="sender[email]" value="sender@gmail.com">
+    <input type="hidden" name="sender[firstName]" value="Sender">
+    <input type="hidden" name="sender[lastName]" value="Person">
+    <input type="hidden" name="sender[email]" value="sender@gmail.com">
 
-    <input type="text" name="recipient[firstName]" value="Recipient">
-    <input type="text" name="recipient[lastName]" value="Person">
-    <input type="text" name="recipient[email]" value="recipient@gmail.com">
+    <input type="hidden" name="recipient[firstName]" value="Recipient">
+    <input type="hidden" name="recipient[lastName]" value="Person">
+    <input type="hidden" name="recipient[email]" value="recipient@gmail.com">
 
     <input type="submit" value="Send Email">
 </form>
@@ -67,9 +67,9 @@ Please note that the sender and recipient details are required, including a firs
 If the sender is a logged-in user, you can of course set these inputs to hidden, and populate with the `currentUser` content from Craft.
 
 ```twig
-<input type="text" name="sender[firstName]" value="{{ currentUser.firstName }}">
-<input type="text" name="sender[lastName]" value="{{ currentUser.lastName }}">
-<input type="text" name="sender[email]" value="{{ currentUser.email }}">
+<input type="hidden" name="sender[firstName]" value="{{ currentUser.firstName }}">
+<input type="hidden" name="sender[lastName]" value="{{ currentUser.lastName }}">
+<input type="hidden" name="sender[email]" value="{{ currentUser.email }}">
 ```
 
 You can customise the content of this email via the control panel by going to **Utilities** → **System Messages**.
@@ -86,7 +86,7 @@ You can also set the CC or BCC for the email to one or multiple emails. Multiple
 You can also provide any additional variables you want to access in your email templates using `fields`.
 
 ```twig
-<input type="text" name="fields[personalMessage]" value="Check these out!">
+<input type="hidden" name="fields[personalMessage]" value="Check these out!">
 ```
 
 And if your email templates, you could use:
