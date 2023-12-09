@@ -148,6 +148,8 @@ class ItemsController extends BaseController
 
     public function actionAdd(): ?Response
     {
+        $itemCount = 0;
+
         /* @var Settings $settings */
         $settings = Wishlist::$plugin->getSettings();
         $postItems = $this->_setItemsFromPost();
@@ -166,31 +168,35 @@ class ItemsController extends BaseController
             }
 
             // Get the existing list (either passed in, or the users default), or create it
-            $list = $this->_getOrCreateList($postItem);
+            $lists = $this->_getOrCreateLists($postItem);
 
-            if ($list instanceof ItemError) {
-                $errors[$key] = $list;
+            foreach ($lists as $list) {
+                if ($list instanceof ItemError) {
+                    $errors[$key] = $list;
 
-                continue;
+                    continue;
+                }
+
+                // Create the item for the list and element, with additional attributes
+                $item = $this->_getOrCreateItem($list, $element, $postItem);
+
+                // Check if this is in the list
+                if ($list->getHasItem($item) && !$settings->allowDuplicates) {
+                    $errors[$key] = new ItemError('Item already in list.');
+
+                    continue;
+                }
+
+                if (!Wishlist::$plugin->getItems()->saveElement($item)) {
+                    $errors[$key] = new ItemError('Unable to save item to list.', ['item' => $item]);
+
+                    continue;
+                }
+
+                $variables['items'][] = $item;
+
+                $itemCount++;
             }
-
-            // Create the item for the list and element, with additional attributes
-            $item = $this->_getOrCreateItem($list, $element, $postItem);
-
-            // Check if this is in the list
-            if ($list->getHasItem($item) && !$settings->allowDuplicates) {
-                $errors[$key] = new ItemError('Item already in list.');
-
-                continue;
-            }
-
-            if (!Wishlist::$plugin->getItems()->saveElement($item)) {
-                $errors[$key] = new ItemError('Unable to save item to list.', ['item' => $item]);
-
-                continue;
-            }
-
-            $variables['items'][] = $item;
         }
 
         if ($errors) {
@@ -200,7 +206,7 @@ class ItemsController extends BaseController
         }
 
         $message = Craft::t('wishlist', '{count, number} {count, plural, =1{item} other{items}} added to list.', [
-            'count' => count($postItems),
+            'count' => $itemCount,
         ]);
 
         return $this->returnSuccess($message, $variables);
@@ -208,6 +214,7 @@ class ItemsController extends BaseController
 
     public function actionToggle(): ?Response
     {
+        $itemCount = 0;
         $postItems = $this->_setItemsFromPost();
 
         $errors = [];
@@ -224,33 +231,37 @@ class ItemsController extends BaseController
             }
 
             // Get the existing list (either passed in, or the users default), or create it
-            $list = $this->_getOrCreateList($postItem);
+            $lists = $this->_getOrCreateLists($postItem);
 
-            if ($list instanceof ItemError) {
-                $errors[$key] = $list;
-
-                continue;
-            }
-
-            // Create the item for the list and element, with additional attributes
-            $item = $this->_getOrCreateItem($list, $element, $postItem);
-
-            if ($item->id) {
-                if (!Craft::$app->getElements()->deleteElement($item)) {
-                    $errors[$key] = new ItemError('Unable to delete item from list.', ['item' => $item]);
+            foreach ($lists as $list) {
+                if ($list instanceof ItemError) {
+                    $errors[$key] = $list;
 
                     continue;
                 }
 
-                $variables['items'][] = array_merge(['action' => 'removed'], $item->toArray());
-            } else {
-                if (!Wishlist::$plugin->getItems()->saveElement($item)) {
-                    $errors[$key] = new ItemError('Unable to save item to list.', ['item' => $item]);
+                // Create the item for the list and element, with additional attributes
+                $item = $this->_getOrCreateItem($list, $element, $postItem);
 
-                    continue;
+                if ($item->id) {
+                    if (!Craft::$app->getElements()->deleteElement($item)) {
+                        $errors[$key] = new ItemError('Unable to delete item from list.', ['item' => $item]);
+
+                        continue;
+                    }
+
+                    $variables['items'][] = array_merge(['action' => 'removed'], $item->toArray());
+                } else {
+                    if (!Wishlist::$plugin->getItems()->saveElement($item)) {
+                        $errors[$key] = new ItemError('Unable to save item to list.', ['item' => $item]);
+
+                        continue;
+                    }
+
+                    $variables['items'][] = array_merge(['action' => 'added'], $item->toArray());
                 }
 
-                $variables['items'][] = array_merge(['action' => 'added'], $item->toArray());
+                $itemCount++;
             }
         }
 
@@ -261,7 +272,7 @@ class ItemsController extends BaseController
         }
 
         $message = Craft::t('wishlist', '{count, number} {count, plural, =1{item} other{items}} toggled in list.', [
-            'count' => count($postItems),
+            'count' => $itemCount,
         ]);
 
         return $this->returnSuccess($message, $variables);
@@ -269,6 +280,7 @@ class ItemsController extends BaseController
 
     public function actionRemove(): ?Response
     {
+        $itemCount = 0;
         $postItems = $this->_setItemsFromPost();
 
         $errors = [];
@@ -285,27 +297,31 @@ class ItemsController extends BaseController
             }
 
             // Get the existing list (either passed in, or the users default), or create it
-            $list = $this->_getOrCreateList($postItem);
+            $lists = $this->_getOrCreateLists($postItem);
 
-            if ($list instanceof ItemError) {
-                $errors[$key] = $list;
-
-                continue;
-            }
-
-            // Create the item for the list and element, with additional attributes
-            $item = $this->_getOrCreateItem($list, $element, $postItem);
-
-            if ($item->id) {
-                if (!Craft::$app->getElements()->deleteElement($item)) {
-                    $errors[$key] = new ItemError('Unable to delete item from list.', ['item' => $item]);
+            foreach ($lists as $list) {
+                if ($list instanceof ItemError) {
+                    $errors[$key] = $list;
 
                     continue;
                 }
 
-                $variables['items'][] = array_merge(['action' => 'removed'], $item->toArray());
-            } else {
-                $errors[$key] = new ItemError('Unable to delete item from list.', ['item' => $item]);
+                // Create the item for the list and element, with additional attributes
+                $item = $this->_getOrCreateItem($list, $element, $postItem);
+
+                if ($item->id) {
+                    if (!Craft::$app->getElements()->deleteElement($item)) {
+                        $errors[$key] = new ItemError('Unable to delete item from list.', ['item' => $item]);
+
+                        continue;
+                    }
+
+                    $variables['items'][] = array_merge(['action' => 'removed'], $item->toArray());
+
+                    $itemCount++;
+                } else {
+                    $errors[$key] = new ItemError('Unable to delete item from list.', ['item' => $item]);
+                }
             }
         }
 
@@ -316,7 +332,7 @@ class ItemsController extends BaseController
         }
 
         $message = Craft::t('wishlist', '{count, number} {count, plural, =1{item} other{items}} removed from list.', [
-            'count' => count($postItems),
+            'count' => $itemCount,
         ]);
 
         return $this->returnSuccess($message, $variables);
@@ -324,6 +340,7 @@ class ItemsController extends BaseController
 
     public function actionUpdate(): ?Response
     {
+        $itemCount = 0;
         $postItems = $this->_setItemsFromPost();
 
         $errors = [];
@@ -361,6 +378,8 @@ class ItemsController extends BaseController
             }
 
             $variables['items'][] = $item;
+
+            $itemCount++;
         }
 
         if ($errors) {
@@ -370,7 +389,7 @@ class ItemsController extends BaseController
         }
 
         $message = Craft::t('wishlist', '{count, number} {count, plural, =1{item} other{items}} updated in list.', [
-            'count' => count($postItems),
+            'count' => $itemCount,
         ]);
 
         return $this->returnSuccess($message, $variables);
@@ -458,39 +477,56 @@ class ItemsController extends BaseController
         return $element;
     }
 
-    private function _getOrCreateList(array $postItem): ListElement|ItemError
+    private function _getOrCreateLists(array $postItem): array
     {
-        $listId = $postItem['listId'] ?? null;
+        $lists = [];
+
+        $listIds = $postItem['listId'] ?? null;
         $listType = $postItem['listType'] ?? null;
         $newList = $postItem['newList'] ?? false;
-        
-        // Get the specific list passed in, unless we specifically want to create a new list
-        if ($listId && !$newList) {
-            $list = Wishlist::$plugin->getLists()->getListById($listId);
 
-            if (!$list) {
-                return new ItemError('Invalid List ID "' . $listId . '".');
-            }
-        } else {
-            // Ensure that we resolve the list type correctly
-            $listParams = array_filter(['listType' => $listType]);
-
-            // Either get the current user's list, or create a new one - unless we want a new list always created
-            if ($newList) {
-                $list = Wishlist::$plugin->getLists()->createList($listParams);
-            } else {
-                $list = Wishlist::$plugin->getLists()->getUserList($listParams);
-            }
-
-            if (!Wishlist::$plugin->getLists()->saveElement($list)) {
-                return new ItemError('Unable to save list.', ['list' => $list]);
-            }
+        // List IDs can either be a single ID or an array. Don't forget null is allowed to create the list.
+        if (!is_array($listIds)) {
+            $listIds = [$listIds];
         }
 
-        // Check if we're allowed to manage lists
-        $this->enforceEnabledList($list);
+        foreach ($listIds as $listId) {
+            $list = null;
 
-        return $list;
+            // Get the specific list passed in, unless we specifically want to create a new list
+            if ($listId && !$newList) {
+                $list = Wishlist::$plugin->getLists()->getListById($listId);
+
+                if (!$list) {
+                    $lists[] = new ItemError('Invalid List ID "' . $listId . '".');
+
+                    continue;
+                }
+            } else {
+                // Ensure that we resolve the list type correctly
+                $listParams = array_filter(['listType' => $listType]);
+
+                // Either get the current user's list, or create a new one - unless we want a new list always created
+                if ($newList) {
+                    $list = Wishlist::$plugin->getLists()->createList($listParams);
+                } else {
+                    $list = Wishlist::$plugin->getLists()->getUserList($listParams);
+                }
+
+                if (!Wishlist::$plugin->getLists()->saveElement($list)) {
+                    $lists[] = new ItemError('Unable to save list.', ['list' => $list]);
+
+                    continue;
+                }
+            }
+
+            // Check if we're allowed to manage lists
+            $this->enforceEnabledList($list);
+
+            $lists[] = $list;
+        }
+
+        return $lists;
     }
 
     private function _getOrCreateItem(ListElement $list, ElementInterface $element, array $postItem): Item

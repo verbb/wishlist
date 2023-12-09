@@ -252,6 +252,29 @@ You can also manage the list items in a provided list. The example below shows a
 </form>
 ```
 
+## Bulk Actions
+For any actions (add, remove, toggle, update) you can also action these for multiple lists, by providing a `listId[]` parameter for all the lists you'd like to action with.
+
+For example, you might like to add a single element to all the lists a user has.
+
+```twig
+<form method="POST">
+    <input type="hidden" name="action" value="wishlist/items/add">
+    {{ csrfInput() }}
+
+    {# Fetch all the lists for the user #}
+    {% for list in craft.wishlist.lists() %}
+        <input type="hidden" name="listId[]" value="{{ list.id }}">
+    {% endfor %}
+
+    <input type="hidden" name="elementId" value="{{ entry.id }}">
+
+    <input type="submit" value="Bulk Add">
+</form>
+```
+
+Similarly, you can follow the same structure for other actions like remove/toggle/update.
+
 ## Item Options
 You can also store additional, arbitrary content alongside a Wishlist item in the form of item options. This content won't be visible to users, unless you decide to output it. It will be visible in the control panel, when editing an item.
 
