@@ -11,6 +11,7 @@ use verbb\wishlist\records\ListRecord;
 use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
+use craft\db\Query;
 use craft\elements\User;
 use craft\elements\actions\Delete;
 use craft\helpers\ArrayHelper;
@@ -172,6 +173,7 @@ class ListElement extends Element
     private ?User $_owner = null;
     private ?User $_user = null;
     private ?FieldLayout $_fieldLayout = null;
+    private array $_items = [];
 
 
     // Public Methods
@@ -214,11 +216,7 @@ class ListElement extends Element
 
     public function isEmpty(): bool
     {
-        if ($items = $this->getItems()) {
-            return $items->count() ? false : true;
-        }
-
-        return true;
+        return count($this->getItems()) ? false : true;
     }
 
     public function getIsEditable(): bool
@@ -266,9 +264,51 @@ class ListElement extends Element
         $this->typeId = $listType->id;
     }
 
-    public function getItems(): ?ItemQuery
+    public function setEagerLoadedElements(string $handle, array $elements): void
     {
-        return $this->id ? Item::find()->listId($this->id) : null;
+        if ($handle == 'items') {
+            $this->setItems($elements);
+        } else {
+            parent::setEagerLoadedElements($handle, $elements);
+        }
+    }
+
+    public static function eagerLoadingMap(array $sourceElements, string $handle): array|null|false
+    {
+        if ($handle == 'items') {
+            $sourceElementIds = ArrayHelper::getColumn($sourceElements, 'id');
+
+            $map = (new Query())
+                ->select('listId as source, id as target')
+                ->from(['{{%wishlist_items}}'])
+                ->where(['listId' => $sourceElementIds])
+                ->all();
+
+            return [
+                'elementType' => Item::class,
+                'map' => $map,
+            ];
+        }
+
+        return parent::eagerLoadingMap($sourceElements, $handle);
+    }
+
+    public function getItems(): array
+    {
+        if ($this->_items) {
+            return $this->_items;
+        }
+
+        if ($this->id) {
+            return $this->_items = Item::find()->listId($this->id)->all();
+        }
+
+        return [];
+    }
+
+    public function setItems(array $items): void
+    {
+        $this->_items = $items;
     }
 
     public function getItem(ElementInterface $element, array $params = []): ?Item
@@ -424,7 +464,7 @@ class ListElement extends Element
 
             return '';
         } else if ($attribute == 'items') {
-            return $this->getItems()->count();
+            return count($this->getItems());
         }
 
         return parent::attributeHtml($attribute);
