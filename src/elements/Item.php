@@ -108,6 +108,35 @@ class Item extends Element
         return $attributes;
     }
 
+    public static function eagerLoadingMap(array $sourceElements, string $handle): array|false|null
+    {
+        if ($handle === 'element') {
+            // Get the source element IDs
+            $sourceElementIds = ArrayHelper::getColumn($sourceElements, 'id');
+
+            $map = (new Query())
+                ->select(['id as source', 'elementId as target'])
+                ->from(['{{%wishlist_items}}'])
+                ->where(['and', ['id' => $sourceElementIds], ['not', ['elementId' => null]]])
+                ->all();
+
+            // This isn't amazing, but its benefit is pretty considerable. The thinking here is that its
+            // unlikely you'll be fetching comments across multiple different element types
+            $firstElement = $sourceElements[0] ?? [];
+
+            if (!$firstElement) {
+                return null;
+            }
+
+            return [
+                'elementType' => $firstElement->elementClass,
+                'map' => $map,
+            ];
+        }
+
+        return parent::eagerLoadingMap($sourceElements, $handle);
+    }
+
 
     // Properties
     // =========================================================================
@@ -232,35 +261,6 @@ class Item extends Element
         }
 
         return $this->_fieldLayout = parent::getFieldLayout();
-    }
-
-    public static function eagerLoadingMap(array $sourceElements, string $handle): array|false|null
-    {
-        if ($handle === 'element') {
-            // Get the source element IDs
-            $sourceElementIds = ArrayHelper::getColumn($sourceElements, 'id');
-
-            $map = (new Query())
-                ->select(['id as source', 'elementId as target'])
-                ->from(['{{%wishlist_items}}'])
-                ->where(['and', ['id' => $sourceElementIds], ['not', ['elementId' => null]]])
-                ->all();
-
-            // This isn't amazing, but its benefit is pretty considerable. The thinking here is that its
-            // unlikely you'll be fetching comments across multiple different element types
-            $firstElement = $sourceElements[0] ?? [];
-
-            if (!$firstElement) {
-                return null;
-            }
-
-            return [
-                'elementType' => $firstElement->elementClass,
-                'map' => $map,
-            ];
-        }
-
-        return parent::eagerLoadingMap($sourceElements, $handle);
     }
 
     public function setEagerLoadedElements(string $handle, array $elements): void

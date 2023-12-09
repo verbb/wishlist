@@ -158,6 +158,26 @@ class ListElement extends Element
         ];
     }
 
+    public static function eagerLoadingMap(array $sourceElements, string $handle): array|null|false
+    {
+        if ($handle == 'items') {
+            $sourceElementIds = ArrayHelper::getColumn($sourceElements, 'id');
+
+            $map = (new Query())
+                ->select('listId as source, id as target')
+                ->from(['{{%wishlist_items}}'])
+                ->where(['listId' => $sourceElementIds])
+                ->all();
+
+            return [
+                'elementType' => Item::class,
+                'map' => $map,
+            ];
+        }
+
+        return parent::eagerLoadingMap($sourceElements, $handle);
+    }
+
 
     // Properties
     // =========================================================================
@@ -271,26 +291,6 @@ class ListElement extends Element
         } else {
             parent::setEagerLoadedElements($handle, $elements);
         }
-    }
-
-    public static function eagerLoadingMap(array $sourceElements, string $handle): array|null|false
-    {
-        if ($handle == 'items') {
-            $sourceElementIds = ArrayHelper::getColumn($sourceElements, 'id');
-
-            $map = (new Query())
-                ->select('listId as source, id as target')
-                ->from(['{{%wishlist_items}}'])
-                ->where(['listId' => $sourceElementIds])
-                ->all();
-
-            return [
-                'elementType' => Item::class,
-                'map' => $map,
-            ];
-        }
-
-        return parent::eagerLoadingMap($sourceElements, $handle);
     }
 
     public function getItems(): array
