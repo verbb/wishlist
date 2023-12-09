@@ -100,6 +100,12 @@ class ItemQuery extends ElementQuery
 
         $this->subQuery->innerJoin('{{%wishlist_lists}} wishlist_lists', '[[wishlist_items.listId]] = [[wishlist_lists.id]]');
 
+        // And join the element table for the linked element, in order to fetch non-deleted linked elements
+        $this->query->leftJoin('{{%elements}} element_item', '[[wishlist_items.elementId]] = [[element_item.id]]');
+
+        // Join the element sites table (again) for the linked element
+        $this->query->leftJoin('{{%elements_sites}} element_item_sites', '[[wishlist_items.elementId]] = [[element_item_sites.elementId]] AND [[wishlist_items.elementSiteId]] = [[element_item_sites.siteId]]');
+
         $this->query->select([
             'wishlist_items.id',
             'wishlist_items.elementId',
@@ -109,6 +115,9 @@ class ItemQuery extends ElementQuery
             'wishlist_items.options',
             'wishlist_items.optionsSignature',
             'wishlist_items.dateCreated',
+
+            // Join the element's title onto the same query
+            'element_item_sites.title AS elementTitle',
         ]);
 
         if ($this->id) {
@@ -144,8 +153,6 @@ class ItemQuery extends ElementQuery
         }
 
         if (!$this->trashedElement) {
-            // And join the element table for the linked element, in order to fetch non-deleted linked elements
-            $this->query->leftJoin('{{%elements}} element_item', '[[wishlist_items.elementId]] = [[element_item.id]]');
             $this->query->andWhere(['element_item.dateDeleted' => null]);
         }
 

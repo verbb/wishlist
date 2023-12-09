@@ -117,6 +117,7 @@ class Item extends Element
     public ?int $listId = null;
     
     private ?ElementInterface $_element = null;
+    private ?string $_elementTitle = null;
     private ?ListElement $_list = null;
     private ?FieldLayout $_fieldLayout = null;
     private array $_listItemIds = [];
@@ -130,7 +131,7 @@ class Item extends Element
     {
         parent::init();
 
-        $this->updateTitle();
+        $this->title = $this->getElementTitle();
     }
 
     public function canView(User $user): bool
@@ -158,11 +159,22 @@ class Item extends Element
         return true;
     }
 
-    public function updateTitle(): void
+    public function getElementTitle(): ?string
     {
-        if ($element = $this->getElement()) {
-            $this->title = $element->title;
+        if ($this->_elementTitle !== null) {
+            return $this->_elementTitle;
         }
+
+        if ($element = $this->getElement()) {
+            return $element->title;
+        }
+
+        return null;
+    }
+
+    public function setElementTitle($value): void
+    {
+        $this->_elementTitle = $value;
     }
 
     public function getElement(): ?ElementInterface
