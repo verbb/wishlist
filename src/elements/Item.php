@@ -9,8 +9,10 @@ use verbb\wishlist\records\Item as ItemRecord;
 use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
+use craft\db\Query;
 use craft\elements\User;
 use craft\elements\actions\Delete;
+use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
 use craft\helpers\StringHelper;
 use craft\models\FieldLayout;
@@ -230,6 +232,44 @@ class Item extends Element
         }
 
         return $this->_fieldLayout = parent::getFieldLayout();
+    }
+
+    public static function eagerLoadingMap(array $sourceElements, string $handle): array|false|null
+    {
+        if ($handle === 'element') {
+            // Get the source element IDs
+            $sourceElementIds = ArrayHelper::getColumn($sourceElements, 'id');
+
+            $map = (new Query())
+                ->select(['id as source', 'elementId as target'])
+                ->from(['{{%wishlist_items}}'])
+                ->where(['and', ['id' => $sourceElementIds], ['not', ['elementId' => null]]])
+                ->all();
+
+            // This isn't amazing, but its benefit is pretty considerable. The thinking here is that its
+            // unlikely you'll be fetching comments across multiple different element types
+            $firstElement = $sourceElements[0] ?? [];
+
+            if (!$firstElement) {
+                return null;
+            }
+
+            return [
+                'elementType' => $firstElement->elementClass,
+                'map' => $map,
+            ];
+        }
+
+        return parent::eagerLoadingMap($sourceElements, $handle);
+    }
+
+    public function setEagerLoadedElements(string $handle, array $elements): void
+    {
+        if ($handle === 'element') {
+            $this->_element = $elements[0] ?? null;
+        } else {
+            parent::setEagerLoadedElements($handle, $elements);
+        }
     }
 
     public function getInList(ListElement $list = null): bool
