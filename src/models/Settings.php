@@ -31,4 +31,7 @@ class Settings extends Model
     public string $pdfPaperSize = 'letter';
     public string $pdfPaperOrientation = 'portrait';
 
+    // Email
+    public ?string $templateEmail = null;
+
 }

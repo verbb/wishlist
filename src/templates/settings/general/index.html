@@ -114,6 +114,18 @@
             required: true,
             warning: macros.configWarning('pdfFilenameFormat', 'wishlist'),
         }) }}
+
+        <h3>{{ 'Email' | t('wishlist') }}</h3>
+
+        {{ forms.textField({
+            label: 'HTML Email Template' | t('wishlist'),
+            instructions: 'The template Wishlist will use for HTML emails.' | t('wishlist'),
+            id: 'templateEmail',
+            name: 'templateEmail',
+            value: settings.templateEmail,
+            warning: macros.configWarning('templateEmail', 'wishlist'),
+        }) }}
+
     {% endnamespace %}
 
     <hr>

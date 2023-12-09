@@ -28,6 +28,9 @@ return [
         'pdfAllowRemoteImages' => true,
         'pdfPaperSize' => 'letter',
         'pdfPaperOrientation' => 'portrait',
+
+        // Email
+        'templateEmail' => null,
     ]
 ];
 ```
@@ -52,6 +55,9 @@ return [
 - `pdfAllowRemoteImages` - Whether to allow remote images in the PDF.
 - `pdfPaperSize` - Sets the paper size for the PDF.
 - `pdfPaperOrientation` - Sets the paper orientation for the PDF.
+
+### Email
+- `templateEmail` - The template Wishlist will use for HTML emails.
 
 ## Control Panel
 You can also manage configuration settings through the Control Panel by visiting Settings → Wishlist.
