@@ -151,19 +151,26 @@
         
         <div class="field">
             <div class="heading">
-                <label>{{ 'Owner' | t('wishlist') }}</label>
+                <label>{{ 'Owner Type' | t('wishlist') }}</label>
             </div>
 
-            {% if list.user %}
-                <div class="input ltr">
-                    <a href="{{ list.user.getCpEditUrl() }}">{{ list.user }}</a>
-                </div>
-            {% else %}
-                <div class="input ltr">
+            <div class="input ltr">
+                {% if list.user %}
+                    {{ 'User' | t('wishlist') }}
+                {% else %}
                     {{ 'Guest' | t('wishlist') }}
-                </div>
-            {% endif %}
+                {% endif %}
+            </div>
         </div>
+    
+        {{ forms.elementSelectField({
+            label: 'User' | t('wishlist'),
+            id: 'userId',
+            name: 'userId',
+            elementType: 'craft\\elements\\User',
+            limit: 1,
+            elements: (list.user is defined and list.user ? [list.user]),
+        }) }}
     </div>
 
     {% if list.id %}

@@ -579,6 +579,7 @@ class ListsController extends BaseController
         $list->typeId = $this->request->getParam('typeId', $list->typeId);
         $list->enabled = (bool)$this->request->getParam('enabled', $list->enabled);
         $list->title = $this->request->getParam('title', $list->title);
+        $list->userId = $this->request->getParam('userId')[0] ?? null;
 
         $list->setFieldValuesFromRequest('fields');
 
