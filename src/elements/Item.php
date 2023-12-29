@@ -10,8 +10,9 @@ use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\db\Query;
-use craft\elements\User;
 use craft\elements\actions\Delete;
+use craft\elements\db\EagerLoadPlan;
+use craft\elements\User;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
 use craft\helpers\StringHelper;
@@ -263,12 +264,12 @@ class Item extends Element
         return $this->_fieldLayout = parent::getFieldLayout();
     }
 
-    public function setEagerLoadedElements(string $handle, array $elements): void
+    public function setEagerLoadedElements(string $handle, array $elements, EagerLoadPlan $plan): void
     {
         if ($handle === 'element') {
             $this->_element = $elements[0] ?? null;
         } else {
-            parent::setEagerLoadedElements($handle, $elements);
+            parent::setEagerLoadedElements($handle, $elements, $plan);
         }
     }
 

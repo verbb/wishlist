@@ -12,8 +12,9 @@ use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\db\Query;
-use craft\elements\User;
 use craft\elements\actions\Delete;
+use craft\elements\db\EagerLoadPlan;
+use craft\elements\User;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Cp;
 use craft\models\FieldLayout;
@@ -284,12 +285,12 @@ class ListElement extends Element
         $this->typeId = $listType->id;
     }
 
-    public function setEagerLoadedElements(string $handle, array $elements): void
+    public function setEagerLoadedElements(string $handle, array $elements, EagerLoadPlan $plan): void
     {
         if ($handle == 'items') {
             $this->setItems($elements);
         } else {
-            parent::setEagerLoadedElements($handle, $elements);
+            parent::setEagerLoadedElements($handle, $elements, $plan);
         }
     }
 
