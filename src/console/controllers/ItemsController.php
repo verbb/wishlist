@@ -13,11 +13,17 @@ use craft\helpers\Db;
 use yii\console\ExitCode;
 use yii\web\Response;
 
+/**
+ * Manages Wishlist Items.
+ */
 class ItemsController extends Controller
 {
     // Public Methods
     // =========================================================================
 
+    /**
+     * Removes any items that belong to a list that no longer exists.
+     */
     public function actionCleanupOrphanedItems()
     {
         // Allow batch processing for large items/lists
