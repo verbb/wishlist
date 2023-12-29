@@ -301,24 +301,7 @@ class Item extends Element
             $options = [];
         }
 
-        $cleanEmojiValues = static function(&$options) use (&$cleanEmojiValues) {
-            foreach ($options as $key => $value) {
-                if (is_array($value)) {
-                    $cleanEmojiValues($value);
-                } else if (is_string($value)) {
-                    $options[$key] = StringHelper::emojiToShortcodes($value);
-                }
-            }
-
-            return $options;
-        };
-
-        // TODO make this consistent no matter what the DB driver is. Will be a "breaking" change.
-        if (Craft::$app->getDb()->getSupportsMb4()) {
-            $this->_options = $options;
-        } else {
-            $this->_options = $cleanEmojiValues($options);
-        }
+        $this->_options = $options;
     }
 
     public function getOptionsSignature(): string
