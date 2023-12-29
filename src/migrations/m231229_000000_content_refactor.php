@@ -16,7 +16,7 @@ class m231229_000000_content_refactor extends BaseContentRefactorMigration
     public function safeUp(): bool
     {
         foreach (Wishlist::$plugin->getListTypes()->getAllListTypes() as $type) {
-            $listIds = (new Query())->select('id')->from('{{%wishlist_lists}}')->where(['typeId' => $type->id])->scalar();
+            $listIds = (new Query())->select('id')->from('{{%wishlist_lists}}')->where(['typeId' => $type->id])->column();
 
             $this->updateElements(
                 $listIds,
