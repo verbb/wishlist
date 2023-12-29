@@ -1,7 +1,8 @@
 # Lists
 Lists are simply that - a list of elements for a particular user. Any element on your Craft site can be added to a list, such as Entries, Categories and Commerce Products/Variants. A default list is always created for a user when they first add an item to their list. Use the [Template Guides](docs:template-guides/managing-items) to allow users to manage the items in their list.
 
-Lists are session-based, and are populated as long as the current session is active. For guests, as soon as their session ends – such as they close their browser – their list items will be gone. For registered and logged-in users, lists will be persisted against their account, so It's important to prompt your users to log in or register to save their list contents. In fact, it works pretty similar to a typical Cart!
+## Persisting Lists
+Lists are stored against either the current user (if there is one), or in a cookie for the browser. For logged-in users, they'll be required to login to their account to view their wishlist content. For guests, so long as they haven't cleared their cookies — they should also have access to their wishlist content, even if closing their browser and opening again.
 
 ## Sharing Lists
 A benefit of creating lists is being able to share them, be it a wishlist of items for a Commerce store, or even just to share bits of content a user has liked. It's easy to create and share lists and their contents publicly via a URL.

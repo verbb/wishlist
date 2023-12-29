@@ -329,7 +329,7 @@ Possible values include:
 
 | Value | Fetches lists…
 | - | -
-| `'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'` | with a matching list reference number
+| `'••••••••••••••'` | with a matching list reference number
 
 ::: code
 ```twig Twig
@@ -389,14 +389,14 @@ Narrows the query results based on the lists’ owners’ session ID.
 ```twig Twig
 {# Fetch lists by the owners’ session ID #}
 {% set lists = craft.wishlist.lists()
-    .sessionId('xxxxxxxxxxxxxxxxxxxxx')
+    .sessionId('••••••••••••••')
     .all() %}
 ```
 
 ```php PHP
 // Fetch lists by the owners’ session ID
 $lists = \verbb\wishlist\elements\ListElement::find()
-    .sessionId('xxxxxxxxxxxxxxxxxxxxx')
+    .sessionId('••••••••••••••')
     ->all();
 ```
 :::

@@ -32,6 +32,11 @@ class ListElement extends Element
         return Craft::t('wishlist', 'Wishlist List');
     }
 
+    public static function trackChanges(): bool
+    {
+        return true;
+    }
+
     public static function hasTitles(): bool
     {
         return true;

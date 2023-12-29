@@ -96,7 +96,7 @@ class ListsController extends BaseController
         $session = Craft::$app->getSession();
 
         $listId = $this->request->getRequiredParam('listId');
-        $list = ListElement::findOne($listId);
+        $list = ListElement::find()->id($listId)->status(null)->one();
 
         if (!$list) {
             throw new Exception(Craft::t('wishlist', 'No list exists with the ID “{id}”.', ['id' => $listId]));
@@ -279,7 +279,7 @@ class ListsController extends BaseController
     {
         $listId = $this->request->getRequiredParam('listId');
 
-        $list = ListElement::findOne($listId);
+        $list = ListElement::find()->id($listId)->status(null)->one();
 
         if (!$list) {
             throw new Exception(Craft::t('wishlist', 'No list exists with the ID “{id}”.', ['id' => $listId]));
@@ -307,7 +307,7 @@ class ListsController extends BaseController
     {
         $listId = $this->request->getRequiredParam('listId');
 
-        $list = ListElement::findOne($listId);
+        $list = ListElement::find()->id($listId)->status(null)->one();
 
         if (!$list) {
             throw new Exception(Craft::t('wishlist', 'No list exists with the ID “{id}”.', ['id' => $listId]));
