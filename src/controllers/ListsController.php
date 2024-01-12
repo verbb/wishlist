@@ -430,19 +430,22 @@ class ListsController extends BaseController
         $request = Craft::$app->getRequest();
         $listId = $request->getRequiredParam('listId');
 
-        $list = ListElement::findOne($listId);
-
-        if (!$list) {
-            $message = Craft::t('wishlist', 'No list exists with the ID “{id}”.', ['id' => $listId]);
-
-            Wishlist::error($message);
-
-            return $this->returnError($message);
+        if (!$listId) {
+            return $this->returnError('List ID must be provided.');
         }
+
+        $list = $this->_setListFromPost();
 
         // Check if we're allowed to manage lists
         $this->enforceEnabledList($list);
         $this->enforceListPermissions($list);
+
+        // Only owners can update their own lists
+        if (WishList::$plugin->getLists()->isListOwner($list)) {
+            if (!Wishlist::$plugin->getLists()->saveElement($list)) {
+                return $this->returnError('Unable to update list.', ['list' => $list]);
+            }
+        }
 
         $sender = $request->getRequiredParam('sender');
         $recipient = $request->getRequiredParam('recipient');
