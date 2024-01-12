@@ -2,6 +2,7 @@
 namespace verbb\wishlist\controllers;
 
 use verbb\wishlist\Wishlist;
+use verbb\wishlist\helpers\Locale;
 
 use Craft;
 use craft\web\Controller;
@@ -23,10 +24,28 @@ class PdfController extends Controller
     {
         $request = Craft::$app->getRequest();
 
+        $siteHandle = $request->getParam('site');
+        $site = Craft::$app->getSites()->getPrimarySite();
+
+        if ($siteHandle) {
+            if ($requestedSite = Craft::$app->getSites()->getSiteByHandle($siteHandle)) {
+                $site = $requestedSite;
+            }
+        }
+
         $listId = $request->getRequiredParam('listId');
         $list = Wishlist::$plugin->getLists()->getListById($listId);
 
+        // Switch to use the correct site/language
+        $originalLanguage = Craft::$app->language;
+        $originalFormattingLocale = Craft::$app->formattingLocale;
+
+        Locale::switchAppLanguage($site->language);
+
         $pdf = Wishlist::$plugin->getPdf()->renderPdf($list);
+
+        // Set previous language back
+        Locale::switchAppLanguage($originalLanguage, $originalFormattingLocale);
 
         $filenameFormat = Wishlist::$plugin->getSettings()->pdfFilenameFormat;
         $filename = $this->getView()->renderObjectTemplate($filenameFormat, $list);
