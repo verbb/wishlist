@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.8 - 2024-01-30
+
+### Changed
+- PDFs now support using the current site’s locale language and formatting.
+
+### Fixed
+- Fix being unable to delete a disabled list.
+
 ## 2.0.7 - 2023-10-25
 
 ### Fixed
