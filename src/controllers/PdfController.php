@@ -42,7 +42,7 @@ class PdfController extends Controller
 
         Locale::switchAppLanguage($site->language);
 
-        $pdf = Wishlist::$plugin->getPdf()->renderPdf($list);
+        $pdf = Wishlist::$plugin->getPdf()->renderPdf($list, $site);
 
         // Set previous language back
         Locale::switchAppLanguage($originalLanguage, $originalFormattingLocale);
