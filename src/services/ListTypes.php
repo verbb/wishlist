@@ -297,7 +297,7 @@ class ListTypes extends Component
     }
 
 
-    // Private methods
+    // Private Methods
     // =========================================================================
 
     private function _listTypes(): MemoizableArray

@@ -456,7 +456,7 @@ class ListElement extends Element
     }
 
 
-    // Protected methods
+    // Protected Methods
     // =========================================================================
 
     protected function defineRules(): array
