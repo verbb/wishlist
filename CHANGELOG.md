@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.0.0
+## 3.0.0-beta.1 - 2024-03-04
 
 ### Added
 - Add the ability to create a list when adding or toggling an item in one request.
@@ -15,6 +15,8 @@
 - Add support for `Item::getInList(list)` to pass in a specific list to check.
 
 ### Changed
+- Now requires PHP `8.2.0+`.
+- Now requires Craft `5.0.0-beta.1+`.
 - All URL-based actions now have their query parameters encoded to prevent tampering with.
 - `craft.wishlist.getInUserLists()` now accepts an element as its parameter, not just an elementId.
 - Change `listTypeHandle` parameter for managing items to `listType`.
