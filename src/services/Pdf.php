@@ -8,6 +8,7 @@ use verbb\wishlist\models\Settings;
 
 use Craft;
 use craft\helpers\FileHelper;
+use craft\models\Site;
 use craft\web\View;
 
 use Dompdf\Dompdf;
@@ -28,13 +29,15 @@ class Pdf extends Component
     // Public Methods
     // =========================================================================
 
-    public function renderPdf(ListElement $list): string
+    public function renderPdf(ListElement $list, ?Site $site = null): string
     {
         /* @var Settings $settings */
         $settings = Wishlist::$plugin->getSettings();
 
         $request = Craft::$app->getRequest();
         $format = $request->getParam('format');
+
+        $currentSite = $site ?? Craft::$app->getSites()->getCurrentSite();
 
         $templatePath = $settings->pdfPath;
 
@@ -61,8 +64,13 @@ class Pdf extends Component
             throw new Exception('PDF template file does not exist.');
         }
 
+        $variables = [
+            'list' => $list,
+            'currentSite' => $currentSite,
+        ];
+
         try {
-            $html = $view->renderTemplate($templatePath, compact('list'));
+            $html = $view->renderTemplate($templatePath, $variables);
         } catch (\Exception $e) {
             // Set the pdf html to the render error.
             Craft::error('List PDF render error. List ID: ' . $list->id . '. ' . $e->getMessage());

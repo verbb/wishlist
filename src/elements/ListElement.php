@@ -395,7 +395,9 @@ class ListElement extends Element
 
     public function getPdfUrl(): string
     {
-        return UrlHelper::actionUrl("wishlist/pdf?listId={$this->id}");
+        $currentSite = Craft::$app->getSites()->getCurrentSite();
+
+        return UrlHelper::actionUrl('wishlist/pdf', ['listId' => $this->id, 'site' => $currentSite->handle]);
     }
 
     public function getGqlTypeName(): string

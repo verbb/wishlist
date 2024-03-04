@@ -29,6 +29,26 @@
 ### Deprecated
 - Deprecated `craft.wishlist.item()`. Use `craft.wishlist.items(params)` to find items, or `craft.wishlist.addItemUrl/toggleItemUrl/removeItemUrl` to manage items.
 
+## 2.0.9 - 2024-03-04
+
+### Added
+- Add `currentSite` as a variable when rendering a PDF.
+- Add the ability to order list items by their linked-to element’s title with `orderBy(‘elementTitle asc’)`.
+
+### Changed
+- Bump `dompdf/dompdf` requirement to `2.0.4`.
+
+### Fixed
+- Fix order of operations when uninstalling the plugin.
+
+## 2.0.8 - 2024-01-30
+
+### Changed
+- PDFs now support using the current site’s locale language and formatting.
+
+### Fixed
+- Fix being unable to delete a disabled list.
+
 ## 2.0.7 - 2023-10-25
 
 ### Fixed
