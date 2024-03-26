@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.0-beta.2 - 2024-03-26
+
+### Fixed
+- Fix an error referring to old content table.
+
 ## 3.0.0-beta.1 - 2024-03-04
 
 ### Added
