@@ -172,14 +172,12 @@ class Wishlist extends Plugin
     private function _registerEmailMessages(): void
     {
         Event::on(SystemMessages::class, SystemMessages::EVENT_REGISTER_MESSAGES, function(RegisterEmailMessagesEvent $event) {
-            $event->messages = array_merge($event->messages, [
-                [
-                    'key' => 'wishlist_share_list',
-                    'heading' => Craft::t('wishlist', 'wishlist_share_list_heading'),
-                    'subject' => Craft::t('wishlist', 'wishlist_share_list_subject'),
-                    'body' => Craft::t('wishlist', 'wishlist_share_list_body'),
-                ],
-            ]);
+            $event->messages[] = [
+                'key' => 'wishlist_share_list',
+                'heading' => Craft::t('wishlist', 'wishlist_share_list_heading'),
+                'subject' => Craft::t('wishlist', 'wishlist_share_list_subject'),
+                'body' => Craft::t('wishlist', 'wishlist_share_list_body'),
+            ];
         });
     }
 
