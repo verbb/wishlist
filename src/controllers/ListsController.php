@@ -644,7 +644,14 @@ class ListsController extends BaseController
         $list->typeId = $this->request->getParam('typeId', $list->typeId);
         $list->enabled = (bool)$this->request->getParam('enabled', $list->enabled);
         $list->title = $this->request->getParam('title', $list->title);
-        $list->userId = $this->request->getParam('userId')[0] ?? null;
+
+        // Handle User ID for the CP, front-end and when omitted
+        $currentUser = Craft::$app->getUser()->getIdentity();
+        $userId = $this->request->getParam('userId', ($currentUser->id ?? null));
+
+        if ($userId) {
+            $list->userId = is_array($userId) ? $userId[0] : $userId;
+        }
 
         $list->setFieldValuesFromRequest('fields');
 
