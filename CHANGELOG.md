@@ -1,11 +1,6 @@
 # Changelog
 
-## 3.0.0-beta.2 - 2024-03-26
-
-### Fixed
-- Fix an error referring to old content table.
-
-## 3.0.0-beta.1 - 2024-03-04
+## 3.0.0 - 2024-05-18
 
 ### Added
 - Add the ability to create a list when adding or toggling an item in one request.
@@ -21,7 +16,7 @@
 
 ### Changed
 - Now requires PHP `8.2.0+`.
-- Now requires Craft `5.0.0-beta.1+`.
+- Now requires Craft `5.0.0+`.
 - All URL-based actions now have their query parameters encoded to prevent tampering with.
 - `craft.wishlist.getInUserLists()` now accepts an element as its parameter, not just an elementId.
 - Change `listTypeHandle` parameter for managing items to `listType`.
