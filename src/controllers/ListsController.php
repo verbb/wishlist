@@ -180,7 +180,7 @@ class ListsController extends BaseController
 
         // Check if we're allowed to manage lists
         $this->enforceEnabledList($list);
-        $this->enforceListPermissions($list);
+        $this->enforceListPermissions($list, false);
 
         if (!Wishlist::$plugin->getLists()->saveElement($list)) {
             $error = new ListError('Unable to save list.', ['list' => $list]);
@@ -578,15 +578,32 @@ class ListsController extends BaseController
     // Protected Methods
     // =========================================================================
 
-    protected function enforceListPermissions(ListElement $list): void
+    protected function enforceListPermissions(ListElement $list, bool $enforceOwner = true): void
     {
         if (!$list->getType()) {
             Craft::error('Attempting to access a list that doesn’t have a type', __METHOD__);
             throw new HttpException(404);
         }
 
-        // We shouldn't be checking front-end requests for permissions
-        if (Craft::$app->getRequest()->getIsSiteRequest()) {
+        // If this is a front-end request, ensure that it's the owner of the list making changes
+        if ($enforceOwner && Craft::$app->getRequest()->getIsSiteRequest()) {
+            $currentUser = Craft::$app->getUser()->getIdentity();
+
+            // If an admin, assume they have permission to edit another list
+            if (Craft::$app->getUser()->getIsAdmin()) {
+                return;
+            }
+
+            // If logged in, easy check
+            if ($currentUser && $currentUser->id !== $list->userId) {
+                throw new HttpException(403);
+            }
+
+            // Check if the guests session matches the lists
+            if ($list->sessionId !== Craft::$app->getSession()->get('wishlist_list')) {
+                throw new HttpException(403);
+            }
+
             return;
         }
 
