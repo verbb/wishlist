@@ -1,6 +1,7 @@
 # Changelog
 
 ## 3.0.0 - 2024-05-18
+> {warning} This is a major version with some breaking changes. Be sure to read our [Upgrading from v2](https://verbb.io/craft-plugins/wishlist/docs/get-started/upgrading-from-v2) guide.
 
 ### Added
 - Add the ability to create a list when adding or toggling an item in one request.
