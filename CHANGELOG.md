@@ -10,10 +10,23 @@
 - Add `list.addItemUrl(element, params)` `list.toggleItemUrl(element, params)` `list.removeItemUrl(element, params)`.
 - Add `craft.wishlist.addItemUrl(element, params)` `craft.wishlist.toggleItemUrl(element, params)` `craft.wishlist.removeItemUrl(element, params)`.
 - Add support to update multiple items at once.
+- Add bulk list actions for add/remove/toggle/update, to perform tasks on multiple lists at once.
+- Add the ability to change the owner user for a list in the control panel.
+- Add the ability to duplicate a list from the front-end.
 - Add `List::isEmpty()` to check if there are any items in the list.
 - Add `List::getItem(element, params)` to get a specific item, based on a given element and any additional query params.
 - Add `List::hasItem(item)` to check if a list has a specific item.
 - Add support for `Item::getInList(list)` to pass in a specific list to check.
+- Add the ability to attach a PDF to the share email.
+- Improve item query performance.
+- Add `item.element` eager-loading.
+- Add `list.items` eager-loading.
+- Add `trashedElement` element query param for items.
+- Add the ability to populate cart line item options from list or item custom fields.
+- Add ability to set a custom email template when sharing a list.
+- Add support for items to pick any element type when editing via the control panel.
+- Add `Items:: EVENT_MODIFY_SUPPORTED_ELEMENT_TYPES` event.
+- Update List Type custom fields to support UI elements and other field layout changes.
 
 ### Changed
 - Now requires PHP `8.2.0+`.
@@ -21,6 +34,11 @@
 - All URL-based actions now have their query parameters encoded to prevent tampering with.
 - `craft.wishlist.getInUserLists()` now accepts an element as its parameter, not just an elementId.
 - Change `listTypeHandle` parameter for managing items to `listType`.
+- Item queries by default now don’t return items where the linked element has been trashed or deleted.
+- PDFs now support using the current site’s locale language and formatting.
+
+### Fixed
+- Fix duplicating lists (via “Save as a new list”) not working.
 
 ### Removed
 - Remove `listTypeId` parameter for managing items. Use `listType` instead.
