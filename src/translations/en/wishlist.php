@@ -1,6 +1,15 @@
 <?php
 
 return [
+  //
+  // Email Messages
+  //
+  'wishlist_share_list_heading' => 'When a user shares a wishlist list:',
+  'wishlist_share_list_subject' => '{{ sender.fullName }} has shared their wishlist with you on {{ siteName }}.',
+  'wishlist_share_list_body' => "Hey {{ recipient.friendlyName }},\n\n" .
+    "{{ sender.fullName }} ({{ sender.email }}) has shared their wishlist with you.\n\n" .
+    "Have a look at it via {{ siteUrl('wishlist', { id: list.reference }) }}.",
+
   'All items' => 'All items',
   'All lists' => 'All lists',
   'Allow Duplicates' => 'Allow Duplicates',
@@ -107,9 +116,6 @@ return [
   'Wishlist Item' => 'Wishlist Item',
   'Wishlist List' => 'Wishlist List',
   'Wishlists' => 'Wishlists',
-  'wishlist_share_list_body' => 'wishlist_share_list_body',
-  'wishlist_share_list_heading' => 'wishlist_share_list_heading',
-  'wishlist_share_list_subject' => 'wishlist_share_list_subject',
   'You can only clear your own list.' => 'You can only clear your own list.',
   'You can only delete your own list.' => 'You can only delete your own list.',
   'You can only update your own list.' => 'You can only update your own list.',
