@@ -407,9 +407,10 @@ class ListsController extends BaseController
         }
 
         // Should we remove all items from the list after adding?
-        $clearList = $request->getParam('clearList');
+        if ($clearList = $request->getParam('clearList')) {
+            // In order to clear the list, the user must be the owner
+            $this->enforceListPermissions($list);
 
-        if ($clearList) {
             Wishlist::$plugin->getItems()->deleteItemsForList($listId);
         }
 
