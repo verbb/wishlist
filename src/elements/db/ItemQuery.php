@@ -17,6 +17,7 @@ class ItemQuery extends ElementQuery
     public mixed $elementClass = null;
     public mixed $listId = null;
     public mixed $listTypeId = null;
+    public mixed $listTypeHandle = null;
     public mixed $optionsSignature = null;
     public bool $enabled = true;
     public bool $trashedElement = false;
@@ -65,6 +66,12 @@ class ItemQuery extends ElementQuery
     public function listTypeId($value): static
     {
         $this->listTypeId = $value;
+        return $this;
+    }
+
+    public function listTypeHandle($value): static
+    {
+        $this->listTypeHandle = $value;
         return $this;
     }
 
@@ -154,6 +161,12 @@ class ItemQuery extends ElementQuery
 
         if ($this->listTypeId) {
             $this->subQuery->andWhere(Db::parseParam('wishlist_lists.typeId', $this->listTypeId));
+        }
+
+        if ($this->listTypeHandle) {
+            $this->subQuery->innerJoin('{{%wishlist_listtypes}} wishlist_listtypes', '[[wishlist_lists.typeId]] = [[wishlist_listtypes.id]]');
+
+            $this->subQuery->andWhere(Db::parseParam('wishlist_listtypes.handle', $this->listTypeHandle));
         }
 
         if (!$this->trashedElement) {

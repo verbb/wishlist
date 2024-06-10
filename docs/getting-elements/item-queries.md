@@ -370,6 +370,27 @@ $item = \verbb\wishlist\elements\Item::find()
 
 
 
+### `listTypeHandle`
+Narrows the query results based on the items’ List Type handle.
+
+::: code
+```twig Twig
+{# Fetch the item by its list type handle #}
+{% set item = craft.wishlist.items()
+    .listTypeHandle('favourites')
+    .one() %}
+```
+
+```php PHP
+// Fetch the item by its list type handle
+$item = \verbb\wishlist\elements\Item::find()
+    ->listTypeHandle('favourites')
+    ->one();
+```
+:::
+
+
+
 ### `listTypeId`
 Narrows the query results based on the items’ List Type IDs.
 
