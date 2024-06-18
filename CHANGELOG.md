@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.0.11 - 2024-06-18
+
+### Changed
+- Update English translations.
+- Clearing a list after adding to the cart is only allowed if the list is the owners.
+
+### Fixed
+- Fix an error for guests creating lists from the front-end.
+- Fix list permissions enforcement for adding items to a cart from another users list.
+
 ## 2.0.10 - 2024-05-18
 
 ### Changed
