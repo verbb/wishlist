@@ -24,6 +24,7 @@ class ListsController extends BaseController
     // =========================================================================
 
     public static ?Commerce $commercePlugin = null;
+
     protected array|bool|int $allowAnonymous = ['create', 'delete', 'clear', 'update', 'update-items', 'add-to-cart', 'share-by-email'];
 
 
@@ -502,28 +503,30 @@ class ListsController extends BaseController
         }
 
         // If this is a front-end request, ensure that it's the owner of the list making changes
-        if ($enforceOwner && Craft::$app->getRequest()->getIsSiteRequest()) {
-            $currentUser = Craft::$app->getUser()->getIdentity();
+        if ($enforceOwner) {
+            if (Craft::$app->getRequest()->getIsSiteRequest()) {
+                $currentUser = Craft::$app->getUser()->getIdentity();
 
-            // If an admin, assume they have permission to edit another list
-            if (Craft::$app->getUser()->getIsAdmin()) {
+                // If an admin, assume they have permission to edit another list
+                if (Craft::$app->getUser()->getIsAdmin()) {
+                    return;
+                }
+
+                // If logged in, easy check
+                if ($currentUser && $currentUser->id !== $list->userId) {
+                    throw new HttpException(403);
+                }
+
+                // Check if the guests session matches the lists
+                if ($list->sessionId !== Craft::$app->getSession()->get('wishlist_list')) {
+                    throw new HttpException(403);
+                }
+
                 return;
             }
-
-            // If logged in, easy check
-            if ($currentUser && $currentUser->id !== $list->userId) {
-                throw new HttpException(403);
-            }
-
-            // Check if the guests session matches the lists
-            if ($list->sessionId !== Craft::$app->getSession()->get('wishlist_list')) {
-                throw new HttpException(403);
-            }
-
-            return;
+            
+            $this->requirePermission('wishlist-manageListType:' . $list->getType()->uid);
         }
-
-        $this->requirePermission('wishlist-manageListType:' . $list->getType()->uid);
     }
 
 
