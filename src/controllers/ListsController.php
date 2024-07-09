@@ -513,12 +513,16 @@ class ListsController extends BaseController
                 }
 
                 // If logged in, easy check
-                if ($currentUser && $currentUser->id !== $list->userId) {
-                    throw new HttpException(403);
+                if ($currentUser) {
+                    if ($currentUser->id !== $list->userId) {
+                        throw new HttpException(403);
+                    }
+
+                    return;
                 }
 
-                // Check if the guests session matches the lists
                 if ($list->sessionId !== Craft::$app->getSession()->get('wishlist_list')) {
+                    // Check if the guests session matches the lists
                     throw new HttpException(403);
                 }
 
