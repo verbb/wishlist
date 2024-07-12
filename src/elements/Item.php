@@ -283,6 +283,10 @@ class Item extends Element
         // Default to searching in the same list
         $list = $list ?? $this->getList();
 
+        if (!$list) {
+            return false;
+        }
+
         // Find the exact matching item
         $existingItem = Item::find()
             ->elementId($this->elementId)
