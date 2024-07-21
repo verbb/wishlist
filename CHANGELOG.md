@@ -1,5 +1,22 @@
 # Changelog
 
+## 3.0.1 - 2024-07-21
+
+### Added
+- Add `listTypeHandle` as a query param for fetching items.
+- Add Craft Teams support for permissions.
+
+### Changed
+- Update English translations.
+- Clearing a list after adding to the cart is only allowed if the list is the owners.
+
+### Fixed
+- Fix an error when checking if an item is in a list.
+- Fix an error when editing lists on the front-end for logged-in users.
+- Fix an error for guests creating lists from the front-end.
+- Fix an error when creating new items without a linked element.
+- Fix list permissions enforcement for adding items to a cart from another users list.
+
 ## 3.0.0 - 2024-05-18
 > {warning} This is a major version with some breaking changes. Be sure to read our [Upgrading from v2](https://verbb.io/craft-plugins/wishlist/docs/get-started/upgrading-from-v2) guide.
 
