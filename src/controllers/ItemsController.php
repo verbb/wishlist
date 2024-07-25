@@ -181,10 +181,16 @@ class ItemsController extends BaseController
                 $item = $this->_getOrCreateItem($list, $element, $postItem);
 
                 // Check if this is in the list
-                if ($list->getHasItem($item) && !$settings->allowDuplicates) {
-                    $errors[$key] = new ItemError('Item already in list.');
+                if ($list->getHasItem($item)) {
+                    // If we allow duplicates and this is one, ensure that it's still added and not updated
+                    if (!$settings->allowDuplicates) {
+                        $errors[$key] = new ItemError('Item already in list.');
 
-                    continue;
+                        continue;
+                    } else {
+                        // Create the item, as we're adding a new duplicate
+                        $item = $this->_createItem($list, $element, $postItem);
+                    }
                 }
 
                 if (!Wishlist::$plugin->getItems()->saveElement($item)) {
@@ -531,6 +537,15 @@ class ItemsController extends BaseController
 
     private function _getOrCreateItem(ListElement $list, ElementInterface $element, array $postItem): Item
     {
+        if ($item = $this->_getItem($list, $element, $postItem)) {
+            return $item;
+        }
+
+        return $this->_createItem($list, $element, $postItem);
+    }
+
+    private function _getItem(ListElement $list, ElementInterface $element, array $postItem): ?Item
+    {
         $itemId = $postItem['itemId'] ?? null;
         $fields = $postItem['fields'] ?? [];
         $options = $postItem['options'] ?? [];
@@ -551,6 +566,14 @@ class ItemsController extends BaseController
         if ($item = $query->one()) {
             return $item;
         }
+
+        return null;
+    }
+
+    private function _createItem(ListElement $list, ElementInterface $element, array $postItem): Item
+    {
+        $fields = $postItem['fields'] ?? [];
+        $options = $postItem['options'] ?? [];
 
         $itemParams = array_filter(['options' => $options, 'fields' => $fields]);
         $item = WishList::$plugin->getItems()->createItem($list, $element, $itemParams);
