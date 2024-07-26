@@ -286,25 +286,6 @@ class Lists extends Component
         return true;
     }
 
-    public function addEditUserListInfoTab(array &$context): void
-    {
-        if (!$context['isNewUser']) {
-            $context['tabs']['wishlistInfo'] = [
-                'label' => Craft::t('wishlist', 'Wishlists'),
-                'url' => '#wishlistInfo',
-            ];
-        }
-    }
-
-    public function addEditUserListInfoTabContent(array &$context): string
-    {
-        if (!$context['user'] || $context['isNewUser']) {
-            return '';
-        }
-
-        return Craft::$app->getView()->renderTemplate('wishlist/_includes/_editUserTab', $context);
-    }
-
 
     // Private Methods
     // =========================================================================

@@ -2,6 +2,7 @@
 namespace verbb\wishlist;
 
 use verbb\wishlist\base\PluginTrait;
+use verbb\wishlist\controllers\UsersController as WishlistUsersController;
 use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\elements\Item;
 use verbb\wishlist\fieldlayoutelements\OptionsField;
@@ -20,7 +21,9 @@ use craft\base\Plugin;
 use craft\console\Application as ConsoleApplication;
 use craft\console\Controller as ConsoleController;
 use craft\console\controllers\ResaveController;
+use craft\controllers\UsersController;
 use craft\events\DefineConsoleActionsEvent;
+use craft\events\DefineEditUserScreensEvent;
 use craft\events\DefineFieldLayoutFieldsEvent;
 use craft\events\RebuildConfigEvent;
 use craft\events\RegisterComponentTypesEvent;
@@ -151,6 +154,10 @@ class Wishlist extends Plugin
     {
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event) {
             $event->rules = array_merge($event->rules, [
+                // User edit screen
+                'myaccount/wishlist' => 'wishlist/users/index',
+                'users/<userId:\d+>/wishlist' => 'wishlist/users/index',
+
                 'wishlist' => 'wishlist/lists/index',
 
                 'wishlist/lists/<listTypeHandle:{handle}>' => 'wishlist/lists/index',
@@ -323,8 +330,10 @@ class Wishlist extends Plugin
     private function _registerTemplateHooks(): void
     {
         if ($this->getSettings()->showListInfoTab) {
-            Craft::$app->getView()->hook('cp.users.edit', [$this->getLists(), 'addEditUserListInfoTab']);
-            Craft::$app->getView()->hook('cp.users.edit.content', [$this->getLists(), 'addEditUserListInfoTabContent']);
+            // Add Wishlist info to user edit screen
+            Event::on(UsersController::class, UsersController::EVENT_DEFINE_EDIT_SCREENS, function(DefineEditUserScreensEvent $event) {
+                $event->screens[WishlistUsersController::SCREEN_WISHLIST] = ['label' => Craft::t('wishlist', 'Wishlist')];
+            });
         }
     }
 
