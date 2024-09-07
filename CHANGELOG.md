@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.2 - 2024-09-07
+
+### Fixed
+- Fix Wishlist summary not appearing in user profile in the control panel.
+- Fix adding an item as a duplicate not working correctly.
+
 ## 3.0.1 - 2024-07-21
 
 ### Added
