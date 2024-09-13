@@ -443,7 +443,7 @@ class Lists extends Component
 
         $guestIds = $query->column();
 
-        return array_merge($userIds, $guestIds);
+        return array_values(array_unique(array_merge($userIds, $guestIds)));
     }
 
 }
