@@ -408,7 +408,12 @@ class Lists extends Component
             ->offset($offset);
 
         if ($settings->purgeEmptyListsOnly) {
-            $query->andWhere(['is', '[[items.listId]]', null]);
+            // Check if there's no item records found, or if the item no longer links to an element
+            $query->andWhere([
+                'or',
+                ['is', '[[items.listId]]', null],
+                ['is', '[[items.elementId]]', null],
+            ]);
         }
 
         $userIds = $query->column();
@@ -428,7 +433,12 @@ class Lists extends Component
             ->offset($offset);
 
         if ($settings->purgeEmptyGuestListsOnly) {
-            $query->andWhere(['is', '[[items.listId]]', null]);
+            // Check if there's no item records found, or if the item no longer links to an element
+            $query->andWhere([
+                'or',
+                ['is', '[[items.listId]]', null],
+                ['is', '[[items.elementId]]', null],
+            ]);
         }
 
         $guestIds = $query->column();
