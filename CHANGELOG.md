@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.3 - 2024-09-14
+
+### Fixed
+- Fix unnecessary duplicates when purging lists.
+- Fix an inconsistency when purging empty lists, where items still exist, but no longer relate to an element.
+
 ## 3.0.2 - 2024-09-07
 
 ### Fixed
