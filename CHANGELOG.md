@@ -73,6 +73,12 @@
 ### Deprecated
 - Deprecated `craft.wishlist.item()`. Use `craft.wishlist.items(params)` to find items, or `craft.wishlist.addItemUrl/toggleItemUrl/removeItemUrl` to manage items.
 
+## 2.0.13 - 2024-09-14
+
+### Fixed
+- Fix unnecessary duplicates when purging lists.
+- Fix an inconsistency when purging empty lists, where items still exist, but no longer relate to an element.
+
 ## 2.0.12 - 2024-07-21
 
 ### Fixed
