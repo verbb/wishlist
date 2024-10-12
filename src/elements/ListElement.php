@@ -320,6 +320,15 @@ class ListElement extends Element
     public function getItem(ElementInterface $element, array $params = []): ?Item
     {
         if ($this->id) {
+            // For anyone not using query params, ensure we use the eager-loaded items for performance
+            if (!$params) {
+                return ArrayHelper::firstWhere($this->getItems(), function(Item $item) use ($element) {
+                    return $item->elementId === $element->id && $item->elementSiteId === $element->siteId;
+                });
+            }
+
+            // TODO: change `$params` from a query param to filtering a Collection. This drastically effects performance
+            // doing an element query on a list in a loop for example.
             $query = Item::find()
                 ->listId($this->id)
                 ->elementId($element->id)
