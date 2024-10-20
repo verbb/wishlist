@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.4 - 2024-10-20
+
+### Changed
+- Improve `list.getItem()` performance when not providing additional query params to filter by.
+
 ## 3.0.3 - 2024-09-14
 
 ### Fixed
