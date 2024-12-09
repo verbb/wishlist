@@ -9,6 +9,7 @@ use verbb\wishlist\models\Settings;
 
 use Craft;
 use craft\elements\User;
+use craft\helpers\ArrayHelper;
 use craft\helpers\Assets;
 use craft\helpers\Json;
 use craft\mail\Message;
@@ -358,7 +359,7 @@ class ListsController extends BaseController
         // Check to see if we want to add all the items in the list, or just specific ones
         $addingPurchasables = $this->request->getParam('purchasables');
 
-        foreach ($list->getItems()->indexBy('id')->all() as $key => $item) {
+        foreach (ArrayHelper::index($list->getItems(), 'id') as $key => $item) {
             if (is_a($item->getElement(), Purchasable::class)) {
                 $purchasable = $item->getElement();
 
