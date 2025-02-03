@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.5 - 2025-02-03
+
+### Fixed
+- Fix an error when adding wishlist items to a cart.
+
 ## 3.0.4 - 2024-10-20
 
 ### Changed
