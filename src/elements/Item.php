@@ -172,7 +172,7 @@ class Item extends Element
     public function updateTitle(): void
     {
         if ($element = $this->getElement()) {
-            $this->title = $element->title;
+            $this->title = $element->title ?: $element::displayName();
         }
     }
 

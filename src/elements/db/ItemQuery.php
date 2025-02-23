@@ -88,7 +88,7 @@ class ItemQuery extends ElementQuery
         ]);
 
         // Join the linked-to element's content
-        $this->subQuery->innerJoin('{{%content}} element_content', '[[wishlist_items.elementId]] = [[element_content.elementId]] AND [[wishlist_items.elementSiteId]] = [[element_content.siteId]]');
+        $this->subQuery->leftJoin('{{%content}} element_content', '[[wishlist_items.elementId]] = [[element_content.elementId]] AND [[wishlist_items.elementSiteId]] = [[element_content.siteId]]');
         $this->subQuery->addSelect('element_content.title AS elementTitle');
 
         if ($this->id) {
