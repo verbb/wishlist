@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.14 - 2025-03-04
+
+### Fixed
+- Fix Wishlist items not working correctly for contentless elements like Matrix blocks.
+
 ## 2.0.13 - 2024-09-14
 
 ### Fixed
