@@ -5,10 +5,9 @@ use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\helpers\Gql as GqlHelper;
 
 use craft\elements\db\ElementQuery;
+use craft\elements\ElementCollection;
 use craft\gql\base\ElementResolver;
 use craft\helpers\Db;
-
-use Illuminate\Support\Collection;
 
 class ListResolver extends ElementResolver
 {
@@ -34,7 +33,7 @@ class ListResolver extends ElementResolver
         $pairs = GqlHelper::extractAllowedEntitiesFromSchema('read');
 
         if (!GqlHelper::canQueryWishlist()) {
-            return Collection::empty();
+            return ElementCollection::empty();
         }
 
         if (!GqlHelper::canSchema('wishlistListTypes.all')) {
