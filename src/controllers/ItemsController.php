@@ -451,18 +451,29 @@ class ItemsController extends BaseController
         }
 
         // By default, handle multi-items, but if not - set them up as one
-        return $this->request->getParam('items', [
-            array_merge([
-                'itemId' => $this->request->getParam('itemId'),
-                'listId' => $this->request->getParam('listId'),
-                'listType' => $this->request->getParam('listType'),
-                'elementId' => $this->request->getParam('elementId'),
-                'elementSiteId' => $this->request->getParam('elementSiteId'),
-                'newList' => $this->request->getParam('newList', false),
-                'fields' => $this->request->getParam('fields', []),
-                'options' => $this->request->getParam('options', []),
-            ], $urlPayload),
-        ]);
+        $baseItem = array_merge([
+            'itemId' => $this->request->getParam('itemId'),
+            'listId' => $this->request->getParam('listId'),
+            'listType' => $this->request->getParam('listType'),
+            'elementId' => $this->request->getParam('elementId'),
+            'elementSiteId' => $this->request->getParam('elementSiteId'),
+            'newList' => $this->request->getParam('newList', false),
+            'fields' => $this->request->getParam('fields', []),
+            'options' => $this->request->getParam('options', []),
+        ], $urlPayload);
+
+        // Merge any item attributes which would override the base values above
+        $items = $this->request->getParam('items') ?? [];
+
+        if ($items && is_array($items)) {
+            foreach ($items as $key => $item) {
+                $items[$key] = array_merge($baseItem, $item);
+            }
+        } else {
+            $items = [$baseItem];
+        }
+
+        return $items;
     }
 
     private function _getElementForItem(array $postItem): ElementInterface|ItemError
