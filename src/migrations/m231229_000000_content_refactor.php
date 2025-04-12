@@ -20,13 +20,13 @@ class m231229_000000_content_refactor extends BaseContentRefactorMigration
 
             $this->updateElements(
                 $listIds,
-                $type->getFieldLayout(),
+                $type->getListFieldLayout(),
             );
 
             foreach ($listIds as $listId) {
                 $this->updateElements(
                     (new Query())->from('{{%wishlist_items}}')->where(['listId' => $listId]),
-                    $type->getFieldLayout(),
+                    $type->getItemFieldLayout(),
                 );
             }
         }
