@@ -169,6 +169,11 @@ class Item extends Element
         parent::init();
 
         $this->title = $this->getElementTitle();
+
+        // Handle deprecated elements
+        if ($this->elementClass === 'craft\elements\MatrixBlock') {
+            $this->elementClass = 'craft\elements\Entry';
+        }
     }
 
     public function canView(User $user): bool
