@@ -76,7 +76,7 @@ class Pdf extends Component
             Craft::error('List PDF render error. List ID: ' . $list->id . '. ' . $e->getMessage());
 
             Craft::$app->getErrorHandler()->logException($e);
-            $html = Craft::t('events', 'An error occurred while generating this PDF.');
+            $html = Craft::t('wishlist', 'An error occurred while generating this PDF.');
         }
 
         // Restore the original template mode
