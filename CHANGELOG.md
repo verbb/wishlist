@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.0.7 - 2025-05-01
+
+### Changed
+- Update GraphQL resolvers to use `ElementCollection` correctly.
+
+### Fixed
+- Fix PDF handling for Craft Cloud.
+- Fix typo when generating an error when rendering a PDF template
+- Fix an error where wishlist items on Matrix blocks in Craft 4 were throwing an error.
+- Fix a Wishlist 3 migration error where custom fields on items weren’t being migrated properly.
+- Fix normalization of bulk or multi-actions for items (like adding multiple items to a nominated `listId`).
+
 ## 3.0.6 - 2025-03-04
 
 ### Fixed
