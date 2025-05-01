@@ -94,6 +94,11 @@
 ### Deprecated
 - Deprecated `craft.wishlist.item()`. Use `craft.wishlist.items(params)` to find items, or `craft.wishlist.addItemUrl/toggleItemUrl/removeItemUrl` to manage items.
 
+## 2.0.15 - 2025-05-01
+
+### Fixed
+- Fix PDF handling for Craft Cloud.
+
 ## 2.0.14 - 2025-03-04
 
 ### Fixed
