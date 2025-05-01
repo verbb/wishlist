@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.15 - 2025-05-01
+
+### Fixed
+- Fix PDF handling for Craft Cloud.
+
 ## 2.0.14 - 2025-03-04
 
 ### Fixed
