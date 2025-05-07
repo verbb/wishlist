@@ -5,6 +5,8 @@ use verbb\wishlist\Wishlist;
 use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\errors\ItemError;
 use verbb\wishlist\errors\ListError;
+use verbb\wishlist\events\AddLineItemEvent;
+use verbb\wishlist\events\AddToCartEvent;
 use verbb\wishlist\models\Settings;
 
 use Craft;
@@ -26,6 +28,15 @@ use Throwable;
 
 class ListsController extends BaseController
 {
+    // Constants
+    // =========================================================================
+
+    public const EVENT_BEFORE_ADD_TO_CART = 'beforeAddToCart';
+    public const EVENT_AFTER_ADD_TO_CART = 'afterAddToCart';
+    public const EVENT_BEFORE_ADD_LINE_ITEM = 'beforeAddLineItem';
+    public const EVENT_AFTER_ADD_LINE_ITEM = 'afterAddLineItem';
+
+
     // Properties
     // =========================================================================
 
@@ -359,6 +370,14 @@ class ListsController extends BaseController
         // Check to see if we want to add all the items in the list, or just specific ones
         $addingPurchasables = $this->request->getParam('purchasables');
 
+        // Fire a 'beforeAddToCart' event
+        if ($this->hasEventHandlers(self::EVENT_BEFORE_ADD_TO_CART)) {
+            $this->trigger(self::EVENT_BEFORE_ADD_TO_CART, new AddToCartEvent([
+                'cart' => $cart,
+                'list' => $list,
+            ]));
+        }
+
         foreach (ArrayHelper::index($list->getItems(), 'id') as $key => $item) {
             if (is_a($item->getElement(), Purchasable::class)) {
                 $purchasable = $item->getElement();
@@ -398,7 +417,28 @@ class ListsController extends BaseController
                     }
 
                     $lineItem->note = $note;
+
+                    // Fire a 'beforeAddLineItem' event
+                    if ($this->hasEventHandlers(self::EVENT_BEFORE_ADD_LINE_ITEM)) {
+                        $this->trigger(self::EVENT_BEFORE_ADD_LINE_ITEM, new AddLineItemEvent([
+                            'cart' => $cart,
+                            'list' => $list,
+                            'item' => $item,
+                            'lineItem' => $lineItem,
+                        ]));
+                    }
+
                     $cart->addLineItem($lineItem);
+
+                    // Fire a 'afterAddLineItem' event
+                    if ($this->hasEventHandlers(self::EVENT_AFTER_ADD_LINE_ITEM)) {
+                        $this->trigger(self::EVENT_AFTER_ADD_LINE_ITEM, new AddLineItemEvent([
+                            'cart' => $cart,
+                            'list' => $list,
+                            'item' => $item,
+                            'lineItem' => $lineItem,
+                        ]));
+                    }
 
                     // Should we remove it from the list?
                     $removeFromList = $this->request->getParam("purchasables.{$key}.removeFromList", false);
@@ -414,6 +454,14 @@ class ListsController extends BaseController
             return $this->returnError('Unable to add items to cart.', [
                 'list' => $list,
             ]);
+        }
+
+        // Fire a 'afterAddToCart' event
+        if ($this->hasEventHandlers(self::EVENT_AFTER_ADD_TO_CART)) {
+            $this->trigger(self::EVENT_AFTER_ADD_TO_CART, new AddToCartEvent([
+                'cart' => $cart,
+                'list' => $list,
+            ]));
         }
 
         // Should we remove all items from the list after adding?
