@@ -57,6 +57,7 @@
 - Fix list permissions enforcement for adding items to a cart from another users list.
 
 ## 3.0.0 - 2024-05-18
+
 > {warning} This is a major version with some breaking changes. Be sure to read our [Upgrading from v2](https://verbb.io/craft-plugins/wishlist/docs/get-started/upgrading-from-v2) guide.
 
 ### Added
@@ -105,6 +106,11 @@
 
 ### Deprecated
 - Deprecated `craft.wishlist.item()`. Use `craft.wishlist.items(params)` to find items, or `craft.wishlist.addItemUrl/toggleItemUrl/removeItemUrl` to manage items.
+
+## 2.0.16 - 2025-07-18
+
+### Changed
+- Update English translations.
 
 ## 2.0.15 - 2025-05-01
 
