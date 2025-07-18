@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.0.8 - 2025-07-18
+
+### Added
+- Add “Add to Cart” action events.
+
+### Changed
+- Update English translations.
+
 ## 3.0.7 - 2025-05-01
 
 ### Changed
