@@ -115,6 +115,11 @@
 ### Deprecated
 - Deprecated `craft.wishlist.item()`. Use `craft.wishlist.items(params)` to find items, or `craft.wishlist.addItemUrl/toggleItemUrl/removeItemUrl` to manage items.
 
+## 2.0.17 - 2025-09-12
+
+### Added
+- Add list-owner enforcement for managing list items from the front-end.
+
 ## 2.0.16 - 2025-07-18
 
 ### Changed

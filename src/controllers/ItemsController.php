@@ -177,6 +177,9 @@ class ItemsController extends BaseController
                     continue;
                 }
 
+                // Check if we're allowed to manage lists
+                $this->enforceListPermissions($list);
+
                 // Create the item for the list and element, with additional attributes
                 $item = $this->_getOrCreateItem($list, $element, $postItem);
 
@@ -246,6 +249,9 @@ class ItemsController extends BaseController
                     continue;
                 }
 
+                // Check if we're allowed to manage lists
+                $this->enforceListPermissions($list);
+
                 // Create the item for the list and element, with additional attributes
                 $item = $this->_getOrCreateItem($list, $element, $postItem);
 
@@ -312,6 +318,9 @@ class ItemsController extends BaseController
                     continue;
                 }
 
+                // Check if we're allowed to manage lists
+                $this->enforceListPermissions($list);
+
                 // Create the item for the list and element, with additional attributes
                 $item = $this->_getOrCreateItem($list, $element, $postItem);
 
@@ -373,6 +382,7 @@ class ItemsController extends BaseController
 
             // Check if we're allowed to manage lists
             $this->enforceEnabledList($item->getList());
+            $this->enforceListPermissions($item->getList());
 
             $item->setFieldValues($fields);
             $item->setOptions($options);
@@ -539,6 +549,7 @@ class ItemsController extends BaseController
 
             // Check if we're allowed to manage lists
             $this->enforceEnabledList($list);
+            $this->enforceListPermissions($list);
 
             $lists[] = $list;
         }
