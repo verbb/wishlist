@@ -187,6 +187,7 @@ class ItemsController extends BaseController
 
             // Check if we're allowed to manage lists
             $this->enforceEnabledList($item->getList());
+            $this->enforceListPermissions($item->getList());
 
             // Set any additional options on the item
             $options = $postItem['options'] ?? [];
@@ -252,6 +253,7 @@ class ItemsController extends BaseController
 
         // Check if we're allowed to manage lists
         $this->enforceEnabledList($list);
+        $this->enforceListPermissions($list);
 
         $errors = [];
 
@@ -348,6 +350,7 @@ class ItemsController extends BaseController
 
         // Check if we're allowed to manage lists
         $this->enforceEnabledList($list);
+        $this->enforceListPermissions($list);
 
         $errors = [];
 
@@ -457,6 +460,7 @@ class ItemsController extends BaseController
 
         // Check if we're allowed to manage lists
         $this->enforceEnabledList($item->getList());
+        $this->enforceListPermissions($item->getList());
 
         $item->setFieldValuesFromRequest('fields');
 

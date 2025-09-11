@@ -492,48 +492,6 @@ class ListsController extends BaseController
     }
 
 
-    // Protected Methods
-    // =========================================================================
-
-    protected function enforceListPermissions(ListElement $list, bool $enforceOwner = true): void
-    {
-        if (!$list->getType()) {
-            Craft::error('Attempting to access a list that doesn’t have a type', __METHOD__);
-            throw new HttpException(404);
-        }
-
-        // If this is a front-end request, ensure that it's the owner of the list making changes
-        if ($enforceOwner) {
-            if (Craft::$app->getRequest()->getIsSiteRequest()) {
-                $currentUser = Craft::$app->getUser()->getIdentity();
-
-                // If an admin, assume they have permission to edit another list
-                if (Craft::$app->getUser()->getIsAdmin()) {
-                    return;
-                }
-
-                // If logged in, easy check
-                if ($currentUser) {
-                    if ($currentUser->id !== $list->userId) {
-                        throw new HttpException(403);
-                    }
-
-                    return;
-                }
-
-                if ($list->sessionId !== Craft::$app->getSession()->get('wishlist_list')) {
-                    // Check if the guests session matches the lists
-                    throw new HttpException(403);
-                }
-
-                return;
-            }
-            
-            $this->requirePermission('wishlist-manageListType:' . $list->getType()->uid);
-        }
-    }
-
-
     // Private Methods
     // =========================================================================
 

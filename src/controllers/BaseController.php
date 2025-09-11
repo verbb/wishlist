@@ -2,6 +2,7 @@
 namespace verbb\wishlist\controllers;
 
 use verbb\wishlist\Wishlist;
+use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\models\Settings;
 
 use Craft;
@@ -9,6 +10,7 @@ use craft\helpers\StringHelper;
 use craft\web\Controller;
 
 use yii\web\ForbiddenHttpException;
+use yii\web\HttpException;
 use yii\web\Response;
 
 class BaseController extends Controller
@@ -24,6 +26,44 @@ class BaseController extends Controller
         // If it's disabled, and should we check?
         if ($list && !$list->enabled && !$settings->manageDisabledLists) {
             throw new ForbiddenHttpException('User is not permitted to perform this action');
+        }
+    }
+
+    protected function enforceListPermissions(ListElement $list, bool $enforceOwner = true): void
+    {
+        if (!$list->getType()) {
+            Craft::error('Attempting to access a list that doesn’t have a type', __METHOD__);
+            throw new HttpException(404);
+        }
+
+        // If this is a front-end request, ensure that it's the owner of the list making changes
+        if ($enforceOwner) {
+            if (Craft::$app->getRequest()->getIsSiteRequest()) {
+                $currentUser = Craft::$app->getUser()->getIdentity();
+
+                // If an admin, assume they have permission to edit another list
+                if (Craft::$app->getUser()->getIsAdmin()) {
+                    return;
+                }
+
+                // If logged in, easy check
+                if ($currentUser) {
+                    if ($currentUser->id !== $list->userId) {
+                        throw new HttpException(403);
+                    }
+
+                    return;
+                }
+
+                if ($list->sessionId !== Craft::$app->getSession()->get('wishlist_list')) {
+                    // Check if the guests session matches the lists
+                    throw new HttpException(403);
+                }
+
+                return;
+            }
+            
+            $this->requirePermission('wishlist-manageListType:' . $list->getType()->uid);
         }
     }
 
