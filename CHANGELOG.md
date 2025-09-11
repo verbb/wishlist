@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.9 - 2025-09-12
+
+### Added
+- Add list-owner enforcement for managing list items from the front-end.
+
 ## 3.0.8 - 2025-07-18
 
 ### Added
