@@ -532,6 +532,22 @@
       "oAP" : "\/src\/errors\/ListError.php",
       "oF" : 0
     },
+    "\/src\/events\/AddLineItemEvent.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/events\/AddLineItemEvent.php",
+      "oF" : 0
+    },
+    "\/src\/events\/AddToCartEvent.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/events\/AddToCartEvent.php",
+      "oF" : 0
+    },
     "\/src\/events\/ListTypeEvent.php" : {
       "cB" : 0,
       "ft" : 8192,

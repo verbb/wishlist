@@ -12,7 +12,7 @@ use Craft;
 use craft\base\Field;
 use craft\base\MemoizableArray;
 use craft\db\Query;
-use craft\events\ConfigEvent;
+use CraftCms\Cms\ProjectConfig\Events\ItemAdded;
 use craft\events\FieldEvent;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Db;
@@ -122,7 +122,7 @@ class ListTypes extends Component
         return true;
     }
 
-    public function handleChangedListType(ConfigEvent $event): void
+    public function handleChangedListType($event): void
     {
         $listTypeUid = $event->tokenMatches[0];
         $data = $event->newValue;
@@ -213,7 +213,7 @@ class ListTypes extends Component
         return true;
     }
 
-    public function handleDeletedListType(ConfigEvent $event): void
+    public function handleDeletedListType($event): void
     {
         $uid = $event->tokenMatches[0];
         $listTypeRecord = $this->_getListTypeRecord($uid);

@@ -2,7 +2,7 @@
     "name": "verbb/wishlist",
     "description": "Allow users to create lists to store favourite entries, save products in a wishlist and more.",
     "type": "craft-plugin",
-    "version": "3.0.8",
+    "version": "4.0.0-alpha.1",
     "keywords": [
         "craft",
         "cms",
@@ -25,10 +25,10 @@
         }
     ],
     "require": {
-        "php": "^8.2",
-        "craftcms/cms": "^5.0.0",
+        "php": "^8.4",
+        "craftcms/cms": "6.x-dev",
         "dompdf/dompdf": "^1.0.2 || ^2.0.4",
-        "verbb/base": "^3.0.0"
+        "verbb/base": "dev-craft-6"
     },
     "autoload": {
         "psr-4": {
@@ -38,7 +38,9 @@
     "extra": {
         "name": "Wishlist",
         "handle": "wishlist",
-        "changelogUrl": "https://raw.githubusercontent.com/verbb/wishlist/craft-5/CHANGELOG.md",
+        "changelogUrl": "https://raw.githubusercontent.com/verbb/wishlist/craft-6/CHANGELOG.md",
         "class": "verbb\\wishlist\\Wishlist"
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
