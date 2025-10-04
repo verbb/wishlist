@@ -468,6 +468,8 @@ class ItemsController extends BaseController
             'elementId' => $this->request->getParam('elementId'),
             'elementSiteId' => $this->request->getParam('elementSiteId'),
             'newList' => $this->request->getParam('newList', false),
+            'listTitle' => $this->request->getParam('listTitle', null),
+            'listEnabled' => $this->request->getParam('listEnabled', true),
             'fields' => $this->request->getParam('fields', []),
             'options' => $this->request->getParam('options', []),
         ], $urlPayload);
