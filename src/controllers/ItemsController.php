@@ -540,6 +540,8 @@ class ItemsController extends BaseController
                     $list = Wishlist::$plugin->getLists()->getUserList($listParams);
                 }
 
+                $list->title = $postItem['listTitle'] ?? $list->title;
+
                 if (!Wishlist::$plugin->getLists()->saveElement($list)) {
                     $lists[] = new ItemError('Unable to save list.', ['list' => $list]);
 
