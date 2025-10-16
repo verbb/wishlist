@@ -106,6 +106,7 @@ class ItemQuery extends ElementQuery
         $this->joinElementTable('wishlist_items');
 
         $this->subQuery->innerJoin('{{%wishlist_lists}} wishlist_lists', '[[wishlist_items.listId]] = [[wishlist_lists.id]]');
+        $this->subQuery->innerJoin('{{%elements}} lists_elements', '[[wishlist_items.listId]] = [[lists_elements.id]]');
 
         // And join the element table for the linked element, in order to fetch non-deleted linked elements
         $this->query->leftJoin('{{%elements}} element_item', '[[wishlist_items.elementId]] = [[element_item.id]]');
@@ -171,6 +172,14 @@ class ItemQuery extends ElementQuery
 
         if (!$this->trashedElement) {
             $this->query->andWhere(['element_item.dateDeleted' => null]);
+        }
+
+        // Ensure that we respect the trashed param, in case the list has been deleted. We don't update the item's deleted
+        // status (but we probably should!). TODO: querying only trashed items won't work for example...
+        if ($this->trashed === false) {
+            $this->subQuery->andWhere(['lists_elements.dateDeleted' => null]);
+        } else if ($this->trashed === true) {
+            $this->subQuery->andWhere(['not', ['lists_elements.dateDeleted' => null]]);
         }
 
         return parent::beforePrepare();
