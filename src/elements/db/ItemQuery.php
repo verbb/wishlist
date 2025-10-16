@@ -75,6 +75,7 @@ class ItemQuery extends ElementQuery
         $this->joinElementTable('wishlist_items');
 
         $this->subQuery->innerJoin('{{%wishlist_lists}} wishlist_lists', '[[wishlist_items.listId]] = [[wishlist_lists.id]]');
+        $this->subQuery->innerJoin('{{%elements}} lists_elements', '[[wishlist_items.listId]] = [[lists_elements.id]]');
 
         $this->query->select([
             'wishlist_items.id',
@@ -125,6 +126,14 @@ class ItemQuery extends ElementQuery
 
         if ($this->listTypeId) {
             $this->subQuery->andWhere(Db::parseParam('wishlist_lists.typeId', $this->listTypeId));
+        }
+
+        // Ensure that we respect the trashed param, in case the list has been deleted. We don't update the item's deleted
+        // status (but we probably should!). TODO: querying only trashed items won't work for example...
+        if ($this->trashed === false) {
+            $this->subQuery->andWhere(['lists_elements.dateDeleted' => null]);
+        } else if ($this->trashed === true) {
+            $this->subQuery->andWhere(['not', ['lists_elements.dateDeleted' => null]]);
         }
 
         return parent::beforePrepare();
