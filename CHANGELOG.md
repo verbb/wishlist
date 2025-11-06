@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.18 - 2025-11-06
+
+### Fixed
+- Fix querying list items returning items from deleted lists.
+
 ## 2.0.17 - 2025-09-12
 
 ### Added
