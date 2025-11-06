@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.0.10 - 2025-11-06
+
+### Added
+- Add the ability to set `listEnabled` when adding new list items.
+- Add the ability to set `listTitle` when adding new list items.
+
+### Fixed
+- Fix querying list items returning items from deleted lists.
+
 ## 3.0.9 - 2025-09-12
 
 ### Added
