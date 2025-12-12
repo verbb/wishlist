@@ -14,6 +14,7 @@ use craft\elements\User;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Assets;
 use craft\helpers\Json;
+use craft\helpers\Template;
 use craft\mail\Message;
 use craft\web\View;
 
