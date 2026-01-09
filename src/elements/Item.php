@@ -82,25 +82,44 @@ class Item extends Element
 
     protected static function defineSearchableAttributes(): array
     {
-        return ['title', 'elementDisplay'];
+        return ['title', 'elementClass'];
     }
 
     protected static function defineSortOptions(): array
     {
         return [
-            'title' => Craft::t('app', 'Item'),
-            'elementDisplay' => Craft::t('app', 'Type'),
-            'dateCreated' => Craft::t('app', 'Date Created'),
+            [
+                'label' => Craft::t('app', 'Title'),
+                'orderBy' => 'elementTitle',
+                'attribute' => 'title',
+            ],
+            [
+                'label' => Craft::t('app', 'Type'),
+                'orderBy' => 'elementClass',
+                'attribute' => 'elementClass',
+            ],
+            [
+                'label' => Craft::t('app', 'Date Created'),
+                'orderBy' => 'dateCreated',
+                'defaultDir' => 'desc',
+            ],
+            [
+                'label' => Craft::t('app', 'Date Updated'),
+                'orderBy' => 'dateUpdated',
+                'defaultDir' => 'desc',
+            ],
+            [
+                'label' => Craft::t('app', 'ID'),
+                'orderBy' => 'id',
+            ],
         ];
     }
 
     protected static function defineTableAttributes(): array
     {
-        return [
-            'title' => ['label' => Craft::t('app', 'Item')],
-            'elementDisplay' => ['label' => Craft::t('app', 'Type')],
-            'dateCreated' => ['label' => Craft::t('app', 'Date Created')],
-        ];
+        return array_merge(parent::defineTableAttributes(), [
+            'elementClass' => ['label' => Craft::t('app', 'Type')],
+        ]);
     }
 
     protected static function defineDefaultTableAttributes(string $source): array
@@ -108,7 +127,7 @@ class Item extends Element
         $attributes = [];
 
         $attributes[] = 'title';
-        $attributes[] = 'elementDisplay';
+        $attributes[] = 'elementClass';
         $attributes[] = 'dateCreated';
 
         return $attributes;
@@ -428,5 +447,14 @@ class Item extends Element
     protected function cpEditUrl(): ?string
     {
         return UrlHelper::cpUrl('wishlist/lists/' . $this->getList()->getType()->handle . '/' . $this->listId . '/items/' . $this->id);
+    }
+
+    protected function attributeHtml(string $attribute): string
+    {
+        if ($attribute == 'elementClass') {
+            return $this->getElementDisplay();
+        }
+
+        return parent::attributeHtml($attribute);
     }
 }
