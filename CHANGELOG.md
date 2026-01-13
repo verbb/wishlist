@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.11 - 2026-01-13
+
+### Fixed
+- Fix table columns and sorting for Wishlist items in the control panel.
+- Fix an error when trying to render email templates for lists.
+
 ## 3.0.10 - 2025-11-06
 
 ### Added
