@@ -7,6 +7,7 @@ use verbb\wishlist\errors\ItemError;
 use verbb\wishlist\errors\ListError;
 use verbb\wishlist\events\AddLineItemEvent;
 use verbb\wishlist\events\AddToCartEvent;
+use verbb\wishlist\helpers\Markdown;
 use verbb\wishlist\models\Settings;
 
 use Craft;
@@ -697,39 +698,55 @@ class ListsController extends BaseController
         $settings = Wishlist::$plugin->getSettings();
 
         $mailer = Craft::$app->getMailer();
-        $message = $mailer->composeFromKey($key, $variables);
-
-        // Default to the current language
         $language = Craft::$app->getRequest()->getIsSiteRequest() ? Craft::$app->language : Craft::$app->getSites()->getPrimarySite()->language;
         $systemMessage = Craft::$app->getSystemMessages()->getMessage($key, $language);
 
         $view = Craft::$app->getView();
 
-        $message->setSubject($view->renderString($systemMessage->subject, $variables, View::TEMPLATE_MODE_SITE));
+        $subject = $view->renderString($systemMessage->subject, $variables, View::TEMPLATE_MODE_SITE);
         $textBody = $view->renderString($systemMessage->body, $variables, View::TEMPLATE_MODE_SITE);
 
+        // Use custom template if configured, otherwise fall back to Craft's default
         if ($settings->templateEmail) {
             $template = $settings->templateEmail;
             $templateMode = View::TEMPLATE_MODE_SITE;
         } else {
-            // Default to the `_special/email` template from Craft.
             $template = '_special/email';
             $templateMode = View::TEMPLATE_MODE_CP;
         }
 
-        try {
-            $message->setHtmlBody($view->renderTemplate($template, array_merge($variables, [
-                'body' => Template::raw(Markdown::process($textBody)),
+        $htmlBody = null;
 
-                // Required when using `_special/email` from Craft.
+        try {
+            $templateVariables = array_merge($variables, [
                 'language' => $language,
-            ]), $templateMode));
-        } catch (Throwable $e) {
-            Wishlist::error('Error rendering email template: {message} {file}:{line}.', [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
             ]);
+
+            // Only add body variable when using Craft's default template
+            if (!$settings->templateEmail) {
+                $templateVariables['body'] = Template::raw(Markdown::process($textBody));
+            }
+
+            $htmlBody = $view->renderTemplate($template, $templateVariables, $templateMode);
+
+            if (empty(trim($htmlBody))) {
+                $htmlBody = null;
+            }
+        } catch (Throwable $e) {
+            Wishlist::error('Error rendering email template: {message}', [
+                'message' => $e->getMessage(),
+            ]);
+        }
+
+        // Use compose() instead of composeFromKey() to ensure custom HTML body is used
+        if ($htmlBody) {
+            $message = $mailer->compose()
+                ->setSubject($subject)
+                ->setTextBody($textBody)
+                ->setHtmlBody($htmlBody);
+        } else {
+            $message = $mailer->composeFromKey($key, $variables);
+            $message->setSubject($subject);
         }
 
         return $message;
