@@ -7,7 +7,6 @@ use verbb\wishlist\errors\ItemError;
 use verbb\wishlist\errors\ListError;
 use verbb\wishlist\events\AddLineItemEvent;
 use verbb\wishlist\events\AddToCartEvent;
-use verbb\wishlist\helpers\Markdown;
 use verbb\wishlist\models\Settings;
 
 use Craft;
