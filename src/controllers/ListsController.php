@@ -22,6 +22,7 @@ use craft\commerce\Plugin as Commerce;
 use craft\commerce\base\Purchasable;
 
 use yii\base\Exception;
+use yii\helpers\Markdown;
 use yii\web\HttpException;
 use yii\web\Response;
 
