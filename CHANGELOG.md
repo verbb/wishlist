@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.12 - 2026-01-23
+
+### Fixed
+- Fix an error rendering Markdown for emails.
+- Fix bug when using custom email templates.
+
 ## 3.0.11 - 2026-01-13
 
 ### Fixed
