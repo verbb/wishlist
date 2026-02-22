@@ -1,5 +1,5 @@
 # Getting List Items
-No doubt you'll want to display the contents of a user's list at some point. To do this, you'll need to first fetch the list first, which will be for the current user, and then loop through the contained items.
+No doubt you'll want to display the contents of a user's list at some point. To do this, you'll need to first fetch the list, which will be for the current user, and then loop through the contained items.
 
 ## Single List
 If you're after just a single list, the `getUserList()` method will return the default list for the current user. This includes whether the user is logged in, or a guest. `getUserList()` will always return a List element, even if the user hasn't added any items to their list, as it will be their empty, but default list.
