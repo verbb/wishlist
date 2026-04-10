@@ -156,6 +156,7 @@ class ItemsController extends BaseController
 
         $errors = [];
         $variables = [];
+        $batchNewListId = null;
 
         foreach ($postItems as $key => $postItem) {
             // Get the element we're trying to action
@@ -167,14 +168,21 @@ class ItemsController extends BaseController
                 continue;
             }
 
+            $wantsNewList = !empty($postItem['newList']);
+            $postItemForLists = $this->_resolvePostItemForBatchNewList($postItem, $batchNewListId);
+
             // Get the existing list (either passed in, or the users default), or create it
-            $lists = $this->_getOrCreateLists($postItem);
+            $lists = $this->_getOrCreateLists($postItemForLists);
 
             foreach ($lists as $list) {
                 if ($list instanceof ItemError) {
                     $errors[$key] = $list;
 
                     continue;
+                }
+
+                if ($wantsNewList && $batchNewListId === null) {
+                    $batchNewListId = $list->id;
                 }
 
                 // Check if we're allowed to manage lists
@@ -228,6 +236,7 @@ class ItemsController extends BaseController
 
         $errors = [];
         $variables = [];
+        $batchNewListId = null;
 
         foreach ($postItems as $key => $postItem) {
             // Get the element we're trying to action
@@ -239,14 +248,21 @@ class ItemsController extends BaseController
                 continue;
             }
 
+            $wantsNewList = !empty($postItem['newList']);
+            $postItemForLists = $this->_resolvePostItemForBatchNewList($postItem, $batchNewListId);
+
             // Get the existing list (either passed in, or the users default), or create it
-            $lists = $this->_getOrCreateLists($postItem);
+            $lists = $this->_getOrCreateLists($postItemForLists);
 
             foreach ($lists as $list) {
                 if ($list instanceof ItemError) {
                     $errors[$key] = $list;
 
                     continue;
+                }
+
+                if ($wantsNewList && $batchNewListId === null) {
+                    $batchNewListId = $list->id;
                 }
 
                 // Check if we're allowed to manage lists
@@ -414,6 +430,18 @@ class ItemsController extends BaseController
 
     // Private Methods
     // =========================================================================
+
+    private function _resolvePostItemForBatchNewList(array $postItem, ?int &$batchNewListId): array
+    {
+        if (!empty($postItem['newList']) && $batchNewListId !== null) {
+            return array_merge($postItem, [
+                'newList' => false,
+                'listId' => $batchNewListId,
+            ]);
+        }
+
+        return $postItem;
+    }
 
     private function _prepareVariableArray(array &$variables): void
     {
