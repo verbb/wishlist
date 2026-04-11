@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.13 - 2026-04-11
+
+### Fixed
+- Fix `newList` parameter for some actions, so a single request creates one list when adding multiple items.
+
 ## 3.0.12 - 2026-01-23
 
 ### Fixed
