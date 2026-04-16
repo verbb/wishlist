@@ -303,6 +303,13 @@ class Lists extends Component
         // If no session, check for a saved cookie, allowing us to retain lists after sessions have ended
         if (!$sessionId) {
             $sessionId = Craft::$app->getRequest()->getRawCookies()->getValue($cookieName);
+
+            // Mirror the cookie into the PHP session. Guest permission checks compare the list’s
+            // sessionId to Session::get('wishlist_list'); without this, a new Craft session with
+            // only the cookie set would still have an empty session key and every action 403s.
+            if ($sessionId) {
+                $session->set($this->listName, $sessionId);
+            }
         }
 
         // If still no session, we better generate a new one.
