@@ -63,6 +63,7 @@ return [
   'Manage lists' => 'Manage lists',
   'Manage list types' => 'Manage list types',
   'Manage “{type}” lists' => 'Manage “{type}” lists',
+  'Manage other users’ “{type}” lists' => 'Manage other users’ “{type}” lists',
   'Merge List on Login' => 'Merge List on Login',
   'Migrate Shortlist' => 'Migrate Shortlist',
   'Migrate Shortlist (for Craft 2)' => 'Migrate Shortlist (for Craft 2)',

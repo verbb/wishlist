@@ -227,8 +227,8 @@ class ListsController extends BaseController
         $this->enforceEnabledList($list);
         $this->enforceListPermissions($list);
 
-        // Only owners can update their own lists
-        if (!WishList::$plugin->getLists()->isListOwner($list)) {
+        // Only owners (or users with manage-others permission) can update lists
+        if (!Wishlist::$plugin->getLists()->canModifyListContent($list)) {
             throw new Exception(Craft::t('wishlist', 'You can only update your own list.'));
         }
 
@@ -253,8 +253,8 @@ class ListsController extends BaseController
         $this->enforceEnabledList($list);
         $this->enforceListPermissions($list);
 
-        // Only owners can update their own lists
-        if (!WishList::$plugin->getLists()->isListOwner($list)) {
+        // Only owners (or users with manage-others permission) can update lists
+        if (!Wishlist::$plugin->getLists()->canModifyListContent($list)) {
             throw new Exception(Craft::t('wishlist', 'You can only update your own list.'));
         }
 
@@ -304,8 +304,8 @@ class ListsController extends BaseController
         $this->enforceEnabledList($list);
         $this->enforceListPermissions($list);
 
-        // Only owners can delete their own lists
-        if (!WishList::$plugin->getLists()->isListOwner($list)) {
+        // Only owners (or users with manage-others permission) can delete lists
+        if (!Wishlist::$plugin->getLists()->canModifyListContent($list)) {
             throw new Exception(Craft::t('wishlist', 'You can only delete your own list.'));
         }
 
@@ -332,8 +332,8 @@ class ListsController extends BaseController
         $this->enforceEnabledList($list);
         $this->enforceListPermissions($list);
 
-        // Only owners can clear their own lists
-        if (!WishList::$plugin->getLists()->isListOwner($list)) {
+        // Only owners (or users with manage-others permission) can clear lists
+        if (!Wishlist::$plugin->getLists()->canModifyListContent($list)) {
             throw new Exception(Craft::t('wishlist', 'You can only clear your own list.'));
         }
 

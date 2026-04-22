@@ -46,13 +46,17 @@ class BaseController extends Controller
                     return;
                 }
 
-                // If logged in, easy check
+                // If logged in, must be the list owner or have delegated permission
                 if ($currentUser) {
-                    if ($currentUser->id !== $list->userId) {
-                        throw new HttpException(403);
+                    if ($currentUser->id === $list->userId) {
+                        return;
                     }
 
-                    return;
+                    if (Wishlist::$plugin->getLists()->canManageOthersList($list)) {
+                        return;
+                    }
+
+                    throw new HttpException(403);
                 }
 
                 if ($list->sessionId !== Craft::$app->getSession()->get('wishlist_list')) {

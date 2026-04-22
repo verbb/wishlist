@@ -197,6 +197,7 @@ class Wishlist extends Plugin
             foreach ($listTypes as $listType) {
                 $suffix = ':' . $listType->uid;
                 $listTypePermissions['wishlist-manageListType' . $suffix] = ['label' => Craft::t('wishlist', 'Manage “{type}” lists', ['type' => $listType->name])];
+                $listTypePermissions['wishlist-manageOthersListType' . $suffix] = ['label' => Craft::t('wishlist', 'Manage other users’ “{type}” lists', ['type' => $listType->name])];
             }
 
             $event->permissions[] = [
