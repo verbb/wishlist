@@ -149,6 +149,22 @@ class Lists extends Component
         return (int)$list->getOwnerId() === (int)$id;
     }
 
+    public function canManageOthersList(ListElement $list): bool
+    {
+        if (Craft::$app->getUser()->getIsAdmin()) {
+            return true;
+        }
+
+        $type = $list->getType();
+
+        return $type && Craft::$app->getUser()->checkPermission('wishlist-manageOthersListType:' . $type->uid);
+    }
+
+    public function canModifyListContent(ListElement $list): bool
+    {
+        return $this->isListOwner($list) || $this->canManageOthersList($list);
+    }
+
     public function createList(): ListElement
     {
         $listType = Wishlist::$plugin->getListTypes()->getDefaultListType();
