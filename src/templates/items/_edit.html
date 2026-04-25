@@ -81,8 +81,11 @@
             {% set elementTypeOptions = elementTypeOptions | merge([{ label: displayName(elementType), value: elementType | kebab }]) %}
         {% endfor %}
 
+        {% set supportedElementTypes = craft.wishlist.plugin.items.getSupportedElementTypes() %}
+        {% set settingsDefault = craft.wishlist.plugin.getSettings().defaultCpItemElementType %}
+        {% set defaultElementClass = (settingsDefault and settingsDefault in supportedElementTypes) ? settingsDefault : 'craft\\elements\\Entry' %}
         {% set itemElements = item.element ? [item.element] %}
-        {% set itemElementType = (item.element ? className(item.element) : 'craft\\elements\\Entry') | kebab %}
+        {% set itemElementType = (item.element ? className(item.element) : defaultElementClass) | kebab %}
 
         {{ forms.selectField({
             label: 'Element Type' | t('wishlist'),

@@ -1,7 +1,9 @@
 <?php
 namespace verbb\wishlist\models;
 
+use Craft;
 use craft\base\Model;
+use verbb\wishlist\Wishlist;
 
 class Settings extends Model
 {
@@ -23,6 +25,7 @@ class Settings extends Model
     public mixed $cookieExpiry = 0;
     public bool $updateListSearchIndexes = true;
     public bool $updateItemSearchIndexes = true;
+    public ?string $defaultCpItemElementType = null;
 
     // PDF
     public string $pdfFilenameFormat = 'Wishlist-{id}';
@@ -34,5 +37,35 @@ class Settings extends Model
     // Email
     public ?string $templateEmail = null;
     public bool $attachPdfToEmail = false;
+    
+
+    // Protected Methods
+    // =========================================================================
+
+    protected function defineRules(): array
+    {
+        $rules = parent::defineRules();
+
+        $rules[] = [['defaultCpItemElementType'], 'validateDefaultCpItemElementType'];
+
+        return $rules;
+    }
+
+    public function validateDefaultCpItemElementType(string $attribute): void
+    {
+        if ($this->defaultCpItemElementType === null || $this->defaultCpItemElementType === '') {
+            $this->defaultCpItemElementType = null;
+
+            return;
+        }
+
+        $supported = Wishlist::$plugin->getItems()->getSupportedElementTypes();
+
+        if (!in_array($this->defaultCpItemElementType, $supported, true)) {
+            $this->addError($attribute, Craft::t('wishlist', '“{type}” is not a supported element type.', [
+                'type' => $this->defaultCpItemElementType,
+            ]));
+        }
+    }
 
 }

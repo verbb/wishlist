@@ -37,6 +37,22 @@
 
         <h3>{{ 'Lists' | t('wishlist') }}</h3>
 
+        {% set cpDefaultElementTypeOptions = [] %}
+        {% for elementType in craft.wishlist.plugin.items.getSupportedElementTypes() %}
+            {% set cpDefaultElementTypeOptions = cpDefaultElementTypeOptions | merge([{ label: displayName(elementType), value: elementType }]) %}
+        {% endfor %}
+
+        {{ forms.selectField({
+            label: 'Default Element Type for New Items' | t('wishlist'),
+            instructions: 'The element type selected when creating a new wishlist item in the control panel.' | t('wishlist'),
+            id: 'defaultCpItemElementType',
+            name: 'defaultCpItemElementType',
+            value: settings.defaultCpItemElementType ?? 'craft\\elements\\Entry',
+            options: cpDefaultElementTypeOptions,
+            errors: settings.getErrors('defaultCpItemElementType'),
+            warning: macros.configWarning('defaultCpItemElementType', 'wishlist'),
+        }) }}
+
         {{ forms.lightswitchField({
             label: 'Allow Duplicates' | t('wishlist'),
             instructions: 'Whether to allow duplicate items to be added to lists.' | t('wishlist'),
