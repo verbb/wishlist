@@ -147,6 +147,22 @@ class Lists extends Component
         return $this->isListOwner($list) || $this->canManageOthersList($list);
     }
 
+    public function createList(): ListElement
+    {
+        $listType = Wishlist::$plugin->getListTypes()->getDefaultListType();
+
+        $list = new ListElement();
+        $list->reference = $this->generateReferenceNumber();
+        $list->typeId = $listType->id;
+        $list->title = $listType->name;
+        $list->sessionId = $this->getSessionId();
+
+        $list->lastIp = Craft::$app->getRequest()->userIP;
+        $list->userId = Craft::$app->getUser()->getIdentity()->id ?? null;
+
+        return $list;
+    }
+
     public function purgeInactiveLists(): int
     {
         $doPurge = Wishlist::$plugin->getSettings()->purgeInactiveLists;
