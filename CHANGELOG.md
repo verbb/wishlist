@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.19 - 2026-04-29
+
+### Added
+- Add user permission to manage other users’ lists.
+
 ## 2.0.18 - 2025-11-06
 
 ### Fixed
