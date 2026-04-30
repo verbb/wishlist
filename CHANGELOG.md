@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.0.14 - 2026-04-30
+
+### Added
+- Add `defaultCpItemElementType` plugin setting for default CP wishlist item element type.
+- Add `showSiteMenu` on wishlist item element selector (multi-site).
+- Add user permission to manage other users’ lists.
+
+### Fixed
+- Fix guest wishlist 403s by syncing `Wishlist:sessionId` cookie into the PHP session when restoring from cookie.
+
 ## 3.0.13 - 2026-04-11
 
 ### Fixed
