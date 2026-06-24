@@ -180,6 +180,36 @@ There are cases where you may want a new list created when adding an item. You c
 ```
 :::
 
+## List Fields
+When adding items you can also populate custom fields on the list itself via `listFields`. This is useful when creating a new list and adding items in a single request.
+
+::: code
+```twig Form
+<form method="POST">
+    <input type="hidden" name="action" value="wishlist/items/add">
+    {{ csrfInput() }}
+
+    <input type="hidden" name="listType" value="quote">
+    <input type="hidden" name="newList" value="1">
+    <input type="hidden" name="listFields[savedOrderTotal]" value="123.45">
+
+    <input type="hidden" name="elementId" value="{{ entry.id }}">
+    <input type="hidden" name="elementSiteId" value="{{ entry.siteId }}">
+
+    {# Optional: Pass content for item custom fields #}
+    <input type="hidden" name="fields[myField]" value="My Value">
+
+    <input type="submit" value="Save to List">
+</form>
+```
+
+```twig URL
+<a href="{{ craft.wishlist.addItemUrl(entry, { listType: 'quote', newList: true, listFields: { savedOrderTotal: '123.45' } }) }}">
+    Save to List
+</a>
+```
+:::
+
 ## Multiple Items
 You can also manage multiple items at a time, for example, adding multiple items:
 

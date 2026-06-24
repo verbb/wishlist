@@ -498,6 +498,7 @@ class ItemsController extends BaseController
             'newList' => $this->request->getParam('newList', false),
             'listTitle' => $this->request->getParam('listTitle', null),
             'listEnabled' => $this->request->getParam('listEnabled', true),
+            'listFields' => $this->request->getParam('listFields', []),
             'fields' => $this->request->getParam('fields', []),
             'options' => $this->request->getParam('options', []),
         ], $urlPayload);
@@ -550,8 +551,11 @@ class ItemsController extends BaseController
         foreach ($listIds as $listId) {
             $list = null;
 
+            $listFields = $postItem['listFields'] ?? [];
+            $isExistingList = $listId && !$newList;
+
             // Get the specific list passed in, unless we specifically want to create a new list
-            if ($listId && !$newList) {
+            if ($isExistingList) {
                 $list = Wishlist::$plugin->getLists()->getListById($listId);
 
                 if (!$list) {
@@ -572,7 +576,13 @@ class ItemsController extends BaseController
 
                 $list->title = $postItem['listTitle'] ?? $list->title;
                 $list->enabled = $postItem['listEnabled'] ?? $list->enabled;
+            }
 
+            if ($listFields) {
+                $list->setFieldValues($listFields);
+            }
+
+            if (!$isExistingList || $listFields) {
                 if (!Wishlist::$plugin->getLists()->saveElement($list)) {
                     $lists[] = new ItemError('Unable to save list.', ['list' => $list]);
 
