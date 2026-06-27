@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.15 - 2026-06-27
+
+### Added
+- Add `dompdf/dompdf:^3.0` support for PHP 8.5 compatibility.
+- Add the ability to set `listFields` when adding, toggling, or removing list items.
+
 ## 3.0.14 - 2026-04-30
 
 ### Added
