@@ -162,6 +162,11 @@
 ### Deprecated
 - Deprecated `craft.wishlist.item()`. Use `craft.wishlist.items(params)` to find items, or `craft.wishlist.addItemUrl/toggleItemUrl/removeItemUrl` to manage items.
 
+## 2.0.20 - 2026-08-20
+
+### Added
+- Add support for `dompdf/dompdf` v3.
+
 ## 2.0.19 - 2026-04-29
 
 ### Added
