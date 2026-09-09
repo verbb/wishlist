@@ -1,4 +1,4 @@
-{% extends 'wishlist/_layouts' %}
+{% extends 'verbb-base/_layouts/settings' %}
 
 {% import '_includes/forms' as forms %}
 {% import 'verbb-base/_macros' as macros %}
@@ -6,34 +6,21 @@
 {% requireAdmin %}
 
 {% set crumbs = [
-    { label: craft.wishlist.getPluginName() | t('wishlist'), url: url('wishlist') },
-    { label: 'Settings' | t('app'), url: url('wishlist/settings') },
-] %}
+    { label: 'Settings' | t('app'), url: url('settings') },
+    { label: 'Plugins' | t('app'), url: url('settings/plugins') },
+    { label: craft.wishlist.getPluginName() | t('wishlist'), url: url('wishlist/settings') },
+] | merge(crumbs ?? []) %}
 
-{% set navItems = {
-    'general': { title: 'General Settings' | t('wishlist') },
+{% set pageTabs = {
+    general: { title: 'General Settings' | t('wishlist'), url: url('wishlist/settings/general') },
     'migrations-heading': { heading: 'Migrations' | t('wishlist') },
-    'migrate/shortlist': { title: 'Shortlist' | t('wishlist') },
-    'migrate/upvote': { title: 'Upvote' | t('wishlist') },
+    'migrate/shortlist': { title: 'Shortlist' | t('wishlist'), url: url('wishlist/settings/migrate/shortlist') },
+    'migrate/upvote': { title: 'Upvote' | t('wishlist'), url: url('wishlist/settings/migrate/upvote') },
 } %}
 
 {% set selectedSubnavItem = 'settings' %}
-{% set selectedTab = selectedTab ?? craft.app.request.getSegment(3) ?? 'general' %}
 
-{% block sidebar %}
-    <nav class="wishlist-settings-tabs">
-        <ul>
-            {% for handle, item in navItems %}
-                {% if item.heading is defined %}
-                    <li class="heading"><span>{{ item.heading }}</span></li>
-                {% else %}
-                    <li>
-                        <a href="{{ url('wishlist/settings/' ~ handle) }}" {% if handle == selectedTab %}class="sel"{% endif %}>
-                            {{ item.title }}
-                        </a>
-                    </li>
-                {% endif %}
-            {% endfor %}
-        </ul>
-    </nav>
-{% endblock %}
+{% set pageTitle = pageTitle ?? false %}
+{% if title is not defined and pageTitle %}
+    {% set title = pageTitle %}
+{% endif %}

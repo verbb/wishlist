@@ -5,6 +5,7 @@
 
 {% set bodyClass = 'wishlist-settings-migrate' %}
 {% set selectedTab = 'migrate/upvote' %}
+{% set pageTitle = 'Migrate Upvote' | t('wishlist') %}
 {% set fullPageForm = outputs is not defined %}
 
 {% set installed = craft.app.plugins.pluginInstalled('upvote') %}
@@ -15,11 +16,9 @@
     {% endif %}
 {% endblock %}
 
-{% block content %}
+{% block settingsContent %}
     {{ actionInput('wishlist/migrations/upvote') }}
     {{ redirectInput('wishlist/settings/upvote') }}
-
-    <h2>{{ 'Migrate Upvote' | t('wishlist') }}</h2>
 
     {% if installed %}
         <p>{{ 'Click "Migrate Upvote" to migrate all Upvote votes into Wishlist lists.' | t('wishlist') }}</p>

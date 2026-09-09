@@ -46,6 +46,8 @@ class Settings extends Model
     {
         $rules = parent::defineRules();
 
+        $rules[] = [['pluginName'], 'trim'];
+        $rules[] = [['pluginName', 'pdfPath', 'pdfFilenameFormat'], 'required'];
         $rules[] = [['defaultCpItemElementType'], 'validateDefaultCpItemElementType'];
 
         return $rules;

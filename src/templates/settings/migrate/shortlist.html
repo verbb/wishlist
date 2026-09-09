@@ -5,6 +5,7 @@
 
 {% set bodyClass = 'wishlist-settings-migrate' %}
 {% set selectedTab = 'migrate/shortlist' %}
+{% set pageTitle = 'Migrate Shortlist (for Craft 2)' | t('wishlist') %}
 {% set fullPageForm = outputs is not defined %}
 
 {% set shortlistData = craft.app.db.tableExists('{{%shortlist_list}}') %}
@@ -15,11 +16,9 @@
     {% endif %}
 {% endblock %}
 
-{% block content %}
+{% block settingsContent %}
     {{ actionInput('wishlist/migrations/shortlist') }}
     {{ redirectInput('wishlist/settings/shortlist') }}
-
-    <h2>{{ 'Migrate Shortlist (for Craft 2)' | t('wishlist') }}</h2>
 
     {% if shortlistData %}
         <p>{{ 'Click "Migrate Shortlist" to migrate all Shortlist lists and their items to Wishlist.' | t('wishlist') }}</p>
