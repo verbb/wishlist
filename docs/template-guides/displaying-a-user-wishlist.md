@@ -1,8 +1,8 @@
-# Available Variables
-The following methods are available to call in your Twig templates:
+# Displaying a User Wishlist
 
-### `craft.wishlist.getPlugin()`
-Returns an instance of the Wishlist plugin.
+Start with the current user’s list. Keep ownership filtering enabled for customer-facing pages; a query across all users belongs only in an appropriately authorised context.
+
+## Calls Used in This Task
 
 ### `craft.wishlist.getUserList(params)`
 Returns the default list for the current user. The `params` can be a collection of [query params](docs:getting-elements/list-queries).
@@ -12,15 +12,6 @@ See [List Queries](docs:getting-elements/list-queries). By default, `forUser` is
 
 ### `craft.wishlist.items()`
 See [Item Queries](docs:getting-elements/item-queries).
-
-### `craft.wishlist.getAddItemUrl(element, params)`
-Returns a URL to add a given element to the default wishlist.
-
-### `craft.wishlist.getToggleItemUrl(element, params)`
-Returns a URL to toggle a given element to the default wishlist.
-
-### `craft.wishlist.getRemoveItemUrl(element, params)`
-Returns a URL to remove a given element to the default wishlist.
 
 ### `craft.wishlist.getInUserLists(element)`
 Returns `true/false` whether a provided `element` exists in any lists for the current user (guest, or logged-in user). This can be useful if you have multiple list types, but want to denote if an element exists in _any_ list of the user.

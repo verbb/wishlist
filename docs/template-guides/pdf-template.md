@@ -17,7 +17,7 @@ Here, we're generating a link for the user to click on to download their PDF. Wh
 
 `https://craft.test/actions/wishlist/pdf?listId=123`
 
-## Additional parameters
+## Additional Parameters
 You may find the additional parameters useful, especially during testing and development of these templates. Simply use one of the following values to append to the URL produced above.
 
 - `&attach=false` - Add this to not force the PDF to download. Instead, it'll be rendered inside the browser window. This will still render as a PDF and is useful for debugging layout issues.
@@ -26,7 +26,7 @@ You may find the additional parameters useful, especially during testing and dev
 ## Template
 In order for the user do have something to download, you'll want to generate the actual template used by the PDF. Create a template for the path you've set in your **PDF Path** under the [Configuration](docs:get-started/configuration). By default, the path to the PDF template is `_pdf/wishlist`. 
 
-### Template variables
+### Template Variables
 In the template itself, you'll have access to the following Twig variables:
 
 Variable | Description
@@ -34,7 +34,7 @@ Variable | Description
 `list` | The [List](docs:developers/list) object.
 
 
-## Example template
+## Example Template
 Below is an extremely basic example, we encourage you to get creative to make great-looking templates!
 
 ```twig

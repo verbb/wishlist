@@ -21,7 +21,9 @@
         "title": "Template Guides",
         "collapsable": false,
         "children": [
-            "template-guides/available-variables",
+            "template-guides/displaying-a-user-wishlist",
+            "template-guides/adding-and-removing-wishlist-items",
+            "template-guides/accessing-the-plugin",
             "template-guides/managing-items",
             "template-guides/managing-lists",
             "template-guides/getting-list-items",

@@ -230,7 +230,7 @@ You can also manage multiple items at a time, for example, adding multiple items
 </form>
 ```
 
-## Check if in List
+## Check If in List
 You can also check to see if an item is already in the list, which is useful for changing the layout based on that fact.
 
 ```twig

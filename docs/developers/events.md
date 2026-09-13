@@ -1,10 +1,17 @@
 # Events
 Events can be used to extend the functionality of Wishlist.
 
-## List related events
 
-### The `beforeSaveList` event
-Plugins can get notified before a list is saved. Event handlers can prevent the list from getting sent by setting `$event->isValid` to false.
+## Register a Listener
+
+Register listeners from a custom module or plugin that is bootstrapped for the requests where the event occurs. Put the `use` imports at the top of its PHP file and the `Event::on(...)` call inside its `init()` method, after `parent::init()`. Do not place the listener in a Twig template or modify this plugin's source to register it.
+
+Choose a hook whose timing matches your task. Cancellation depends on the particular event and emitter, as described for each hook below. Test a listener on the operation it affects, including any relevant queue or console path.
+
+## List Related Events
+
+### The `beforeSaveList` Event
+The event that is triggered before a list is saved. Event handlers can prevent the list from being saved by setting `$event->isValid` to false.
 
 ```php
 use craft\events\ModelEvent;
@@ -17,8 +24,8 @@ Event::on(ListElement::class, ListElement::EVENT_BEFORE_SAVE, function(ModelEven
 });
 ```
 
-### The `afterSaveList` event
-Plugins can get notified after a list has been saved
+### The `afterSaveList` Event
+The event that is triggered after a list has been saved
 
 ```php
 use craft\events\ModelEvent;
@@ -30,8 +37,8 @@ Event::on(ListElement::class, ListElement::EVENT_AFTER_SAVE, function(ModelEvent
 });
 ```
 
-### The `beforeDeleteList` event
-Plugins can get notified before a list is deleted. Event handlers can prevent the list from getting sent by setting `$event->isValid` to false.
+### The `beforeDeleteList` Event
+The event that is triggered before a list is deleted. Event handlers can prevent the list from being deleted by setting `$event->isValid` to false.
 
 ```php
 use verbb\wishlist\elements\ListElement;
@@ -43,8 +50,8 @@ Event::on(ListElement::class, ListElement::EVENT_BEFORE_DELETE, function(Event $
 });
 ```
 
-### The `afterDeleteList` event
-Plugins can get notified after a list has been deleted
+### The `afterDeleteList` Event
+The event that is triggered after a list has been deleted
 
 ```php
 use verbb\wishlist\elements\ListElement;
@@ -55,7 +62,7 @@ Event::on(ListElement::class, ListElement::EVENT_AFTER_DELETE, function(Event $e
 });
 ```
 
-### The `beforeAddToCart` event
+### The `beforeAddToCart` Event
 The event that is triggered before a list's content is added to the Commerce cart.
 
 ```php
@@ -69,7 +76,7 @@ Event::on(ListsController::class, ListsController::EVENT_BEFORE_ADD_TO_CART, fun
 });
 ```
 
-### The `afterAddToCart` event
+### The `afterAddToCart` Event
 The event that is triggered after a list's content has been added to the Commerce cart.
 
 ```php
@@ -83,8 +90,8 @@ Event::on(ListsController::class, ListsController::EVENT_AFTER_ADD_TO_CART, func
 });
 ```
 
-### The `beforeAddToCart` event
-The event that is triggered before a list's content is added to the Commerce cart.
+### The `beforeAddLineItem` Event
+The event that is triggered before an individual wishlist item is added to the Commerce cart.
 
 ```php
 use verbb\wishlist\controllers\ListsController;
@@ -99,8 +106,8 @@ Event::on(ListsController::class, ListsController::EVENT_BEFORE_ADD_LINE_ITEM, f
 });
 ```
 
-### The `afterAddToCart` event
-The event that is triggered after a list's content has been added to the Commerce cart.
+### The `afterAddLineItem` Event
+The event that is triggered after an individual wishlist item has been added to the Commerce cart.
 
 ```php
 use verbb\wishlist\controllers\ListsController;
@@ -116,10 +123,10 @@ Event::on(ListsController::class, ListsController::EVENT_AFTER_ADD_LINE_ITEM, fu
 ```
 
 
-## List Type related events
+## List Type Related Events
 
-### The `beforeSaveListType` event
-Plugins can get notified before a list type is being saved.
+### The `beforeSaveListType` Event
+The event that is triggered before a list type is being saved.
 
 ```php
 use verbb\wishlist\events\ListTypeEvent;
@@ -131,8 +138,8 @@ Event::on(ListTypes::class, ListTypes::EVENT_BEFORE_SAVE_LISTTYPE, function(List
 });
 ```
 
-### The `afterSaveListType` event
-Plugins can get notified after a list type has been saved.
+### The `afterSaveListType` Event
+The event that is triggered after a list type has been saved.
 
 ```php
 use verbb\wishlist\events\ListTypeEvent;
@@ -145,10 +152,10 @@ Event::on(ListTypes::class, ListTypes::EVENT_AFTER_SAVE_LISTTYPE, function(ListT
 ```
 
 
-## Item related events
+## Item Related Events
 
-### The `beforeSaveItem` event
-Plugins can get notified before an item is saved. Event handlers can prevent the item from getting sent by setting `$event->isValid` to false.
+### The `beforeSaveItem` Event
+The event that is triggered before an item is saved. Event handlers can prevent the item from being saved by setting `$event->isValid` to false.
 
 ```php
 use craft\events\ModelEvent;
@@ -161,8 +168,8 @@ Event::on(Item::class, Item::EVENT_BEFORE_SAVE, function(ModelEvent $event) {
 });
 ```
 
-### The `afterSaveItem` event
-Plugins can get notified after an item has been saved
+### The `afterSaveItem` Event
+The event that is triggered after an item has been saved
 
 ```php
 use craft\events\ModelEvent;
@@ -174,8 +181,8 @@ Event::on(Item::class, Item::EVENT_AFTER_SAVE, function(ModelEvent $event) {
 });
 ```
 
-### The `beforeDeleteItem` event
-Plugins can get notified before an item is deleted. Event handlers can prevent the item from getting sent by setting `$event->isValid` to false.
+### The `beforeDeleteItem` Event
+The event that is triggered before an item is deleted. Event handlers can prevent the item from being deleted by setting `$event->isValid` to false.
 
 ```php
 use verbb\wishlist\elements\Item;
@@ -187,8 +194,8 @@ Event::on(Item::class, Item::EVENT_BEFORE_DELETE, function(Event $event) {
 });
 ```
 
-### The `afterDeleteList` event
-Plugins can get notified after a item has been deleted
+### The `afterDeleteItem` Event
+The event that is triggered after an item has been deleted.
 
 ```php
 use verbb\wishlist\elements\Item;

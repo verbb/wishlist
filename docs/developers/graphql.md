@@ -40,7 +40,7 @@ Wishlist supports accessing [Item](docs:developers/item) and [List](docs:develop
 ```
 :::
 
-### The `wishlists` query
+### The `wishlists` Query
 This query is used to query for lists.
 
 | Argument | Type | Description
@@ -74,7 +74,7 @@ This query is used to query for lists.
 | `reference`| `String` | Narrows the query results based on the list’s reference.
 | `default`| `Boolean` | Narrows the query results based on whether it is the default list.
 
-### The `ListInterface` interface
+### The `ListInterface` Interface
 This is the interface implemented by all lists.
 
 | Field | Type | Description
@@ -128,7 +128,7 @@ This is the interface implemented by all lists.
 ```
 :::
 
-### The `wishlistItems` query
+### The `wishlistItems` Query
 This query is used to query for items.
 
 | Argument | Type | Description
@@ -160,7 +160,7 @@ This query is used to query for items.
 | `elementId`| `String` | Narrows the query results based on the owner element ID.
 | `elementClass`| `String` | Narrows the query results based on the owner element class.
 
-### The `ItemInterface` interface
+### The `ItemInterface` Interface
 This is the interface implemented by all items.
 
 | Field | Type | Description
