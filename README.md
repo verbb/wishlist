@@ -9,6 +9,8 @@ All sharable via a unique URL of course.
 - Guests and logged-in users both supported.
 - Create multiple lists, or just use the default one.
 - Allow registered users to manage their own lists, creating new ones, deleting or clearing.
+- Allow nominated staff to manage other users' lists.
+- Enforce list ownership for front-end item-management actions.
 - Custom fields for lists and list items.
 - Single-click add to cart for any purchasables in a list.
 - Easy sharing of lists.
