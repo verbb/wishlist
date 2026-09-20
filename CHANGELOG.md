@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.0.19 - 2026-09-20
 
 ### Fixed
 - Fix submitting Shortlist and Upvote migrations after settings layout changes.
