@@ -25,6 +25,7 @@ class SettingsController extends Controller
     public function actionSaveSettings(): ?Response
     {
         $this->requirePostRequest();
+        $this->requireAdmin();
 
         $request = Craft::$app->getRequest();
 

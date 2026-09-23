@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fix a settings authorization vulnerability.
+
 ## 2.0.20 - 2026-08-20
 
 ### Added
