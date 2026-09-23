@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.0.21 - 2026-09-23
 
 ### Fixed
 - Fix a settings authorization vulnerability.
