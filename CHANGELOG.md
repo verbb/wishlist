@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.0.20 - 2026-09-23
 
 ### Changed
 - Render wishlist email subjects and bodies in Twig sandbox.
