@@ -6,6 +6,7 @@ use verbb\wishlist\services\Lists;
 use verbb\wishlist\services\ListTypes;
 use verbb\wishlist\services\Items;
 use verbb\wishlist\services\Pdf;
+use verbb\wishlist\services\Templates;
 
 use verbb\base\LogTrait;
 use verbb\base\helpers\Plugin;
@@ -37,6 +38,7 @@ trait PluginTrait
                 'listTypes' => ListTypes::class,
                 'items' => Items::class,
                 'pdf' => Pdf::class,
+                'templates' => Templates::class,
             ],
         ];
     }
@@ -63,6 +65,11 @@ trait PluginTrait
     public function getPdf(): Pdf
     {
         return $this->get('pdf');
+    }
+
+    public function getTemplates(): Templates
+    {
+        return $this->get('templates');
     }
 
 }

@@ -703,8 +703,8 @@ class ListsController extends BaseController
 
         $view = Craft::$app->getView();
 
-        $subject = $view->renderString($systemMessage->subject, $variables, View::TEMPLATE_MODE_SITE);
-        $textBody = $view->renderString($systemMessage->body, $variables, View::TEMPLATE_MODE_SITE);
+        $subject = Wishlist::$plugin->getTemplates()->renderSandboxedString($systemMessage->subject, $variables);
+        $textBody = Wishlist::$plugin->getTemplates()->renderSandboxedString($systemMessage->body, $variables);
 
         // Use custom template if configured, otherwise fall back to Craft's default
         if ($settings->templateEmail) {
