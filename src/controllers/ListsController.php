@@ -390,7 +390,7 @@ class ListsController extends BaseController
         $canModifyList = Wishlist::$plugin->getLists()->canModifyListContent($list);
         $reference = $this->request->getParam('reference');
 
-        if (!$canModifyList && (!is_string($list->reference) || !is_string($reference) || $reference === '' || !hash_equals($list->reference, $reference))) {
+        if (!$canModifyList && !Wishlist::$plugin->getLists()->hasMatchingReference($list, $reference)) {
             throw new HttpException(403, Craft::t('wishlist', 'A valid shared-list reference is required.'));
         }
 

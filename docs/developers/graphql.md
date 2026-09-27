@@ -70,7 +70,6 @@ This query is used to query for lists.
 | `orderBy`| `String` | Sets the field the returned elements should be ordered by
 | `typeId`| `String` | Narrows the query results based on the list type ID.
 | `userId`| `String` | Narrows the query results based on the list’s owner.
-| `sessionId`| `String` | Narrows the query results based on the list’s session ID.
 | `reference`| `String` | Narrows the query results based on the list’s reference.
 | `default`| `Boolean` | Narrows the query results based on whether it is the default list.
 

@@ -39,6 +39,8 @@ Then, it's just a matter of querying items based on the provided reference.
 
 Remember to use `craft.wishlist.lists(false)` to fetch lists that don't belong to the current user, which in this case will be the new user viewing the list. Be careful with this.
 
+The `reference()` parameter requires the complete reference and does not support wildcard or comparison syntax. Treat the reference as a read-only sharing key and avoid logging it or exposing it outside the intended shared URL.
+
 ## Emailing
 
 You can also email your lists directly via a form.

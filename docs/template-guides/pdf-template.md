@@ -15,7 +15,9 @@ Then, you'll want to fetch the list you want to generate the PDF for.
 
 Here, we're generating a link for the user to click on to download their PDF. When clicked, their PDF will be downloaded. The URL will look something similar to:
 
-`https://craft.test/actions/wishlist/pdf?listId=123`
+`https://craft.test/actions/wishlist/pdf?listId=123&reference=abcdefghij`
+
+The list owner can download the PDF directly. Anyone else must use a generated URL containing the list’s exact sharing reference. A numeric list ID on its own does not grant access.
 
 ## Additional Parameters
 You may find the additional parameters useful, especially during testing and development of these templates. Simply use one of the following values to append to the URL produced above.

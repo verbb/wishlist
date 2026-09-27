@@ -210,6 +210,16 @@ class ListElement extends Element
         return (string)$this->title;
     }
 
+    public function fields(): array
+    {
+        $fields = parent::fields();
+
+        // The session ID is a guest ownership credential, not public element data.
+        unset($fields['sessionId']);
+
+        return $fields;
+    }
+
     public function getName(): ?string
     {
         return $this->title;
@@ -406,7 +416,11 @@ class ListElement extends Element
     {
         $currentSite = Craft::$app->getSites()->getCurrentSite();
 
-        return UrlHelper::actionUrl('wishlist/pdf', ['listId' => $this->id, 'site' => $currentSite->handle]);
+        return UrlHelper::actionUrl('wishlist/pdf', [
+            'listId' => $this->id,
+            'reference' => $this->reference,
+            'site' => $currentSite->handle,
+        ]);
     }
 
     public function getGqlTypeName(): string

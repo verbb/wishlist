@@ -24,11 +24,6 @@ class ListArguments extends ElementArguments
                 'type' => Type::listOf(QueryArgument::getType()),
                 'description' => 'Narrows the query results based on the list’s owner.',
             ],
-            'sessionId' => [
-                'name' => 'sessionId',
-                'type' => Type::listOf(Type::string()),
-                'description' => 'Narrows the query results based on the list’s session ID.',
-            ],
             'reference' => [
                 'name' => 'reference',
                 'type' => Type::listOf(Type::string()),

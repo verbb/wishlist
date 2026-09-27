@@ -59,13 +59,11 @@ class BaseController extends Controller
                     throw new HttpException(403);
                 }
 
-                $sessionId = Craft::$app->getSession()->get('wishlist_list');
-
-                if (!is_string($list->sessionId) || $list->sessionId === '' || !is_string($sessionId) || $sessionId === '' || !hash_equals($list->sessionId, $sessionId)) {
-                    throw new HttpException(403);
+                if (Wishlist::$plugin->getLists()->isListOwner($list)) {
+                    return;
                 }
 
-                return;
+                throw new HttpException(403);
             }
             
             $this->requirePermission('wishlist-manageListType:' . $list->getType()->uid);

@@ -17,7 +17,6 @@ use craft\helpers\ArrayHelper;
 use craft\helpers\ConfigHelper;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
-use craft\helpers\StringHelper;
 
 use DateTime;
 
@@ -86,15 +85,16 @@ class Lists extends Component
     public function createList(array $params = []): ListElement
     {
         $listType = $params['type'] ?? $this->_getListType($params);
+        $currentUser = Craft::$app->getUser()->getIdentity();
 
         $list = new ListElement();
         $list->reference = $this->generateReferenceNumber();
         $list->typeId = $listType->id;
         $list->title = $listType->name;
-        $list->sessionId = $this->getSessionId();
+        $list->sessionId = $currentUser ? null : $this->getSessionId();
 
         $list->lastIp = Craft::$app->getRequest()->userIP;
-        $list->userId = Craft::$app->getUser()->getIdentity()->id ?? null;
+        $list->userId = $currentUser->id ?? null;
 
         Craft::configure($list, $params);
 
@@ -149,6 +149,13 @@ class Lists extends Component
         return $this->isListOwner($list) || $this->canManageOthersList($list);
     }
 
+    public function hasMatchingReference(ListElement $list, mixed $reference): bool
+    {
+        return is_string($list->reference) && $list->reference !== '' &&
+            is_string($reference) && $reference !== '' &&
+            hash_equals($list->reference, $reference);
+    }
+
     public function purgeInactiveLists(): int
     {
         $doPurge = Wishlist::$plugin->getSettings()->purgeInactiveLists;
@@ -197,12 +204,12 @@ class Lists extends Component
 
     public function generateReferenceNumber(): string
     {
-        return StringHelper::randomString(10);
+        return Craft::$app->getSecurity()->generateRandomString(10);
     }
 
     public function generateSessionId(): string
     {
-        return md5(uniqid(random_int(0, mt_getrandmax()), true));
+        return Craft::$app->getSecurity()->generateRandomString(32);
     }
 
     public function loginHandler(UserEvent $event): void
@@ -221,11 +228,16 @@ class Lists extends Component
             $db = Craft::$app->getDb();
 
             // Try and find the default list for the guest
-            $sessionId = $this->getSessionId();
+            $sessionId = $this->_getExistingSessionId();
 
-            Db::update('{{%wishlist_lists}}', ['userId' => $user->id], ['sessionId' => $sessionId, 'userId' => null]);
+            if ($sessionId) {
+                Db::update('{{%wishlist_lists}}', ['userId' => $user->id, 'sessionId' => null], ['sessionId' => $sessionId, 'userId' => null]);
 
-            Wishlist::info('Moving guest lists for session "' . $sessionId . '" to user "' . $user->id . '"');
+                // Once an account owns the lists, the old guest bearer must no longer remain usable.
+                $this->_clearSessionId();
+
+                Wishlist::info('Moving guest lists for session "' . $sessionId . '" to user "' . $user->id . '"');
+            }
 
             if ($settings->mergeLastListOnLogin) {
                 // Check if we've now got multiple lists for a logged-in user. We need to merge them
@@ -308,49 +320,86 @@ class Lists extends Component
     // Private Methods
     // =========================================================================
 
-    private function getSessionId()
+    private function getSessionId(): string
+    {
+        $sessionId = $this->_getExistingSessionId();
+
+        if (!$sessionId) {
+            $sessionId = $this->generateSessionId();
+            Craft::$app->getSession()->set($this->listName, $sessionId);
+            $this->_setSessionCookie($sessionId);
+        }
+
+        return $sessionId;
+    }
+
+    private function _getExistingSessionId(): ?string
+    {
+        $session = Craft::$app->getSession();
+        $sessionId = $session->get($this->listName);
+
+        if ($this->_isValidSessionId($sessionId)) {
+            return $sessionId;
+        }
+
+        if ($sessionId !== null) {
+            $this->_clearSessionId();
+        }
+
+        $sessionId = Craft::$app->getRequest()->getRawCookies()->getValue('Wishlist:sessionId');
+
+        if (!$this->_isValidSessionId($sessionId)) {
+            if ($sessionId !== null) {
+                $this->_clearSessionId();
+            }
+
+            return null;
+        }
+
+        // Restore the durable guest identity and reissue the cookie with current security flags.
+        $session->set($this->listName, $sessionId);
+        $this->_setSessionCookie($sessionId);
+
+        return $sessionId;
+    }
+
+    private function _isValidSessionId(mixed $sessionId): bool
+    {
+        // Legacy migrations copied earlier guest identifiers verbatim into this 32-character column.
+        return is_string($sessionId) && $sessionId !== '' && strlen($sessionId) <= 32;
+    }
+
+    private function _setSessionCookie(string $sessionId): void
     {
         /* @var Settings $settings */
         $settings = Wishlist::$plugin->getSettings();
 
-        $session = Craft::$app->getSession();
-        $sessionId = $session[$this->listName];
+        $configInterval = ConfigHelper::durationInSeconds($settings->cookieExpiry);
+        $expiry = (new DateTime())->add(DateTimeHelper::secondsToInterval($configInterval));
 
-        $cookieName = 'Wishlist:sessionId';
+        $cookie = Craft::createObject(Craft::cookieConfig([
+            'class' => Cookie::class,
+            'name' => 'Wishlist:sessionId',
+            'value' => $sessionId,
+            'httpOnly' => true,
+            'expire' => $expiry->getTimestamp(),
+        ]));
 
-        // If no session, check for a saved cookie, allowing us to retain lists after sessions have ended
-        if (!$sessionId) {
-            $sessionId = Craft::$app->getRequest()->getRawCookies()->getValue($cookieName);
+        Craft::$app->getResponse()->getRawCookies()->add($cookie);
+    }
 
-            // Mirror the cookie into the PHP session. Guest permission checks compare the list’s
-            // sessionId to Session::get('wishlist_list'); without this, a new Craft session with
-            // only the cookie set would still have an empty session key and every action 403s.
-            if ($sessionId) {
-                $session->set($this->listName, $sessionId);
-            }
-        }
+    private function _clearSessionId(): void
+    {
+        Craft::$app->getSession()->remove($this->listName);
 
-        // If still no session, we better generate a new one.
-        if (!$sessionId) {
-            $sessionId = $this->generateSessionId();
-            $session->set($this->listName, $sessionId);
+        // Use Craft's cookie configuration so custom path/domain settings are also cleared.
+        $cookie = Craft::createObject(Craft::cookieConfig([
+            'class' => Cookie::class,
+            'name' => 'Wishlist:sessionId',
+            'httpOnly' => true,
+        ]));
 
-            $configInterval = ConfigHelper::durationInSeconds($settings->cookieExpiry);
-            $expiry = (new DateTime())->add(DateTimeHelper::secondsToInterval($configInterval));
-
-            // Save this as a cookie for better persistence
-            $cookie = Craft::createObject(Craft::cookieConfig([
-                'class' => Cookie::class,
-                'name' => $cookieName,
-                'value' => $sessionId,
-                'httpOnly' => false,
-                'expire' => $expiry->getTimestamp(),
-            ]));
-
-            Craft::$app->getResponse()->getRawCookies()->add($cookie);
-        }
-
-        return $sessionId;
+        Craft::$app->getResponse()->getRawCookies()->remove($cookie);
     }
 
     private function _getListType(array &$params = []): ListType

@@ -2,11 +2,13 @@
 
 ## Unreleased
 
-### Fixed
-- Fixed ownership and item-binding checks for list management and shared add-to-cart requests.
-
 ### Changed
+- List reference and guest session ID queries now require exact values, and guest session IDs are no longer available through GraphQL or serialized element responses.
 - Route plugin settings through the plugin’s authorized settings controller.
+
+### Fixed
+- Fixed moderate-severity information disclosure and authorization vulnerabilities affecting shared lists and guest ownership.
+- Fixed ownership and item-binding checks for list management and shared add-to-cart requests.
 
 ## 3.0.20 - 2026-09-23
 

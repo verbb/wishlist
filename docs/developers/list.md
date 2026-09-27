@@ -42,7 +42,7 @@ If logged in, this will be the user ID of the owner for this list.
 
 **Type:** `string|null`
 
-If a guest, this will contain the unique session ID used to identify this guest.
+If a guest, this contains the private credential used to identify this guest. It remains available to trusted server-side code but is omitted from GraphQL and serialized element responses. Do not expose it in templates, URLs, logs or API responses.
 :::
 
 ::: reference

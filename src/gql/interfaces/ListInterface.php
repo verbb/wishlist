@@ -66,11 +66,6 @@ class ListInterface extends Element
                 'type' => Type::int(),
                 'description' => 'The user ID that owns the list.',
             ],
-            'sessionId' => [
-                'name' => 'sessionId',
-                'type' => Type::string(),
-                'description' => 'The list’s session ID.',
-            ],
             'reference' => [
                 'name' => 'reference',
                 'type' => Type::string(),

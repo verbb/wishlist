@@ -5,10 +5,11 @@ use verbb\wishlist\Wishlist;
 use verbb\wishlist\helpers\Locale;
 
 use Craft;
-use craft\web\Controller;
 use craft\web\Response;
 
-class PdfController extends Controller
+use yii\web\HttpException;
+
+class PdfController extends BaseController
 {
     // Properties
     // =========================================================================
@@ -30,8 +31,21 @@ class PdfController extends Controller
             }
         }
 
-        $listId = $this->request->getRequiredParam('listId');
+        $listId = (int)$this->request->getRequiredParam('listId');
         $list = Wishlist::$plugin->getLists()->getListById($listId);
+
+        if (!$list) {
+            throw new HttpException(404, Craft::t('wishlist', 'Unable to find the requested list.'));
+        }
+
+        $this->enforceEnabledList($list);
+
+        $reference = $this->request->getParam('reference');
+        $canModifyList = Wishlist::$plugin->getLists()->canModifyListContent($list);
+
+        if (!$canModifyList && !Wishlist::$plugin->getLists()->hasMatchingReference($list, $reference)) {
+            throw new HttpException(403, Craft::t('wishlist', 'A valid shared-list reference is required.'));
+        }
 
         // Switch to use the correct site/language
         $originalLanguage = Craft::$app->language;

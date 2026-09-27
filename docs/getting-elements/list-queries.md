@@ -325,6 +325,8 @@ $lists = \verbb\wishlist\elements\ListElement::find()
 ### `reference`
 Narrows the query results based on the list reference number.
 
+References are matched exactly. Wildcard and comparison syntax are not supported because the reference can grant read-only access to a shared list.
+
 Possible values include:
 
 | Value | Fetches lists…
@@ -383,7 +385,11 @@ $lists = \verbb\wishlist\elements\ListElement::find()
 
 
 ### `sessionId`
-Narrows the query results based on the lists’ owners’ session ID.
+Narrows the query results based on the lists’ owners’ session ID. Session IDs are matched exactly.
+
+::: warning
+This is a private guest-ownership credential intended for trusted server-side code. Do not place it in URLs, templates, logs or API responses.
+:::
 
 ::: code
 ```twig Twig

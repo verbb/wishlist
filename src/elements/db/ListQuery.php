@@ -10,6 +10,8 @@ use craft\db\QueryAbortedException;
 use craft\elements\db\ElementQuery;
 use craft\helpers\Db;
 
+use yii\db\Expression;
+
 class ListQuery extends ElementQuery
 {
     // Properties
@@ -119,8 +121,9 @@ class ListQuery extends ElementQuery
             'wishlist_lists.default',
         ]);
 
-        if ($this->reference) {
-            $this->subQuery->andWhere(Db::parseParam('wishlist_lists.reference', $this->reference));
+        if ($this->reference !== null) {
+            // References are public sharing credentials, so query syntax must never broaden a match.
+            $this->_applyExactParam('wishlist_lists.reference', $this->reference);
         }
 
         if ($this->typeId) {
@@ -135,8 +138,9 @@ class ListQuery extends ElementQuery
             $this->subQuery->andWhere(Db::parseParam('wishlist_lists.userId', $this->userId));
         }
 
-        if ($this->sessionId) {
-            $this->subQuery->andWhere(Db::parseParam('wishlist_lists.sessionId', $this->sessionId));
+        if ($this->sessionId !== null) {
+            // Session IDs grant write access to guest lists and must be compared literally.
+            $this->_applyExactParam('wishlist_lists.sessionId', $this->sessionId);
         }
 
         $this->_applyEditableParam();
@@ -147,6 +151,33 @@ class ListQuery extends ElementQuery
 
     // Private Methods
     // =========================================================================
+
+    private function _applyExactParam(string $column, mixed $value): void
+    {
+        if (!Craft::$app->getDb()->getIsMysql()) {
+            $this->subQuery->andWhere([$column => $value]);
+
+            return;
+        }
+
+        // MySQL's normal Craft collations ignore case, which is inappropriate for bearer values.
+        $values = is_array($value) ? array_values($value) : [$value];
+
+        if (!$values) {
+            $this->subQuery->andWhere(new Expression('0=1'));
+
+            return;
+        }
+
+        $condition = ['or'];
+        $columnExpression = new Expression('BINARY ' . Craft::$app->getDb()->quoteColumnName($column));
+
+        foreach ($values as $exactValue) {
+            $condition[] = ['=', $columnExpression, $exactValue];
+        }
+
+        $this->subQuery->andWhere($condition);
+    }
 
     private function _applyEditableParam(): void
     {
