@@ -67,6 +67,8 @@ class ListsController extends BaseController
 
     public function actionEditList(string $listTypeHandle, int $listId = null, ListElement $list = null): Response
     {
+        $this->requireCpRequest();
+
         $listType = null;
 
         $variables = [
@@ -106,6 +108,7 @@ class ListsController extends BaseController
 
     public function actionDeleteList(): ?Response
     {
+        $this->requireCpRequest();
         $this->requirePostRequest();
         
         $session = Craft::$app->getSession();
@@ -144,6 +147,7 @@ class ListsController extends BaseController
 
     public function actionSaveList(): ?Response
     {
+        $this->requireCpRequest();
         $this->requirePostRequest();
 
         $list = $this->_setListFromPost();
@@ -190,12 +194,16 @@ class ListsController extends BaseController
 
     public function actionCreate(): ?Response
     {
-        $list = $this->_setListFromPost();
+        if ($this->request->getParam('listId')) {
+            throw new HttpException(400, Craft::t('wishlist', 'An existing list cannot be created again.'));
+        }
+
+        $list = $this->_setListFromPost(false);
         $list->enabled = true;
 
         // Check if we're allowed to manage lists
         $this->enforceEnabledList($list);
-        $this->enforceListPermissions($list, false);
+        $this->enforceListPermissions($list);
 
         if (!Wishlist::$plugin->getLists()->saveElement($list)) {
             $error = new ListError('Unable to save list.', ['list' => $list]);
@@ -221,7 +229,7 @@ class ListsController extends BaseController
             return $this->returnError('List ID must be provided.');
         }
 
-        $list = $this->_setListFromPost();
+        $list = $this->_setListFromPost(false);
 
         // Check if we're allowed to manage lists
         $this->enforceEnabledList($list);
@@ -247,7 +255,11 @@ class ListsController extends BaseController
             return $this->returnError('List ID must be provided.');
         }
 
-        $list = $this->_setListFromPost();
+        $list = Wishlist::$plugin->getLists()->getListById($listId);
+
+        if (!$list) {
+            throw new Exception(Craft::t('wishlist', 'No list with the ID “{id}”', ['id' => $listId]));
+        }
 
         // Check if we're allowed to manage lists
         $this->enforceEnabledList($list);
@@ -262,11 +274,22 @@ class ListsController extends BaseController
         $errors = [];
 
         if ($items = $this->request->getParam('items')) {
-            foreach ($items as $itemId => $item) {
+            $listItems = [];
+
+            foreach (array_keys($items) as $itemId) {
+                $item = Wishlist::$plugin->getItems()->getItemById($itemId);
+
+                if (!$item || $item->listId !== $list->id) {
+                    throw new HttpException(404, Craft::t('wishlist', 'Unable to find item in list.'));
+                }
+
+                $listItems[$itemId] = $item;
+            }
+
+            foreach ($listItems as $itemId => $item) {
                 $removeItem = $this->request->getParam("items.{$itemId}.remove");
                 $fields = $this->request->getParam("items.{$itemId}.fields", []);
 
-                $item = Wishlist::$plugin->getItems()->getItemById($itemId);
                 $item->setFieldValues($fields);
 
                 if ($removeItem) {
@@ -364,13 +387,25 @@ class ListsController extends BaseController
         $this->enforceEnabledList($list);
         $this->enforceListPermissions($list, false);
 
-        $cart = Commerce::getInstance()->getCarts()->getCart(true);
+        $canModifyList = Wishlist::$plugin->getLists()->canModifyListContent($list);
+        $reference = $this->request->getParam('reference');
+
+        if (!$canModifyList && (!is_string($list->reference) || !is_string($reference) || $reference === '' || !hash_equals($list->reference, $reference))) {
+            throw new HttpException(403, Craft::t('wishlist', 'A valid shared-list reference is required.'));
+        }
 
         $populateListFieldOptions = $this->request->getParam('populateListFieldOptions');
         $populateItemFieldOptions = $this->request->getParam('populateItemFieldOptions');
 
         // Check to see if we want to add all the items in the list, or just specific ones
         $addingPurchasables = $this->request->getParam('purchasables');
+
+        if (!$canModifyList && ($populateListFieldOptions || $populateItemFieldOptions || $this->request->getParam('clearList') || $this->_hasRequestedItemRemoval($addingPurchasables))) {
+            throw new HttpException(403, Craft::t('wishlist', 'Shared lists cannot be modified or used to populate private field values.'));
+        }
+
+        $cart = Commerce::getInstance()->getCarts()->getCart(true);
+        $itemIdsToRemove = [];
 
         // Fire a 'beforeAddToCart' event
         if ($this->hasEventHandlers(self::EVENT_BEFORE_ADD_TO_CART)) {
@@ -445,8 +480,8 @@ class ListsController extends BaseController
                     // Should we remove it from the list?
                     $removeFromList = $this->request->getParam("purchasables.{$key}.removeFromList", false);
 
-                    if ($removeFromList) {
-                        Craft::$app->getElements()->deleteElementById($item->id);
+                    if ($removeFromList && $canModifyList) {
+                        $itemIdsToRemove[] = $item->id;
                     }
                 }
             }
@@ -458,6 +493,10 @@ class ListsController extends BaseController
             ]);
         }
 
+        foreach ($itemIdsToRemove as $itemId) {
+            Craft::$app->getElements()->deleteElementById($itemId);
+        }
+
         // Fire a 'afterAddToCart' event
         if ($this->hasEventHandlers(self::EVENT_AFTER_ADD_TO_CART)) {
             $this->trigger(self::EVENT_AFTER_ADD_TO_CART, new AddToCartEvent([
@@ -467,10 +506,7 @@ class ListsController extends BaseController
         }
 
         // Should we remove all items from the list after adding?
-        if ($clearList = $this->request->getParam('clearList')) {
-            // In order to clear the list, the user must be the owner
-            $this->enforceListPermissions($list);
-
+        if ($canModifyList && $this->request->getParam('clearList')) {
             Wishlist::$plugin->getItems()->deleteItemsForList($listId);
         }
 
@@ -656,12 +692,20 @@ class ListsController extends BaseController
         $listType = $variables['listType'];
         $list = $variables['list'];
 
+        if ($list->id) {
+            $this->enforceListPermissions($list);
+
+            if ($list->typeId !== $listType->id) {
+                throw new HttpException(404);
+            }
+        }
+
         $form = $listType->getFieldLayout()->createForm($list);
         $variables['tabs'] = $form->getTabMenu();
         $variables['fieldsHtml'] = $form->render();
     }
 
-    private function _setListFromPost(): ListElement
+    private function _setListFromPost(bool $allowUserAssignment = true): ListElement
     {
         $listId = $this->request->getParam('listId');
 
@@ -671,25 +715,73 @@ class ListsController extends BaseController
             if (!$list) {
                 throw new Exception(Craft::t('wishlist', 'No list with the ID “{id}”', ['id' => $listId]));
             }
+
+            $this->enforceListPermissions($list);
         } else {
             $list = Wishlist::$plugin->getLists()->createList();
         }
 
-        $list->typeId = $this->request->getParam('typeId', $list->typeId);
+        $typeId = (int)$this->request->getParam('typeId', $list->typeId);
+
+        if ($list->id && $typeId !== $list->typeId) {
+            $this->_enforceListTypeChangePermission($list, $typeId);
+        }
+
+        $list->typeId = $typeId;
         $list->enabled = (bool)$this->request->getParam('enabled', $list->enabled);
         $list->title = $this->request->getParam('title', $list->title);
 
-        // Handle User ID for the CP, front-end and when omitted
-        $currentUser = Craft::$app->getUser()->getIdentity();
-        $userId = $this->request->getParam('userId', ($currentUser->id ?? null));
+        if ($allowUserAssignment) {
+            $userId = $this->request->getParam('userId');
 
-        if ($userId) {
-            $list->userId = is_array($userId) ? $userId[0] : $userId;
+            if ($userId) {
+                $list->userId = is_array($userId) ? $userId[0] : $userId;
+            }
         }
 
         $list->setFieldValuesFromRequest('fields');
 
         return $list;
+    }
+
+    private function _enforceListTypeChangePermission(ListElement $list, int $typeId): void
+    {
+        $targetType = Wishlist::$plugin->getListTypes()->getListTypeById($typeId);
+
+        if (!$targetType) {
+            throw new HttpException(404, Craft::t('wishlist', 'Unable to find the requested list type.'));
+        }
+
+        if ($this->request->getIsCpRequest()) {
+            $this->requirePermission('wishlist-manageListType:' . $targetType->uid);
+
+            return;
+        }
+
+        if (Wishlist::$plugin->getLists()->isListOwner($list) || Craft::$app->getUser()->getIsAdmin()) {
+            return;
+        }
+
+        $currentUser = Craft::$app->getUser()->getIdentity();
+
+        if (!$currentUser || !$currentUser->can('wishlist-manageOthersListType:' . $targetType->uid)) {
+            throw new HttpException(403);
+        }
+    }
+
+    private function _hasRequestedItemRemoval(mixed $purchasables): bool
+    {
+        if (!is_array($purchasables)) {
+            return false;
+        }
+
+        foreach ($purchasables as $purchasable) {
+            if (is_array($purchasable) && !empty($purchasable['removeFromList'])) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function _renderEmail(string $key, array $variables): Message

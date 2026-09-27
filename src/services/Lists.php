@@ -119,16 +119,18 @@ class Lists extends Component
 
     public function isListOwner(ListElement $list): bool
     {
-        $id = false;
         $currentUser = Craft::$app->getUser()->getIdentity();
 
         if ($currentUser) {
-            $id = $currentUser->id;
-        } else {
-            $id = $this->getSessionId();
+            return $list->userId !== null && (int)$list->userId === (int)$currentUser->id;
         }
 
-        return (int)$list->getOwnerId() === (int)$id;
+        $sessionId = $this->getSessionId();
+
+        return $list->userId === null &&
+            is_string($list->sessionId) && $list->sessionId !== '' &&
+            is_string($sessionId) && $sessionId !== '' &&
+            hash_equals($list->sessionId, $sessionId);
     }
 
     public function canManageOthersList(ListElement $list): bool

@@ -217,22 +217,22 @@ class ListElement extends Element
 
     public function canView(User $user): bool
     {
-        return true;
+        return $this->_canManage($user);
     }
 
     public function canSave(User $user): bool
     {
-        return true;
+        return $this->_canManage($user);
     }
 
     public function canDuplicate(User $user): bool
     {
-        return true;
+        return $this->_canManage($user);
     }
 
     public function canDelete(User $user): bool
     {
-        return true;
+        return $this->_canManage($user);
     }
 
     public function canCreateDrafts(User $user): bool
@@ -505,5 +505,38 @@ class ListElement extends Element
         }
 
         return null;
+    }
+
+    private function _canManage(User $user): bool
+    {
+        $typeIds = [$this->typeId];
+
+        if ($this->id) {
+            $storedTypeId = (new Query())
+                ->select(['typeId'])
+                ->from(['{{%wishlist_lists}}'])
+                ->where(['id' => $this->id])
+                ->scalar();
+
+            if (!$storedTypeId) {
+                return false;
+            }
+
+            $typeIds[] = (int)$storedTypeId;
+        }
+
+        foreach (array_unique($typeIds) as $typeId) {
+            if (!$typeId) {
+                return false;
+            }
+
+            $type = Wishlist::$plugin->getListTypes()->getListTypeById($typeId);
+
+            if (!$type || !$user->can('wishlist-manageListType:' . $type->uid)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

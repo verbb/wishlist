@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Fixed
+- Fixed ownership and item-binding checks for list management and shared add-to-cart requests.
+
 ### Changed
 - Route plugin settings through the plugin’s authorized settings controller.
 

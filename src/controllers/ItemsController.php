@@ -12,6 +12,7 @@ use Craft;
 use craft\base\ElementInterface;
 
 use yii\base\Exception;
+use yii\web\HttpException;
 use yii\web\Response;
 
 class ItemsController extends BaseController
@@ -27,6 +28,8 @@ class ItemsController extends BaseController
 
     public function actionEditItem(string $listTypeHandle, int $listId, int $itemId = null, Item $item = null): Response
     {
+        $this->requireCpRequest();
+
         $variables = [
             'listTypeHandle' => $listTypeHandle,
             'listId' => $listId,
@@ -52,9 +55,18 @@ class ItemsController extends BaseController
 
     public function actionSaveItem(): ?Response
     {
+        $this->requireCpRequest();
         $this->requirePostRequest();
 
         $itemId = $this->request->getParam('itemId');
+        $listId = $this->request->getRequiredParam('listId');
+        $list = Wishlist::$plugin->getLists()->getListById($listId);
+
+        if (!$list) {
+            throw new Exception(Craft::t('wishlist', 'No list with the ID “{id}”', ['id' => $listId]));
+        }
+
+        $this->enforceListPermissions($list);
 
         if ($itemId) {
             $item = Wishlist::$plugin->getItems()->getItemById($itemId);
@@ -62,11 +74,15 @@ class ItemsController extends BaseController
             if (!$item) {
                 throw new Exception(Craft::t('wishlist', 'No item with the ID “{id}”', ['id' => $itemId]));
             }
+
+            if ($item->listId !== $list->id) {
+                throw new HttpException(404, Craft::t('wishlist', 'Unable to find item in list.'));
+            }
         } else {
             $item = new Item();
+            $item->listId = $list->id;
         }
 
-        $item->listId = $this->request->getParam('listId');
         $item->setFieldValuesFromRequest('fields');
 
         // Element is a little special to cater for multiple types
@@ -109,6 +125,7 @@ class ItemsController extends BaseController
 
     public function actionDelete(): ?Response
     {
+        $this->requireCpRequest();
         $this->requirePostRequest();
 
         $itemId = $this->request->getParam('itemId');
@@ -117,6 +134,14 @@ class ItemsController extends BaseController
         if (!$item) {
             throw new Exception(Craft::t('wishlist', 'Item not found with the ID “{id}”', ['id' => $itemId]));
         }
+
+        $list = $item->getList();
+
+        if (!$list) {
+            throw new HttpException(404, Craft::t('wishlist', 'Unable to find list for item.'));
+        }
+
+        $this->enforceListPermissions($list);
 
         if (!Craft::$app->getElements()->deleteElement($item)) {
             if ($this->request->getAcceptsJson()) {
@@ -460,6 +485,12 @@ class ItemsController extends BaseController
 
         $variables['list'] = Craft::$app->getElements()->getElementById($variables['listId'], ListElement::class);
 
+        if (!$variables['list']) {
+            throw new HttpException(404, Craft::t('wishlist', 'Unable to find list.'));
+        }
+
+        $this->enforceListPermissions($variables['list']);
+
         if (!empty($variables['listTypeHandle'])) {
             $variables['listType'] = Wishlist::$plugin->getListTypes()->getListTypeByHandle($variables['listTypeHandle']);
         } else if (!empty($variables['listTypeHandleId'])) {
@@ -468,6 +499,10 @@ class ItemsController extends BaseController
 
         $listType = $variables['listType'];
         $item = $variables['item'];
+
+        if (!$listType || $variables['list']->typeId !== $listType->id || ($item->id && $item->listId !== $variables['list']->id)) {
+            throw new HttpException(404);
+        }
 
         // For new items, they should have an associated listId
         if (!$item->listId) {
@@ -563,6 +598,9 @@ class ItemsController extends BaseController
 
                     continue;
                 }
+
+                $this->enforceEnabledList($list);
+                $this->enforceListPermissions($list);
             } else {
                 // Ensure that we resolve the list type correctly
                 $listParams = array_filter(['listType' => $listType]);
@@ -576,6 +614,9 @@ class ItemsController extends BaseController
 
                 $list->title = $postItem['listTitle'] ?? $list->title;
                 $list->enabled = $postItem['listEnabled'] ?? $list->enabled;
+
+                $this->enforceEnabledList($list);
+                $this->enforceListPermissions($list);
             }
 
             if ($listFields) {
@@ -589,10 +630,6 @@ class ItemsController extends BaseController
                     continue;
                 }
             }
-
-            // Check if we're allowed to manage lists
-            $this->enforceEnabledList($list);
-            $this->enforceListPermissions($list);
 
             $lists[] = $list;
         }
@@ -617,7 +654,13 @@ class ItemsController extends BaseController
 
         // Check if we're passing in an itemId - that's easy
         if ($itemId) {
-            return Wishlist::$plugin->getItems()->getItemById($itemId);
+            $item = Wishlist::$plugin->getItems()->getItemById($itemId);
+
+            if (!$item || $item->listId !== $list->id || $item->elementId !== $element->id || $item->elementSiteId !== $element->siteId) {
+                throw new HttpException(404, Craft::t('wishlist', 'Unable to find item in list.'));
+            }
+
+            return $item;
         }
 
         // Try and find an existing item for the list, with all the appropriate params

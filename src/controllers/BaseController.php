@@ -59,8 +59,9 @@ class BaseController extends Controller
                     throw new HttpException(403);
                 }
 
-                if ($list->sessionId !== Craft::$app->getSession()->get('wishlist_list')) {
-                    // Check if the guests session matches the lists
+                $sessionId = Craft::$app->getSession()->get('wishlist_list');
+
+                if (!is_string($list->sessionId) || $list->sessionId === '' || !is_string($sessionId) || $sessionId === '' || !hash_equals($list->sessionId, $sessionId)) {
                     throw new HttpException(403);
                 }
 

@@ -39,6 +39,30 @@ Once variants are in your list, you can add all of them to your cart in a single
 
 This will look through any Purchasable objects in the list, and add it to your cart.
 
+## Adding a Shared List to the Cart
+
+A visitor can also add products from a publicly shared list to their own cart. Include both the list ID and its sharing reference so Wishlist can verify that the visitor received the shared-list URL.
+
+```twig
+{% set reference = craft.app.request.getParam('id') %}
+{% set list = craft.wishlist.lists(false).reference(reference).one() %}
+
+{% if list %}
+    <form method="POST">
+        <input type="hidden" name="action" value="wishlist/lists/add-to-cart">
+        {{ csrfInput() }}
+        {{ redirectInput('/shop/cart') }}
+
+        <input type="hidden" name="listId" value="{{ list.id }}">
+        <input type="hidden" name="reference" value="{{ list.reference }}">
+
+        <input type="submit" value="Add to Cart">
+    </form>
+{% endif %}
+```
+
+Shared-list visitors can supply quantities, notes and line-item options for their own cart. Only the list owner or a user with permission to manage the list can remove or clear source items, or copy the list’s and items’ custom fields into cart options.
+
 You can even tell Wishlist to use the values in your List or Item custom fields as Line Item Options for the added line item in the cart.
 
 ```twig

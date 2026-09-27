@@ -197,22 +197,22 @@ class Item extends Element
 
     public function canView(User $user): bool
     {
-        return true;
+        return $this->_canManage($user, 'canView');
     }
 
     public function canSave(User $user): bool
     {
-        return true;
+        return $this->_canManage($user, 'canSave');
     }
 
     public function canDuplicate(User $user): bool
     {
-        return true;
+        return $this->_canManage($user, 'canDuplicate');
     }
 
     public function canDelete(User $user): bool
     {
-        return true;
+        return $this->_canManage($user, 'canDelete');
     }
 
     public function canCreateDrafts(User $user): bool
@@ -456,5 +456,38 @@ class Item extends Element
         }
 
         return parent::attributeHtml($attribute);
+    }
+
+    private function _canManage(User $user, string $method): bool
+    {
+        $listIds = [$this->listId];
+
+        if ($this->id) {
+            $storedListId = (new Query())
+                ->select(['listId'])
+                ->from(['{{%wishlist_items}}'])
+                ->where(['id' => $this->id])
+                ->scalar();
+
+            if (!$storedListId) {
+                return false;
+            }
+
+            $listIds[] = (int)$storedListId;
+        }
+
+        foreach (array_unique($listIds) as $listId) {
+            if (!$listId) {
+                return false;
+            }
+
+            $list = ListElement::find()->id($listId)->status(null)->one();
+
+            if (!$list || !$list->{$method}($user)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
