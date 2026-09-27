@@ -23,6 +23,7 @@ use craft\commerce\base\Purchasable;
 
 use yii\base\Exception;
 use yii\helpers\Markdown;
+use yii\validators\EmailValidator;
 use yii\web\HttpException;
 use yii\web\Response;
 
@@ -533,20 +534,16 @@ class ListsController extends BaseController
         $this->enforceEnabledList($list);
         $this->enforceListPermissions($list);
 
-        $sender = $this->request->getRequiredParam('sender');
-        $recipient = $this->request->getRequiredParam('recipient');
+        $sender = $this->_createShareUser($this->request->getRequiredParam('sender'));
+        $recipient = $this->_createShareUser($this->request->getRequiredParam('recipient'));
 
         if (!$sender || !$recipient) {
-            $message = Craft::t('wishlist', 'You must supply and sender and recipient');
+            $message = Craft::t('wishlist', 'You must supply a sender and recipient with valid names and email addresses.');
 
             Wishlist::error($message);
 
             return $this->returnError($message);
         }
-
-        // Create user elements for sender/recipient
-        $sender = new User($sender);
-        $recipient = new User($recipient);
 
         $variables = [
             'list' => $list,
@@ -666,6 +663,31 @@ class ListsController extends BaseController
 
     // Private Methods
     // =========================================================================
+
+    private function _createShareUser(mixed $attributes): ?User
+    {
+        if (!is_array($attributes)) {
+            return null;
+        }
+
+        $values = [];
+
+        foreach (['firstName', 'lastName', 'email'] as $attribute) {
+            $value = $attributes[$attribute] ?? null;
+
+            if (!is_scalar($value) || trim((string)$value) === '') {
+                return null;
+            }
+
+            $values[$attribute] = trim((string)$value);
+        }
+
+        if (!(new EmailValidator())->validate($values['email'])) {
+            return null;
+        }
+
+        return new User($values);
+    }
 
     private function _prepareVariableArray(array &$variables): void
     {

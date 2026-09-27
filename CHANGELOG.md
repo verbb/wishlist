@@ -9,6 +9,7 @@
 ### Fixed
 - Fixed moderate-severity information disclosure and authorization vulnerabilities affecting shared lists and guest ownership.
 - Fixed ownership and item-binding checks for list management and shared add-to-cart requests.
+- Fixed share-by-email requests accepting unsupported Craft user properties.
 
 ## 3.0.20 - 2026-09-23
 
