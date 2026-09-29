@@ -1,6 +1,6 @@
 {
     "name": "verbb/wishlist",
-    "description": "Allow users to create lists to store favourite entries, save products in a wishlist and more.",
+    "description": "A Craft CMS plugin for saving, organising and sharing lists of elements and products.",
     "type": "craft-plugin",
     "version": "3.0.20",
     "keywords": [
