@@ -1,16 +1,16 @@
-Wishlist lets visitors save the Craft content they care about and return to it later. Build favourites, product wishlists, reading lists, or project-specific collections for guests and members, with sharing and Commerce actions ready when they fit.
+Wishlist lets visitors save entries, categories, Commerce products and other Craft elements to lists. Use it for favourites, product wishlists, reading lists or another collection that suits the site.
 
-Guests and signed-in users can add supported Craft elements to a list. A simple site may use one default list, while list types allow several distinct collection experiences with their own behaviour.
+A simple site can use the default list, while larger projects can create multiple list types with their own fields and behaviour. Guests and signed-in members are both supported.
+
+And yes, every list can have its own shareable URL.
 
 ## Features
 
-- **Guests and members:** Support quick anonymous saving and durable account-owned lists.
-- **Multiple list types:** Create distinct collection behaviours for different parts of the site.
-- **Member-managed lists:** Let signed-in users create and organise their own collections.
-- **Staff management:** Allow nominated staff to manage another user's lists.
-- **Owner enforcement:** Restrict front-end item actions to the user who owns the list.
-- **Custom fields:** Add structured data to both a list and its individual items.
-- **Add to cart:** Move saved Commerce products and variants into checkout.
-- **Shareable URLs:** Let a visitor send a list to someone else without sharing an account.
-- **Member-managed lists:** Allow registered users to create, rename, clear, and delete their own lists. Custom fields on lists and items capture notes, quantities, or other context beyond the saved element itself.
-- **Turn saved products into purchases:** Add Craft Commerce purchasables from a wishlist to the cart in one action and share a list through its unique URL. The front-end flow remains in project templates, ready to match the store.
+- Keep guest lists in the visitor's browser and member lists with their Craft account.
+- Use one default list or create multiple list types for different parts of the site.
+- Let signed-in members create, rename, clear and delete their own lists.
+- Allow nominated staff to manage another member's lists.
+- Enforce list ownership for front-end item management.
+- Add custom fields to lists and individual list items.
+- Add saved Craft Commerce purchasables to the cart with quantities and line-item options.
+- Share lists through a unique URL or email.
