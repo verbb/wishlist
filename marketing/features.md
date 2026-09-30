@@ -7,7 +7,7 @@ Let visitors create lists for any Craft element. Build favourites for entries, w
 
 Guests and signed-in users can add supported Craft elements to a list. A simple site may use one default list, while list types allow several distinct collection experiences with their own behaviour.
 
-![A populated Wishlist list containing five saved Craft entries.](../screenshots/output/feature-tour/wishlist-list.png)
+![A populated Wishlist list containing five saved Craft entries.](../screenshots/wishlist-list.png)
 
 <!-- feature-section-end -->
 
