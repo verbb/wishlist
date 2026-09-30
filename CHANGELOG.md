@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.0.21 - 2026-09-30
 
 ### Changed
 - List reference and guest session ID queries now require exact values, and guest session IDs are no longer available through GraphQL or serialized element responses.
