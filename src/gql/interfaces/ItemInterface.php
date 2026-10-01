@@ -3,6 +3,7 @@ namespace verbb\wishlist\gql\interfaces;
 
 use verbb\wishlist\elements\Item;
 use verbb\wishlist\gql\types\generators\ItemGenerator;
+use verbb\wishlist\helpers\Gql as GqlHelper;
 
 use Craft;
 use craft\gql\interfaces\Element;
@@ -68,6 +69,7 @@ class ItemInterface extends Element
                 'name' => 'element',
                 'type' => Element::getType(),
                 'description' => 'The element that the item relates to.',
+                'resolve' => fn(Item $item) => GqlHelper::resolveItemElement($item),
             ],
         ]), self::getName());
     }
