@@ -7,10 +7,13 @@ use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\events\ModifySupportedElementTypesEvent;
 
 use Craft;
+use craft\base\Element;
 use craft\base\Component;
 use craft\base\ElementInterface;
+use craft\base\NestedElementInterface;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
+use craft\models\Site;
 
 class Items extends Component
 {
@@ -88,5 +91,115 @@ class Items extends Component
         $this->trigger(self::EVENT_MODIFY_SUPPORTED_ELEMENT_TYPES, $event);
 
         return $event->types;
+    }
+
+    /**
+     * Whether a linked element may be added from a front-end request.
+     *
+     * Nested elements inherit the lifecycle and public visibility of their
+     * root owner. An explicitly allowed non-live root owner does not also
+     * require the non-public opt-out, because that state cannot have a public
+     * URL.
+     */
+    public function canAddElementFromSite(ElementInterface $element, ?Site $currentSite = null): bool
+    {
+        if (!in_array($element::class, $this->getSupportedElementTypes(), true)) {
+            return false;
+        }
+
+        $settings = Wishlist::$plugin->getSettings();
+        $currentSite ??= Craft::$app->getSites()->getCurrentSite();
+        $elements = [$element];
+        $rootOwner = $this->_getRootOwner($element);
+
+        if ($rootOwner !== $element) {
+            $elements[] = $rootOwner;
+        }
+
+        $rootOwnerHasExplicitlyAllowedState = false;
+
+        foreach ($elements as $candidate) {
+            if ($candidate::isLocalized() && $candidate->siteId !== $currentSite->id && !$settings->allowCrossSiteElements) {
+                return false;
+            }
+
+            if ($candidate->getIsDraft()) {
+                if (!$settings->allowDraftElements) {
+                    return false;
+                }
+
+                $rootOwnerHasExplicitlyAllowedState = $rootOwnerHasExplicitlyAllowedState || $candidate === $rootOwner;
+            }
+
+            if ($candidate->getIsRevision()) {
+                if (!$settings->allowRevisionElements) {
+                    return false;
+                }
+
+                $rootOwnerHasExplicitlyAllowedState = $rootOwnerHasExplicitlyAllowedState || $candidate === $rootOwner;
+            }
+
+            if ($this->_isInactiveElement($candidate)) {
+                if (!$settings->allowInactiveElements) {
+                    return false;
+                }
+
+                $rootOwnerHasExplicitlyAllowedState = $rootOwnerHasExplicitlyAllowedState || $candidate === $rootOwner;
+            }
+        }
+
+        if ($rootOwnerHasExplicitlyAllowedState || $settings->allowNonPublicElements) {
+            return true;
+        }
+
+        return $rootOwner->getUrl() !== null;
+    }
+
+
+    // Private Methods
+    // =========================================================================
+
+    private function _getRootOwner(ElementInterface $element): ElementInterface
+    {
+        $rootOwner = $element;
+        $visitedOwners = [];
+
+        while ($rootOwner instanceof NestedElementInterface) {
+            $objectId = spl_object_id($rootOwner);
+
+            if (isset($visitedOwners[$objectId])) {
+                break;
+            }
+
+            $visitedOwners[$objectId] = true;
+            $primaryOwner = $rootOwner->getPrimaryOwner();
+
+            if (!$primaryOwner || $primaryOwner === $rootOwner) {
+                break;
+            }
+
+            $rootOwner = $primaryOwner;
+        }
+
+        return $rootOwner;
+    }
+
+    private function _isInactiveElement(ElementInterface $element): bool
+    {
+        if (!$element->enabled || $element->archived || $element->getEnabledForSite($element->siteId) === false) {
+            return true;
+        }
+
+        $inactiveStatuses = [Element::STATUS_DISABLED, Element::STATUS_ARCHIVED];
+
+        foreach (['STATUS_INACTIVE', 'STATUS_PENDING', 'STATUS_EXPIRED', 'STATUS_SUSPENDED', 'STATUS_LOCKED'] as $constant) {
+            $constantName = $element::class . '::' . $constant;
+
+            if (defined($constantName)) {
+                $inactiveStatuses[] = constant($constantName);
+            }
+        }
+
+        return in_array($element->getStatus(), $inactiveStatuses, true);
     }
 }

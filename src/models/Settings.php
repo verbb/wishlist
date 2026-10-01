@@ -26,6 +26,11 @@ class Settings extends Model
     public bool $updateListSearchIndexes = true;
     public bool $updateItemSearchIndexes = true;
     public ?string $defaultCpItemElementType = null;
+    public bool $allowDraftElements = false;
+    public bool $allowRevisionElements = false;
+    public bool $allowInactiveElements = false;
+    public bool $allowCrossSiteElements = false;
+    public bool $allowNonPublicElements = false;
 
     // PDF
     public string $pdfFilenameFormat = 'Wishlist-{id}';

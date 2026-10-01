@@ -108,6 +108,55 @@ Set how long of an expiry guest users' lists should have, before being forgotten
 :::
 
 
+### Item Eligibility
+
+These settings control which linked elements can be added from front-end requests. They do not restrict control-panel item management, and existing items can still be removed if their linked element later becomes ineligible. Wishlist continues to support every registered element type permitted by its supported-element-types event.
+
+::: reference
+#### `allowDraftElements`
+
+**Type:** `bool` · **Default:** `false`
+
+Whether draft elements can be added to lists from front-end requests. When the list target’s root owner is a draft, enabling this also permits its expected lack of a public URL.
+:::
+
+
+::: reference
+#### `allowRevisionElements`
+
+**Type:** `bool` · **Default:** `false`
+
+Whether element revisions can be added to lists from front-end requests. When the list target’s root owner is a revision, enabling this also permits its expected lack of a public URL.
+:::
+
+
+::: reference
+#### `allowInactiveElements`
+
+**Type:** `bool` · **Default:** `false`
+
+Whether disabled, archived, pending, expired, suspended or locked elements can be added to lists from front-end requests. When the list target’s root owner is inactive, enabling this also permits its expected lack of a public URL.
+:::
+
+
+::: reference
+#### `allowCrossSiteElements`
+
+**Type:** `bool` · **Default:** `false`
+
+Whether localized elements from a site other than the current site can be added to lists from front-end requests. Other eligibility checks continue to apply.
+:::
+
+
+::: reference
+#### `allowNonPublicElements`
+
+**Type:** `bool` · **Default:** `false`
+
+Whether active elements without a public site URL can be added to lists from front-end requests. Nested elements use their root owner’s public URL.
+:::
+
+
 ### PDF
 
 ::: reference

@@ -98,6 +98,50 @@
         warning: macros.configWarning('purgeEmptyGuestListsOnly', 'wishlist'),
     }) }}
 
+    <h3>{{ 'Item Eligibility' | t('wishlist') }}</h3>
+
+    <p>{{ 'Control which linked elements can be added from front-end requests. Existing items can still be removed if their linked element later becomes ineligible.' | t('wishlist') }}</p>
+
+    {{ forms.lightswitchField({
+        label: 'Allow Draft Elements' | t('wishlist'),
+        instructions: 'Whether draft elements can be added to lists from front-end requests.' | t('wishlist'),
+        name: 'allowDraftElements',
+        on: settings.allowDraftElements,
+        warning: macros.configWarning('allowDraftElements', 'wishlist'),
+    }) }}
+
+    {{ forms.lightswitchField({
+        label: 'Allow Revision Elements' | t('wishlist'),
+        instructions: 'Whether element revisions can be added to lists from front-end requests.' | t('wishlist'),
+        name: 'allowRevisionElements',
+        on: settings.allowRevisionElements,
+        warning: macros.configWarning('allowRevisionElements', 'wishlist'),
+    }) }}
+
+    {{ forms.lightswitchField({
+        label: 'Allow Inactive Elements' | t('wishlist'),
+        instructions: 'Whether disabled, archived, pending, expired, suspended or locked elements can be added to lists from front-end requests.' | t('wishlist'),
+        name: 'allowInactiveElements',
+        on: settings.allowInactiveElements,
+        warning: macros.configWarning('allowInactiveElements', 'wishlist'),
+    }) }}
+
+    {{ forms.lightswitchField({
+        label: 'Allow Cross-Site Elements' | t('wishlist'),
+        instructions: 'Whether localized elements from a site other than the current site can be added to lists from front-end requests.' | t('wishlist'),
+        name: 'allowCrossSiteElements',
+        on: settings.allowCrossSiteElements,
+        warning: macros.configWarning('allowCrossSiteElements', 'wishlist'),
+    }) }}
+
+    {{ forms.lightswitchField({
+        label: 'Allow Non-Public Elements' | t('wishlist'),
+        instructions: 'Whether active elements without a public site URL can be added to lists from front-end requests.' | t('wishlist'),
+        name: 'allowNonPublicElements',
+        on: settings.allowNonPublicElements,
+        warning: macros.configWarning('allowNonPublicElements', 'wishlist'),
+    }) }}
+
     <hr>
 
     <h3>{{ 'PDF' | t('wishlist') }}</h3>

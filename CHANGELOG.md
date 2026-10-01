@@ -2,8 +2,12 @@
 
 ## Unreleased
 
+### Added
+- Added settings for controlling which linked elements can be added from front-end requests.
+
 ### Fixed
 - Fixed a high-severity information disclosure vulnerability.
+- Fixed a medium-severity information disclosure vulnerability.
 
 ## 3.0.21 - 2026-09-30
 

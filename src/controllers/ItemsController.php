@@ -216,6 +216,12 @@ class ItemsController extends BaseController
                 // Create the item for the list and element, with additional attributes
                 $item = $this->_getOrCreateItem($list, $element, $postItem);
 
+                if ($item instanceof ItemError) {
+                    $errors[$key] = $item;
+
+                    continue;
+                }
+
                 // Check if this is in the list
                 if ($list->getHasItem($item)) {
                     // If we allow duplicates and this is one, ensure that it's still added and not updated
@@ -226,6 +232,12 @@ class ItemsController extends BaseController
                     } else {
                         // Create the item, as we're adding a new duplicate
                         $item = $this->_createItem($list, $element, $postItem);
+
+                        if ($item instanceof ItemError) {
+                            $errors[$key] = $item;
+
+                            continue;
+                        }
                     }
                 }
 
@@ -296,6 +308,12 @@ class ItemsController extends BaseController
                 // Create the item for the list and element, with additional attributes
                 $item = $this->_getOrCreateItem($list, $element, $postItem);
 
+                if ($item instanceof ItemError) {
+                    $errors[$key] = $item;
+
+                    continue;
+                }
+
                 if ($item->id) {
                     if (!Craft::$app->getElements()->deleteElement($item)) {
                         $errors[$key] = new ItemError('Unable to delete item from list.', ['item' => $item]);
@@ -364,6 +382,12 @@ class ItemsController extends BaseController
 
                 // Create the item for the list and element, with additional attributes
                 $item = $this->_getOrCreateItem($list, $element, $postItem);
+
+                if ($item instanceof ItemError) {
+                    $errors[$key] = $item;
+
+                    continue;
+                }
 
                 if ($item->id) {
                     if (!Craft::$app->getElements()->deleteElement($item)) {
@@ -637,7 +661,7 @@ class ItemsController extends BaseController
         return $lists;
     }
 
-    private function _getOrCreateItem(ListElement $list, ElementInterface $element, array $postItem): Item
+    private function _getOrCreateItem(ListElement $list, ElementInterface $element, array $postItem): Item|ItemError
     {
         if ($item = $this->_getItem($list, $element, $postItem)) {
             return $item;
@@ -678,8 +702,12 @@ class ItemsController extends BaseController
         return null;
     }
 
-    private function _createItem(ListElement $list, ElementInterface $element, array $postItem): Item
+    private function _createItem(ListElement $list, ElementInterface $element, array $postItem): Item|ItemError
     {
+        if ($this->request->getIsSiteRequest() && !Wishlist::$plugin->getItems()->canAddElementFromSite($element)) {
+            return new ItemError('Unable to find element.');
+        }
+
         $fields = $postItem['fields'] ?? [];
         $options = $postItem['options'] ?? [];
 
