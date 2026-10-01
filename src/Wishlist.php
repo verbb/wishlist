@@ -194,6 +194,7 @@ class Wishlist extends Plugin
             $listTypes = Wishlist::$plugin->getListTypes()->getAllListTypes();
 
             $listTypePermissions = [];
+
             foreach ($listTypes as $listType) {
                 $suffix = ':' . $listType->uid;
                 $listTypePermissions['wishlist-manageListType' . $suffix] = ['label' => Craft::t('wishlist', 'Manage “{type}” lists', ['type' => $listType->name])];
@@ -285,7 +286,7 @@ class Wishlist extends Plugin
             $event->actions['wishlist-lists'] = [
                 'action' => function(): int {
                     $controller = Craft::$app->controller;
-                    
+
                     return $controller->resaveElements(ListElement::class);
                 },
                 'helpSummary' => 'Re-saves Wishlist lists.',

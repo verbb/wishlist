@@ -20,7 +20,7 @@ class UsersController extends Controller
     // =========================================================================
 
     public const SCREEN_WISHLIST = 'wishlist';
-    
+
 
     // Public Methods
     // =========================================================================

@@ -77,7 +77,7 @@ class ListTypes extends Component
     public function getEditableListTypes(): array
     {
         $userSession = Craft::$app->getUser();
-        
+
         return ArrayHelper::where($this->getAllListTypes(), function(ListType $listType) use ($userSession) {
             return $userSession->checkPermission("wishlist-manageListType:$listType->uid");
         }, true, true, false);
@@ -108,7 +108,7 @@ class ListTypes extends Component
 
         if ($isNewListType) {
             $listType->uid = StringHelper::UUID();
-        } else if (!$listType->uid) {
+        } elseif (!$listType->uid) {
             $listType->uid = Db::uidById('{{%wishlist_listtypes}}', $listType->id);
         }
 
@@ -154,7 +154,7 @@ class ListTypes extends Component
                 $fieldsService->saveLayout($layout, false);
 
                 $listTypeRecord->fieldLayoutId = $layout->id;
-            } else if ($listTypeRecord->fieldLayoutId) {
+            } elseif ($listTypeRecord->fieldLayoutId) {
                 // Delete the main field layout
                 $fieldsService->deleteLayoutById($listTypeRecord->fieldLayoutId);
                 $listTypeRecord->fieldLayoutId = null;
@@ -170,7 +170,7 @@ class ListTypes extends Component
                 $fieldsService->saveLayout($layout, false);
 
                 $listTypeRecord->itemFieldLayoutId = $layout->id;
-            } else if ($listTypeRecord->itemFieldLayoutId) {
+            } elseif ($listTypeRecord->itemFieldLayoutId) {
                 // Delete the item field layout
                 $fieldsService->deleteLayoutById($listTypeRecord->itemFieldLayoutId);
                 $listTypeRecord->itemFieldLayoutId = null;

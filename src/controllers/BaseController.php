@@ -65,7 +65,7 @@ class BaseController extends Controller
 
                 throw new HttpException(403);
             }
-            
+
             $this->requirePermission('wishlist-manageListType:' . $list->getType()->uid);
         }
     }

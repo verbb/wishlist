@@ -171,7 +171,7 @@ class Item extends Element
     public ?int $elementSiteId = null;
     public ?string $elementClass = null;
     public ?int $listId = null;
-    
+
     private ?ElementInterface $_element = null;
     private ?string $_elementTitle = null;
     private ?ListElement $_list = null;
@@ -357,7 +357,7 @@ class Item extends Element
             // Do we have any post data for this field?
             if (isset($values[$field->handle])) {
                 $value = $values[$field->handle];
-            } else if (!empty($this->getFieldParamNamespace()) && UploadedFile::getInstancesByName($this->getFieldParamNamespace() . '.' . $field->handle)) {
+            } elseif (!empty($this->getFieldParamNamespace()) && UploadedFile::getInstancesByName($this->getFieldParamNamespace() . '.' . $field->handle)) {
                 // A file was uploaded for this field
                 $value = null;
             } else {
@@ -407,7 +407,7 @@ class Item extends Element
         }
 
         $params = array_merge(['itemId' => $this->id], $params);
-        
+
         return UrlHelper::removeUrl($element, $params);
     }
 

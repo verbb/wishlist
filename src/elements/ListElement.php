@@ -401,14 +401,14 @@ class ListElement extends Element
     public function getToggleItemUrl(ElementInterface $element, array $params = []): string
     {
         $params = array_merge(['listType' => $this->getType()->handle], $params);
-        
+
         return UrlHelper::toggleUrl($element, $params);
     }
 
     public function getRemoveItemUrl(ElementInterface $element, array $params = []): string
     {
         $params = array_merge(['listType' => $this->getType()->handle], $params);
-        
+
         return UrlHelper::removeUrl($element, $params);
     }
 
@@ -499,13 +499,13 @@ class ListElement extends Element
             $owner = $this->getOwner();
 
             return $owner ? Cp::elementChipHtml($owner) : Craft::t('wishlist', 'Guest');
-        } else if ($attribute == 'type') {
+        } elseif ($attribute == 'type') {
             if ($listType = $this->getType()) {
                 return Craft::t('site', $listType->name);
             }
 
             return '';
-        } else if ($attribute == 'items') {
+        } elseif ($attribute == 'items') {
             return count($this->getItems());
         }
 

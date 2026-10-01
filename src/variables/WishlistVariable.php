@@ -96,7 +96,7 @@ class WishlistVariable
 
         if ($listId) {
             $list = Wishlist::$plugin->getLists()->getListById($listId);
-        } 
+        }
 
         if (!isset($list)) {
             $list = Wishlist::$plugin->getLists()->getUserList();

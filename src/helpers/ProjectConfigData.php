@@ -20,7 +20,7 @@ class ProjectConfigData
         return array_filter($configData);
     }
 
-    
+
     // Private Methods
     // =========================================================================
 

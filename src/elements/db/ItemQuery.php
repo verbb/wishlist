@@ -178,7 +178,7 @@ class ItemQuery extends ElementQuery
         // status (but we probably should!). TODO: querying only trashed items won't work for example...
         if ($this->trashed === false) {
             $this->subQuery->andWhere(['lists_elements.dateDeleted' => null]);
-        } else if ($this->trashed === true) {
+        } elseif ($this->trashed === true) {
             $this->subQuery->andWhere(['not', ['lists_elements.dateDeleted' => null]]);
         }
 

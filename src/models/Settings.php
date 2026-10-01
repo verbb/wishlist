@@ -37,7 +37,7 @@ class Settings extends Model
     // Email
     public ?string $templateEmail = null;
     public bool $attachPdfToEmail = false;
-    
+
 
     // Protected Methods
     // =========================================================================

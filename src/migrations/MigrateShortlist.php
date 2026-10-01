@@ -119,17 +119,17 @@ class MigrateShortlist extends Migration
 
             if ($shortlistItem['elementType'] === 'Entry') {
                 $elementClass = Entry::class;
-            } else if ($shortlistItem['elementType'] === 'Category') {
+            } elseif ($shortlistItem['elementType'] === 'Category') {
                 $elementClass = Category::class;
-            } else if ($shortlistItem['elementType'] === 'User') {
+            } elseif ($shortlistItem['elementType'] === 'User') {
                 $elementClass = User::class;
-            } else if ($shortlistItem['elementType'] === 'Tag') {
+            } elseif ($shortlistItem['elementType'] === 'Tag') {
                 $elementClass = Tag::class;
-            } else if ($shortlistItem['elementType'] === 'Asset') {
+            } elseif ($shortlistItem['elementType'] === 'Asset') {
                 $elementClass = Asset::class;
-            } else if ($shortlistItem['elementType'] === 'Commerce_Product') {
+            } elseif ($shortlistItem['elementType'] === 'Commerce_Product') {
                 $elementClass = Product::class;
-            } else if ($shortlistItem['elementType'] === 'Commerce_Variant') {
+            } elseif ($shortlistItem['elementType'] === 'Commerce_Variant') {
                 $elementClass = Variant::class;
             }
 

@@ -50,7 +50,7 @@ class ListQuery extends ElementQuery
     {
         if ($value instanceof ListType) {
             $this->typeId = $value->id;
-        } else if ($value !== null) {
+        } elseif ($value !== null) {
             $this->typeId = (new Query())
                 ->select(['id'])
                 ->from(['{{%wishlist_listtypes}}'])

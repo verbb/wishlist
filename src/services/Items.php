@@ -18,7 +18,7 @@ class Items extends Component
     // =========================================================================
 
     public const EVENT_MODIFY_SUPPORTED_ELEMENT_TYPES = 'modifySupportedElementTypes';
-    
+
 
     // Public Methods
     // =========================================================================

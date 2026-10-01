@@ -111,7 +111,7 @@ class ListsController extends BaseController
     {
         $this->requireCpRequest();
         $this->requirePostRequest();
-        
+
         $session = Craft::$app->getSession();
 
         $listId = $this->request->getRequiredParam('listId');
@@ -297,7 +297,7 @@ class ListsController extends BaseController
                     if (!Craft::$app->getElements()->deleteElement($item)) {
                         $errors[$itemId] = new ItemError('Unable to delete item from list.', ['item' => $item]);
                     }
-                } else if (!Wishlist::$plugin->getItems()->saveElement($item)) {
+                } elseif (!Wishlist::$plugin->getItems()->saveElement($item)) {
                     $errors[$itemId] = new ItemError('Unable to update item in list.', ['item' => $item]);
                 }
 
@@ -518,7 +518,7 @@ class ListsController extends BaseController
     {
         /* @var Settings $settings */
         $settings = Wishlist::$plugin->getSettings();
-        
+
         $listId = $this->request->getRequiredParam('listId');
         $list = ListElement::findOne($listId);
 
@@ -640,7 +640,7 @@ class ListsController extends BaseController
 
             return $this->returnError($message);
         }
-        
+
         $newList = Craft::$app->getElements()->duplicateElement($list, [
             'userId' => $currentUser->id,
         ]);
@@ -652,7 +652,7 @@ class ListsController extends BaseController
 
             return $this->returnError($message);
         }
-        
+
         $message = Craft::t('wishlist', 'Wishlist duplicated.');
 
         Wishlist::info($message);
@@ -707,7 +707,7 @@ class ListsController extends BaseController
 
         if (!empty($variables['listTypeHandle'])) {
             $variables['listType'] = Wishlist::$plugin->getListTypes()->getListTypeByHandle($variables['listTypeHandle']);
-        } else if (!empty($variables['listTypeHandleId'])) {
+        } elseif (!empty($variables['listTypeHandleId'])) {
             $variables['listType'] = Wishlist::$plugin->getListTypes()->getListTypeById($variables['listTypeId']);
         }
 

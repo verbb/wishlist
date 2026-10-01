@@ -493,7 +493,7 @@ class ItemsController extends BaseController
 
         if (!empty($variables['listTypeHandle'])) {
             $variables['listType'] = Wishlist::$plugin->getListTypes()->getListTypeByHandle($variables['listTypeHandle']);
-        } else if (!empty($variables['listTypeHandleId'])) {
+        } elseif (!empty($variables['listTypeHandleId'])) {
             $variables['listType'] = Wishlist::$plugin->getListTypes()->getListTypeById($variables['listTypeId']);
         }
 
