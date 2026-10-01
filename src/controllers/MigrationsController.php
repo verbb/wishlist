@@ -16,6 +16,19 @@ class MigrationsController extends Controller
     // Public Methods
     // =========================================================================
 
+    public function beforeAction($action): bool
+    {
+        if (!parent::beforeAction($action)) {
+            return false;
+        }
+
+        $this->requireCpRequest();
+        $this->requirePostRequest();
+        $this->requireAdmin();
+
+        return true;
+    }
+
     public function actionShortlist(): void
     {
         App::maxPowerCaptain();

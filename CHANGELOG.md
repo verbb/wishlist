@@ -7,6 +7,7 @@
 
 ### Fixed
 - Fixed a high-severity information disclosure vulnerability.
+- Fixed a medium-severity denial-of-service vulnerability.
 - Fixed a medium-severity information disclosure vulnerability.
 
 ## 3.0.21 - 2026-09-30
