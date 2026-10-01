@@ -1,6 +1,8 @@
 # Managing Lists
 You can Add, Delete or Clear lists, and its recommended that these options should only be available to registered users to prevent abuse.
 
+The URL examples on this page require the `allowGetListActions` setting, which is enabled by default for Wishlist 3 compatibility. Disable that setting and use the POST form examples to require CSRF protection for these actions.
+
 ## Add List
 
 ::: code

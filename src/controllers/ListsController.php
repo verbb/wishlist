@@ -51,6 +51,22 @@ class ListsController extends BaseController
     // Public Methods
     // =========================================================================
 
+    public function beforeAction($action): bool
+    {
+        if (!parent::beforeAction($action)) {
+            return false;
+        }
+
+        $settings = Wishlist::$plugin->getSettings();
+        $postOnlyActions = ['create', 'update', 'update-items', 'delete', 'clear', 'add-to-cart'];
+
+        if (!$settings->allowGetListActions && in_array($action->id, $postOnlyActions, true)) {
+            $this->requirePostRequest();
+        }
+
+        return true;
+    }
+
     public function init(): void
     {
         parent::init();

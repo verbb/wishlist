@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Added
+- Added a setting for requiring POST requests for front-end list actions.
 - Added settings for controlling which linked elements can be added from front-end requests.
 
 ### Fixed

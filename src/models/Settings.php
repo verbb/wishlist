@@ -15,6 +15,8 @@ class Settings extends Model
 
     // Lists
     public bool $allowDuplicates = false;
+    // TODO: Default to false in the next major version.
+    public bool $allowGetListActions = true;
     public bool $manageDisabledLists = true;
     public bool $mergeLastListOnLogin = false;
     public bool $purgeInactiveLists = true;

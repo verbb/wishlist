@@ -59,6 +59,14 @@
     }) }}
 
     {{ forms.lightswitchField({
+        label: 'Allow GET Requests for List Actions' | t('wishlist'),
+        instructions: 'Whether front-end list and add-to-cart actions can accept GET requests. Disable this to require POST requests with CSRF protection.' | t('wishlist'),
+        name: 'allowGetListActions',
+        on: settings.allowGetListActions,
+        warning: macros.configWarning('allowGetListActions', 'wishlist'),
+    }) }}
+
+    {{ forms.lightswitchField({
         label: 'Manage Disabled Lists' | t('wishlist'),
         instructions: 'Whether users should be allowed to manage lists when lists are disabled.' | t('wishlist'),
         name: 'manageDisabledLists',

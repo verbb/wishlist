@@ -37,6 +37,15 @@ Whether to allow duplicates in lists.
 
 
 ::: reference
+#### `allowGetListActions`
+
+**Type:** `bool` · **Default:** `true`
+
+Whether front-end list and add-to-cart actions can accept GET requests. Disable this to require POST requests with CSRF protection for creating, updating, deleting and clearing lists, updating list items, and adding lists to a cart. The compatibility default remains enabled for Wishlist 3 and will change in the next major version.
+:::
+
+
+::: reference
 #### `manageDisabledLists`
 
 **Type:** `bool` · **Default:** `true`
