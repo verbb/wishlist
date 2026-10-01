@@ -60,8 +60,16 @@ class ListsController extends BaseController
         $settings = Wishlist::$plugin->getSettings();
         $postOnlyActions = ['create', 'update', 'update-items', 'delete', 'clear', 'add-to-cart'];
 
-        if (!$settings->allowGetListActions && in_array($action->id, $postOnlyActions, true)) {
-            $this->requirePostRequest();
+        if (in_array($action->id, $postOnlyActions, true)) {
+            if (!$settings->allowGetListActions) {
+                $this->requirePostRequest();
+            } elseif ($this->request->getIsGet()) {
+                // Deprecated in 3.0.22.
+                Craft::$app->getDeprecator()->log(
+                    'wishlist.listActions.get',
+                    'GET requests for front-end Wishlist list actions have been deprecated and will be removed in Wishlist 4. Submit these actions with POST instead.',
+                );
+            }
         }
 
         return true;

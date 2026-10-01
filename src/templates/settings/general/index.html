@@ -60,7 +60,7 @@
 
     {{ forms.lightswitchField({
         label: 'Allow GET Requests for List Actions' | t('wishlist'),
-        instructions: 'Whether front-end list and add-to-cart actions can accept GET requests. Disable this to require POST requests with CSRF protection.' | t('wishlist'),
+        instructions: 'Whether front-end list and add-to-cart actions can accept deprecated GET requests. Disable this to require POST requests with CSRF protection. Wishlist 4 will require POST requests.' | t('wishlist'),
         name: 'allowGetListActions',
         on: settings.allowGetListActions,
         warning: macros.configWarning('allowGetListActions', 'wishlist'),

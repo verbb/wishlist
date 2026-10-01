@@ -11,6 +11,9 @@
 - Fixed a medium-severity denial-of-service vulnerability.
 - Fixed a medium-severity information disclosure vulnerability.
 
+### Deprecated
+- Deprecated GET requests for front-end list actions. These requests will be rejected in Wishlist 4.
+
 ## 3.0.21 - 2026-09-30
 
 ### Changed
