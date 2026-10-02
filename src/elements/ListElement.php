@@ -476,6 +476,8 @@ class ListElement extends Element
         }
 
         parent::afterSave($isNew);
+
+        Wishlist::$plugin->getPdf()->invalidateListCache($this->id);
     }
 
 

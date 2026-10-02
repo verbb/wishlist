@@ -204,6 +204,8 @@ class Lists extends Component
         Db::update('{{%wishlist_lists}}', [
             'dateUpdated' => Db::prepareDateForDb(new DateTime()),
         ], ['id' => $listId]);
+
+        Wishlist::$plugin->getPdf()->invalidateListCache($listId);
     }
 
     public function generateReferenceNumber(): string
@@ -235,7 +237,17 @@ class Lists extends Component
             $sessionId = $this->_getExistingSessionId();
 
             if ($sessionId) {
+                $migratedListIds = (new Query())
+                    ->select(['id'])
+                    ->from(['{{%wishlist_lists}}'])
+                    ->where(['sessionId' => $sessionId, 'userId' => null])
+                    ->column();
+
                 Db::update('{{%wishlist_lists}}', ['userId' => $user->id, 'sessionId' => null], ['sessionId' => $sessionId, 'userId' => null]);
+
+                foreach ($migratedListIds as $migratedListId) {
+                    $this->touchList((int)$migratedListId);
+                }
 
                 // Once an account owns the lists, the old guest bearer must no longer remain usable.
                 $this->_clearSessionId();
@@ -257,12 +269,14 @@ class Lists extends Component
 
                     if ($userLists) {
                         $oldestList = $userLists[0];
+                        $oldestListChanged = false;
 
                         // Update all list items to belong to the oldest list
                         foreach ($userLists as $userList) {
                             // Ensure that we check against the title - they should be the same to merge
                             if ($oldestList->id != $userList->id && $oldestList->title == $userList->title) {
                                 Db::update('{{%wishlist_items}}', ['listId' => $oldestList->id], ['listId' => $userList->id]);
+                                $oldestListChanged = true;
 
                                 // Delete the newer list, now the items have been moved off
                                 Db::delete('{{%elements}}', ['id' => $userList->id]);
@@ -307,8 +321,13 @@ class Lists extends Component
                                     $now = new DateTime();
 
                                     Db::update('{{%elements}}', ['dateDeleted' => Db::prepareDateForDb($now)], ['id' => $duplicateItem['id']]);
+                                    $oldestListChanged = true;
                                 }
                             }
+                        }
+
+                        if ($oldestListChanged) {
+                            $this->touchList($oldestList->id);
                         }
                     }
                 }

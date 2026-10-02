@@ -19,6 +19,10 @@ Here, we're generating a link for the user to click on to download their PDF. Wh
 
 The list owner can download the PDF directly. Anyone else must use a generated URL containing the list’s exact sharing reference. A numeric list ID on its own does not grant access.
 
+Wishlist limits uncached generation to five renders per authenticated user or guest client address and 20 renders per list every 15 minutes, with no more than four renders running concurrently. Identical output is cached for five minutes using the current viewer, request, list, site, template and PDF settings as context. List and item changes invalidate cached output; changes to other data used by a custom template can remain cached for up to five minutes. Template HTML larger than 2 MiB is rejected before PDF rendering.
+
+These protections use Craft’s configured cache and mutex components. Multi-node installations must use shared persistent implementations for both components so render limits and cached output apply across every node.
+
 ## Additional Parameters
 You may find the additional parameters useful, especially during testing and development of these templates. Simply use one of the following values to append to the URL produced above.
 

@@ -636,7 +636,8 @@ class ListsController extends BaseController
             }
 
             if ($settings->attachPdfToEmail) {
-                $pdf = Wishlist::$plugin->getPdf()->renderPdf($list);
+                // Email attachments must remain PDFs even when the request contains format=plain.
+                $pdf = Wishlist::$plugin->getPdf()->renderPdf($list, null, 'pdf');
 
                 $pdfPath = Assets::tempFilePath('pdf');
                 file_put_contents($pdfPath, $pdf);
@@ -655,6 +656,10 @@ class ListsController extends BaseController
 
             return $this->returnSuccess($message);
         } catch (Throwable $e) {
+            if ($e instanceof TooManyRequestsHttpException || ($e instanceof HttpException && $e->statusCode === 413)) {
+                throw $e;
+            }
+
             $message = Craft::t('wishlist', 'Failed to send list share to {email} - {error}.', [
                 'email' => $recipient->email,
                 'error' => $e->getMessage(),

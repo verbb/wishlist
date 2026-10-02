@@ -168,6 +168,8 @@ Whether active elements without a public site URL can be added to lists from fro
 
 ### PDF
 
+PDF and plain-template generation is limited to five uncached renders per authenticated user or guest client address and 20 uncached renders per list every 15 minutes. Up to four renders can run concurrently, generated output is cached for five minutes, and rendered template HTML cannot exceed 2 MiB. Multi-node installations must use shared persistent cache and mutex implementations for these limits and cached output to apply across every node.
+
 ::: reference
 #### `pdfPath`
 

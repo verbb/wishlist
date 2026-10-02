@@ -53,10 +53,14 @@ class PdfController extends BaseController
 
         Locale::switchAppLanguage($site->language);
 
-        $pdf = Wishlist::$plugin->getPdf()->renderPdf($list, $site);
+        $format = $this->request->getParam('format');
 
-        // Set previous language back
-        Locale::switchAppLanguage($originalLanguage, $originalFormattingLocale);
+        try {
+            $pdf = Wishlist::$plugin->getPdf()->renderPdf($list, $site, is_string($format) ? $format : null);
+        } finally {
+            // Rendering failures must not leak the requested site's locale into error handling.
+            Locale::switchAppLanguage($originalLanguage, $originalFormattingLocale);
+        }
 
         $filenameFormat = Wishlist::$plugin->getSettings()->pdfFilenameFormat;
         $filename = $this->getView()->renderObjectTemplate($filenameFormat, $list);
@@ -69,7 +73,6 @@ class PdfController extends BaseController
             'mimeType' => 'application/pdf',
         ];
 
-        $format = $this->request->getParam('format');
         $attach = $this->request->getParam('attach');
 
         if ($attach) {

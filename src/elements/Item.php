@@ -420,6 +420,8 @@ class Item extends Element
 
     public function afterSave(bool $isNew): void
     {
+        $previousListId = null;
+
         // Get the node record
         if (!$isNew) {
             $record = ItemRecord::findOne($this->id);
@@ -427,6 +429,8 @@ class Item extends Element
             if (!$record) {
                 throw new Exception('Invalid node ID: ' . $this->id);
             }
+
+            $previousListId = (int)$record->listId;
         } else {
             $record = new ItemRecord();
             $record->id = $this->id;
@@ -448,6 +452,10 @@ class Item extends Element
 
         // Item changes keep the parent list active for guest-retention decisions.
         Wishlist::$plugin->getLists()->touchList($this->listId);
+
+        if ($previousListId && $previousListId !== $this->listId) {
+            Wishlist::$plugin->getLists()->touchList($previousListId);
+        }
     }
 
     public function afterDelete(): void
