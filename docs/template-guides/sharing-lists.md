@@ -84,6 +84,8 @@ You can also set the CC or BCC for the email to one or multiple emails. Multiple
 <input type="hidden" name="bcc" value="another-recipient@gmail.com,manager-recipient@gmail.com">
 ```
 
+Each email can contain up to 10 unique recipients across the recipient, CC and BCC fields. Sending is limited to five attempts per 15 minutes for each client and each list. These limits use Craft’s configured cache and mutex, so multi-node deployments must use shared persistent implementations to enforce the limits across all nodes.
+
 ### Additional Content
 You can also provide any additional variables you want to access in your email templates using `fields`.
 

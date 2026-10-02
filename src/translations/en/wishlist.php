@@ -10,6 +10,8 @@ return [
     "{{ sender.fullName }} ({{ sender.email }}) has shared their wishlist with you.\n\n" .
     "Have a look at it via {{ shareUrl }}.",
 
+  'A maximum of {limit} recipients is allowed.' => 'A maximum of {limit} recipients is allowed.',
+  'All CC and BCC recipients must be valid email addresses.' => 'All CC and BCC recipients must be valid email addresses.',
   'All items' => 'All items',
   'All lists' => 'All lists',
   'Allow Cross-Site Elements' => 'Allow Cross-Site Elements',
@@ -121,6 +123,7 @@ return [
   'The element type selected when creating a new wishlist item in the control panel.' => 'The element type selected when creating a new wishlist item in the control panel.',
   'The template Wishlist will use for HTML emails.' => 'The template Wishlist will use for HTML emails.',
   'This action is not allowed for the current user.' => 'This action is not allowed for the current user.',
+  'Too many share emails. Please try again later.' => 'Too many share emails. Please try again later.',
   'Unable to duplicate list “{errors}”.' => 'Unable to duplicate list “{errors}”.',
   'Upvote' => 'Upvote',
   'Upvote lists migrated.' => 'Upvote lists migrated.',

@@ -27,6 +27,7 @@ use yii\helpers\Markdown;
 use yii\validators\EmailValidator;
 use yii\web\HttpException;
 use yii\web\Response;
+use yii\web\TooManyRequestsHttpException;
 
 use DateTimeInterface;
 use Stringable;
@@ -41,6 +42,12 @@ class ListsController extends BaseController
     public const EVENT_AFTER_ADD_TO_CART = 'afterAddToCart';
     public const EVENT_BEFORE_ADD_LINE_ITEM = 'beforeAddLineItem';
     public const EVENT_AFTER_ADD_LINE_ITEM = 'afterAddLineItem';
+
+    private const SHARE_EMAIL_RECIPIENT_LIMIT = 10;
+    private const SHARE_EMAIL_RATE_LIMIT = 5;
+    private const SHARE_EMAIL_RATE_WINDOW = 900;
+    private const SHARE_EMAIL_CACHE_PREFIX = 'wishlist.share-email.';
+    private const SHARE_EMAIL_MUTEX_PREFIX = 'wishlist.share-email-lock.';
 
 
     // Properties
@@ -576,6 +583,36 @@ class ListsController extends BaseController
             return $this->returnError($message);
         }
 
+        $recipients = $this->_normalizeShareEmailRecipients(
+            $recipient,
+            $this->request->getParam('cc'),
+            $this->request->getParam('bcc'),
+        );
+
+        if ($recipients === null) {
+            $message = Craft::t('wishlist', 'All CC and BCC recipients must be valid email addresses.');
+
+            Wishlist::error($message);
+
+            return $this->returnError($message);
+        }
+
+        if ($recipients['count'] > self::SHARE_EMAIL_RECIPIENT_LIMIT) {
+            $message = Craft::t('wishlist', 'A maximum of {limit} recipients is allowed.', [
+                'limit' => self::SHARE_EMAIL_RECIPIENT_LIMIT,
+            ]);
+
+            Wishlist::error($message);
+
+            return $this->returnError($message);
+        }
+
+        if ($retryAfter = $this->_consumeShareEmailRateLimits($list)) {
+            Craft::$app->getResponse()->getHeaders()->set('Retry-After', (string)$retryAfter);
+
+            throw new TooManyRequestsHttpException(Craft::t('wishlist', 'Too many share emails. Please try again later.'));
+        }
+
         $variables = [
             'list' => $list,
             'sender' => $sender,
@@ -588,12 +625,12 @@ class ListsController extends BaseController
             $mail = $this->_renderEmail('wishlist_share_list', $variables)
                 ->setTo($recipient);
 
-            if ($cc = $this->request->getParam('cc')) {
-                $mail->setCc(explode(',', $cc));
+            if ($recipients['cc']) {
+                $mail->setCc($recipients['cc']);
             }
 
-            if ($bcc = $this->request->getParam('bcc')) {
-                $mail->setBcc(explode(',', $bcc));
+            if ($recipients['bcc']) {
+                $mail->setBcc($recipients['bcc']);
             }
 
             if ($settings->attachPdfToEmail) {
@@ -695,6 +732,162 @@ class ListsController extends BaseController
 
     // Private Methods
     // =========================================================================
+
+    private function _normalizeShareEmailRecipients(User $recipient, mixed $cc, mixed $bcc): ?array
+    {
+        $emailValidator = new EmailValidator();
+        $seen = [strtolower((string)$recipient->email) => true];
+        $recipients = [
+            'cc' => [],
+            'bcc' => [],
+        ];
+
+        foreach (['cc' => $cc, 'bcc' => $bcc] as $type => $value) {
+            if ($value === null || $value === '') {
+                continue;
+            }
+
+            if (!is_string($value)) {
+                return null;
+            }
+
+            foreach (explode(',', $value) as $email) {
+                $email = trim($email);
+
+                if ($email === '' || !$emailValidator->validate($email)) {
+                    return null;
+                }
+
+                $normalizedEmail = strtolower($email);
+
+                if (isset($seen[$normalizedEmail])) {
+                    continue;
+                }
+
+                $seen[$normalizedEmail] = true;
+                $recipients[$type][] = $email;
+            }
+        }
+
+        $recipients['count'] = count($seen);
+
+        return $recipients;
+    }
+
+    private function _consumeShareEmailRateLimits(ListElement $list): ?int
+    {
+        $currentUser = Craft::$app->getUser()->getIdentity();
+        $clientIdentity = $currentUser ? 'user:' . $currentUser->id : 'ip:' . ($this->request->getUserIP() ?: 'unknown');
+        $identities = [
+            'client' => $clientIdentity,
+            'list' => 'list:' . $list->id,
+        ];
+        $budgets = [];
+
+        foreach ($identities as $name => $identity) {
+            $identityHash = hash('sha256', $identity);
+            $budgets[$name] = [
+                'cacheKey' => self::SHARE_EMAIL_CACHE_PREFIX . $name . '.' . $identityHash,
+                'mutexKey' => self::SHARE_EMAIL_MUTEX_PREFIX . $name . '.' . $identityHash,
+            ];
+        }
+
+        ksort($budgets);
+
+        $cache = Craft::$app->getCache();
+        $mutex = Craft::$app->getMutex();
+        $now = time();
+        $acquiredLocks = [];
+        $previousEntries = [];
+        $writtenBudgets = [];
+
+        try {
+            foreach ($budgets as $budget) {
+                if (!($mutex?->acquire($budget['mutexKey'], 3) ?? false)) {
+                    return 1;
+                }
+
+                $acquiredLocks[] = $budget['mutexKey'];
+            }
+
+            $entries = [];
+            $retryAfter = null;
+
+            foreach ($budgets as $name => $budget) {
+                $storedEntry = $cache->get($budget['cacheKey']);
+                $isCurrentEntry = is_array($storedEntry) && isset($storedEntry['count'], $storedEntry['resetAt']) && (int)$storedEntry['resetAt'] > $now;
+                $entry = $isCurrentEntry ? $storedEntry : [
+                    'count' => 0,
+                    'resetAt' => $now + self::SHARE_EMAIL_RATE_WINDOW,
+                ];
+
+                if ((int)$entry['count'] >= self::SHARE_EMAIL_RATE_LIMIT) {
+                    $retryAfter = max($retryAfter ?? 1, (int)$entry['resetAt'] - $now);
+                }
+
+                $previousEntries[$name] = $isCurrentEntry ? $storedEntry : false;
+                $entry['count'] = (int)$entry['count'] + 1;
+                $entries[$name] = $entry;
+            }
+
+            if ($retryAfter !== null) {
+                return max(1, $retryAfter);
+            }
+
+            foreach ($budgets as $name => $budget) {
+                $resetAt = max($now + 1, (int)$entries[$name]['resetAt']);
+
+                if (!$cache->set($budget['cacheKey'], $entries[$name], max(1, $resetAt - $now))) {
+                    $this->_restoreShareEmailRateLimits($budgets, $previousEntries, $writtenBudgets, $now);
+
+                    return 1;
+                }
+
+                $writtenBudgets[] = $name;
+            }
+
+            foreach ($budgets as $name => $budget) {
+                if ($cache->get($budget['cacheKey']) !== $entries[$name]) {
+                    $this->_restoreShareEmailRateLimits($budgets, $previousEntries, $writtenBudgets, $now);
+
+                    return 1;
+                }
+            }
+
+            return null;
+        } catch (Throwable) {
+            try {
+                $this->_restoreShareEmailRateLimits($budgets, $previousEntries, $writtenBudgets, $now);
+            } catch (Throwable) {
+                // The request remains blocked if cache recovery is unavailable.
+            }
+
+            return 1;
+        } finally {
+            foreach (array_reverse($acquiredLocks) as $mutexKey) {
+                $mutex?->release($mutexKey);
+            }
+        }
+    }
+
+    private function _restoreShareEmailRateLimits(array $budgets, array $previousEntries, array $writtenBudgets, int $now): void
+    {
+        $cache = Craft::$app->getCache();
+
+        foreach (array_reverse($writtenBudgets) as $name) {
+            $cacheKey = $budgets[$name]['cacheKey'];
+            $previousEntry = $previousEntries[$name];
+
+            if ($previousEntry === false) {
+                $cache->delete($cacheKey);
+
+                continue;
+            }
+
+            $resetAt = max($now + 1, (int)$previousEntry['resetAt']);
+            $cache->set($cacheKey, $previousEntry, max(1, $resetAt - $now));
+        }
+    }
 
     private function _createShareUser(mixed $attributes): ?User
     {
