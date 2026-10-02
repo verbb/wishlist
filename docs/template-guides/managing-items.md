@@ -1,6 +1,8 @@
 # Managing Items
 You can Add, Remove, Update or Toggle items in any list. You have the option of either using a `<form>` element or simply via a URL, depending on your templating needs.
 
+The URL examples on this page require the `allowGetListActions` setting, which is enabled by default for Wishlist 3 compatibility. GET requests are deprecated and will be rejected in Wishlist 4. Disable the setting and use the POST form examples to require CSRF protection for these actions.
+
 The following examples demonstrate a common use-case for Wishlist, where you'll loop through a collection of entries (`news` entries), and adding buttons to add the entry to your wishlist, toggle it, or remove it.
 
 ## Add Item

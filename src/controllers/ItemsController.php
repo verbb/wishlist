@@ -26,6 +26,29 @@ class ItemsController extends BaseController
     // Public Methods
     // =========================================================================
 
+    public function beforeAction($action): bool
+    {
+        if (!parent::beforeAction($action)) {
+            return false;
+        }
+
+        if (in_array($action->id, ['add', 'toggle', 'remove', 'update'], true)) {
+            $settings = Wishlist::$plugin->getSettings();
+
+            if (!$settings->allowGetListActions) {
+                $this->requirePostRequest();
+            } elseif ($this->request->getIsGet()) {
+                // Deprecated in 3.0.22.
+                Craft::$app->getDeprecator()->log(
+                    'wishlist.itemActions.get',
+                    'GET requests for front-end Wishlist item actions have been deprecated and will be removed in Wishlist 4. Submit these actions with POST instead.',
+                );
+            }
+        }
+
+        return true;
+    }
+
     public function actionEditItem(string $listTypeHandle, int $listId, int $itemId = null, Item $item = null): Response
     {
         $this->requireCpRequest();

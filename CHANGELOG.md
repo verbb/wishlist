@@ -3,7 +3,7 @@
 ## Unreleased
 
 ### Added
-- Added a setting for requiring POST requests for front-end list actions.
+- Added a setting for requiring POST requests for front-end list and item actions.
 - Added settings for controlling which linked elements can be added from front-end requests.
 
 ### Changed
@@ -23,7 +23,7 @@
 - Fixed default list share emails failing to render.
 
 ### Deprecated
-- Deprecated GET requests for front-end list actions. These requests will be rejected in Wishlist 4.
+- Deprecated GET requests for front-end list and item actions. These requests will be rejected in Wishlist 4.
 
 ## 3.0.21 - 2026-09-30
 
