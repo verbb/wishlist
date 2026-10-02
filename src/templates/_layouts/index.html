@@ -1,6 +1,6 @@
 {% extends '_layouts/cp' %}
 
-{% do view.registerAssetBundle("verbb\\wishlist\\assetbundles\\WishlistAsset") %}
+{% do view.registerAssetBundle("verbb\\wishlist\\web\\assets\\cp\\WishlistAsset") %}
 
 {% if title is not defined %}
     {% set title = craft.wishlist.getPluginName() %}

@@ -6,6 +6,10 @@
 - Added a setting for requiring POST requests for front-end list actions.
 - Added settings for controlling which linked elements can be added from front-end requests.
 
+### Changed
+- Updated the required version of `verbb/base` to 3.0.19.
+- Replaced the CodeKit JavaScript build with Vite and moved web assets to `src/web`.
+
 ### Fixed
 - Fixed a high-severity information disclosure vulnerability.
 - Fixed a medium-severity control panel authorization vulnerability.
