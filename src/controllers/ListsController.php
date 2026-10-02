@@ -15,6 +15,7 @@ use craft\helpers\ArrayHelper;
 use craft\helpers\Assets;
 use craft\helpers\Json;
 use craft\helpers\Template;
+use craft\helpers\UrlHelper;
 use craft\mail\Message;
 use craft\web\View;
 
@@ -27,6 +28,8 @@ use yii\validators\EmailValidator;
 use yii\web\HttpException;
 use yii\web\Response;
 
+use DateTimeInterface;
+use Stringable;
 use Throwable;
 
 class ListsController extends BaseController
@@ -574,6 +577,7 @@ class ListsController extends BaseController
             'sender' => $sender,
             'recipient' => $recipient,
             'fields' => $this->request->getParam('fields'),
+            'shareUrl' => UrlHelper::siteUrl('wishlist', ['id' => $list->reference]),
         ];
 
         try {
@@ -713,6 +717,94 @@ class ListsController extends BaseController
         return new User($values);
     }
 
+    private function _getHtmlEmailVariables(array $variables): array
+    {
+        foreach (['sender', 'recipient'] as $key) {
+            if (($variables[$key] ?? null) instanceof User) {
+                $variables[$key] = $this->_escapeEmailUser($variables[$key]);
+            }
+        }
+
+        if (($variables['list'] ?? null) instanceof ListElement) {
+            $variables['list'] = $this->_escapeEmailList($variables['list']);
+        }
+
+        foreach (['fields', 'shareUrl'] as $key) {
+            if (array_key_exists($key, $variables)) {
+                $variables[$key] = $this->_escapeEmailMarkdownValue($variables[$key]);
+            }
+        }
+
+        return $variables;
+    }
+
+    private function _escapeEmailUser(User $user): User
+    {
+        $escapedUser = clone $user;
+
+        foreach (['username', 'email', 'firstName', 'lastName', 'fullName'] as $attribute) {
+            if (is_string($user->$attribute)) {
+                $escapedUser->$attribute = $this->_escapeEmailMarkdownValue($user->$attribute);
+            }
+        }
+
+        if (is_string($user->friendlyName)) {
+            $escapedUser->setFriendlyName($this->_escapeEmailMarkdownValue($user->friendlyName));
+        }
+
+        $escapedUser->setName($this->_escapeEmailMarkdownValue($user->name));
+
+        return $escapedUser;
+    }
+
+    private function _escapeEmailList(ListElement $list): ListElement
+    {
+        $escapedList = clone $list;
+
+        if (is_string($list->title)) {
+            $escapedList->title = $this->_escapeEmailMarkdownValue($list->title);
+        }
+
+        foreach ($list->getFieldLayout()?->getCustomFields() ?? [] as $field) {
+            $escapedList->setFieldValue($field->handle, $this->_escapeEmailMarkdownValue($list->getFieldValue($field->handle)));
+        }
+
+        return $escapedList;
+    }
+
+    private function _escapeEmailMarkdownValue(mixed $value): mixed
+    {
+        if (is_string($value)) {
+            $value = preg_replace('/\R/u', ' ', $value);
+
+            return preg_replace('/([\\\\`*_{}\[\]()#+\-.!|~])/u', '\\\\$1', $value);
+        }
+
+        if (is_array($value)) {
+            $escaped = [];
+
+            foreach ($value as $key => $item) {
+                if (is_string($key)) {
+                    $key = $this->_escapeEmailMarkdownValue($key);
+                }
+
+                $escaped[$key] = $this->_escapeEmailMarkdownValue($item);
+            }
+
+            return $escaped;
+        }
+
+        if ($value instanceof Stringable) {
+            return $this->_escapeEmailMarkdownValue((string)$value);
+        }
+
+        if (is_object($value) && !$value instanceof DateTimeInterface) {
+            return null;
+        }
+
+        return $value;
+    }
+
     private function _prepareVariableArray(array &$variables): void
     {
         // List related checks
@@ -840,9 +932,11 @@ class ListsController extends BaseController
         $systemMessage = Craft::$app->getSystemMessages()->getMessage($key, $language);
 
         $view = Craft::$app->getView();
+        // Preserve system messages saved with the original Wishlist 3 default.
+        $bodyTemplate = str_replace("{{ siteUrl('wishlist', { id: list.reference }) }}", '{{ shareUrl }}', $systemMessage->body);
 
         $subject = Wishlist::$plugin->getTemplates()->renderSandboxedString($systemMessage->subject, $variables);
-        $textBody = Wishlist::$plugin->getTemplates()->renderSandboxedString($systemMessage->body, $variables);
+        $textBody = Wishlist::$plugin->getTemplates()->renderSandboxedString($bodyTemplate, $variables);
 
         // Use custom template if configured, otherwise fall back to Craft's default
         if ($settings->templateEmail) {
@@ -862,7 +956,10 @@ class ListsController extends BaseController
 
             // Only add body variable when using Craft's default template
             if (!$settings->templateEmail) {
-                $templateVariables['body'] = Template::raw(Markdown::process($textBody));
+                // Preserve trusted message formatting while keeping request values plain text.
+                $htmlVariables = $this->_getHtmlEmailVariables($variables);
+                $htmlTextBody = Wishlist::$plugin->getTemplates()->renderSandboxedString($bodyTemplate, $htmlVariables, 'html');
+                $templateVariables['body'] = Template::raw(Markdown::process($htmlTextBody));
             }
 
             $htmlBody = $view->renderTemplate($template, $templateVariables, $templateMode);
@@ -876,15 +973,12 @@ class ListsController extends BaseController
             ]);
         }
 
-        // Use compose() instead of composeFromKey() to ensure custom HTML body is used
+        $message = $mailer->compose()
+            ->setSubject($subject)
+            ->setTextBody($textBody);
+
         if ($htmlBody) {
-            $message = $mailer->compose()
-                ->setSubject($subject)
-                ->setTextBody($textBody)
-                ->setHtmlBody($htmlBody);
-        } else {
-            $message = $mailer->composeFromKey($key, $variables);
-            $message->setSubject($subject);
+            $message->setHtmlBody($htmlBody);
         }
 
         return $message;
