@@ -12,11 +12,18 @@ use Craft;
 use craft\base\ElementInterface;
 
 use yii\base\Exception;
+use yii\web\BadRequestHttpException;
 use yii\web\HttpException;
 use yii\web\Response;
 
 class ItemsController extends BaseController
 {
+    // Constants
+    // =========================================================================
+
+    private const ITEM_REQUEST_LIMIT = 50;
+
+
     // Properties
     // =========================================================================
 
@@ -196,249 +203,261 @@ class ItemsController extends BaseController
 
     public function actionAdd(): ?Response
     {
-        $itemCount = 0;
-
-        /* @var Settings $settings */
-        $settings = Wishlist::$plugin->getSettings();
         $postItems = $this->_setItemsFromPost();
+        $this->_enforceItemTargetLimit($postItems);
 
-        $errors = [];
-        $variables = [];
-        $batchNewListId = null;
+        return $this->runGuestStorageAction(function() use ($postItems) {
+            $itemCount = 0;
 
-        foreach ($postItems as $key => $postItem) {
-            // Get the element we're trying to action
-            $element = $this->_getElementForItem($postItem);
+            /* @var Settings $settings */
+            $settings = Wishlist::$plugin->getSettings();
 
-            if ($element instanceof ItemError) {
-                $errors[$key] = $element;
+            $errors = [];
+            $variables = [];
+            $batchNewListId = null;
 
-                continue;
-            }
+            foreach ($postItems as $key => $postItem) {
+                // Get the element we're trying to action
+                $element = $this->_getElementForItem($postItem);
 
-            $wantsNewList = !empty($postItem['newList']);
-            $postItemForLists = $this->_resolvePostItemForBatchNewList($postItem, $batchNewListId);
-
-            // Get the existing list (either passed in, or the users default), or create it
-            $lists = $this->_getOrCreateLists($postItemForLists);
-
-            foreach ($lists as $list) {
-                if ($list instanceof ItemError) {
-                    $errors[$key] = $list;
+                if ($element instanceof ItemError) {
+                    $errors[$key] = $element;
 
                     continue;
                 }
 
-                if ($wantsNewList && $batchNewListId === null) {
-                    $batchNewListId = $list->id;
-                }
+                $wantsNewList = !empty($postItem['newList']);
+                $postItemForLists = $this->_resolvePostItemForBatchNewList($postItem, $batchNewListId);
 
-                // Check if we're allowed to manage lists
-                $this->enforceListPermissions($list);
+                // Get the existing list (either passed in, or the users default), or create it
+                $lists = $this->_getOrCreateLists($postItemForLists);
 
-                // Create the item for the list and element, with additional attributes
-                $item = $this->_getOrCreateItem($list, $element, $postItem);
-
-                if ($item instanceof ItemError) {
-                    $errors[$key] = $item;
-
-                    continue;
-                }
-
-                // Check if this is in the list
-                if ($list->getHasItem($item)) {
-                    // If we allow duplicates and this is one, ensure that it's still added and not updated
-                    if (!$settings->allowDuplicates) {
-                        $errors[$key] = new ItemError('Item already in list.');
+                foreach ($lists as $list) {
+                    if ($list instanceof ItemError) {
+                        $errors[$key] = $list;
 
                         continue;
-                    } else {
-                        // Create the item, as we're adding a new duplicate
-                        $item = $this->_createItem($list, $element, $postItem);
+                    }
 
-                        if ($item instanceof ItemError) {
-                            $errors[$key] = $item;
+                    if ($wantsNewList && $batchNewListId === null) {
+                        $batchNewListId = $list->id;
+                    }
+
+                    // Check if we're allowed to manage lists
+                    $this->enforceListPermissions($list);
+
+                    // Create the item for the list and element, with additional attributes
+                    $item = $this->_getOrCreateItem($list, $element, $postItem);
+
+                    if ($item instanceof ItemError) {
+                        $errors[$key] = $item;
+
+                        continue;
+                    }
+
+                    // Check if this is in the list
+                    if ($list->getHasItem($item)) {
+                        // If we allow duplicates and this is one, ensure that it's still added and not updated
+                        if (!$settings->allowDuplicates) {
+                            $errors[$key] = new ItemError('Item already in list.');
 
                             continue;
+                        } else {
+                            // Create the item, as we're adding a new duplicate
+                            $item = $this->_createItem($list, $element, $postItem);
+
+                            if ($item instanceof ItemError) {
+                                $errors[$key] = $item;
+
+                                continue;
+                            }
                         }
                     }
-                }
 
-                if (!Wishlist::$plugin->getItems()->saveElement($item)) {
-                    $errors[$key] = new ItemError('Unable to save item to list.', ['item' => $item]);
-
-                    continue;
-                }
-
-                $variables['items'][] = $item;
-
-                $itemCount++;
-            }
-        }
-
-        if ($errors) {
-            foreach ($errors as $itemError) {
-                return $this->returnError($itemError->message, $itemError->params);
-            }
-        }
-
-        $message = Craft::t('wishlist', '{count, number} {count, plural, =1{item} other{items}} added to list.', [
-            'count' => $itemCount,
-        ]);
-
-        return $this->returnSuccess($message, $variables);
-    }
-
-    public function actionToggle(): ?Response
-    {
-        $itemCount = 0;
-        $postItems = $this->_setItemsFromPost();
-
-        $errors = [];
-        $variables = [];
-        $batchNewListId = null;
-
-        foreach ($postItems as $key => $postItem) {
-            // Get the element we're trying to action
-            $element = $this->_getElementForItem($postItem);
-
-            if ($element instanceof ItemError) {
-                $errors[$key] = $element;
-
-                continue;
-            }
-
-            $wantsNewList = !empty($postItem['newList']);
-            $postItemForLists = $this->_resolvePostItemForBatchNewList($postItem, $batchNewListId);
-
-            // Get the existing list (either passed in, or the users default), or create it
-            $lists = $this->_getOrCreateLists($postItemForLists);
-
-            foreach ($lists as $list) {
-                if ($list instanceof ItemError) {
-                    $errors[$key] = $list;
-
-                    continue;
-                }
-
-                if ($wantsNewList && $batchNewListId === null) {
-                    $batchNewListId = $list->id;
-                }
-
-                // Check if we're allowed to manage lists
-                $this->enforceListPermissions($list);
-
-                // Create the item for the list and element, with additional attributes
-                $item = $this->_getOrCreateItem($list, $element, $postItem);
-
-                if ($item instanceof ItemError) {
-                    $errors[$key] = $item;
-
-                    continue;
-                }
-
-                if ($item->id) {
-                    if (!Craft::$app->getElements()->deleteElement($item)) {
-                        $errors[$key] = new ItemError('Unable to delete item from list.', ['item' => $item]);
-
-                        continue;
-                    }
-
-                    $variables['items'][] = array_merge(['action' => 'removed'], $item->toArray());
-                } else {
-                    if (!Wishlist::$plugin->getItems()->saveElement($item)) {
+                    if (!$this->saveItemWithGuestLimits($item, $list)) {
                         $errors[$key] = new ItemError('Unable to save item to list.', ['item' => $item]);
 
                         continue;
                     }
 
-                    $variables['items'][] = array_merge(['action' => 'added'], $item->toArray());
+                    $variables['items'][] = $item;
+
+                    $itemCount++;
                 }
-
-                $itemCount++;
             }
-        }
 
-        if ($errors) {
-            foreach ($errors as $itemError) {
-                return $this->returnError($itemError->message, $itemError->params);
+            if ($errors) {
+                foreach ($errors as $itemError) {
+                    return $this->returnError($itemError->message, $itemError->params);
+                }
             }
-        }
 
-        $message = Craft::t('wishlist', '{count, number} {count, plural, =1{item} other{items}} toggled in list.', [
-            'count' => $itemCount,
-        ]);
+            $message = Craft::t('wishlist', '{count, number} {count, plural, =1{item} other{items}} added to list.', [
+                'count' => $itemCount,
+            ]);
 
-        return $this->returnSuccess($message, $variables);
+            return $this->returnSuccess($message, $variables);
+        });
     }
 
-    public function actionRemove(): ?Response
+    public function actionToggle(): ?Response
     {
-        $itemCount = 0;
         $postItems = $this->_setItemsFromPost();
+        $this->_enforceItemTargetLimit($postItems);
 
-        $errors = [];
-        $variables = [];
+        return $this->runGuestStorageAction(function() use ($postItems) {
+            $itemCount = 0;
 
-        foreach ($postItems as $key => $postItem) {
-            // Get the element we're trying to action
-            $element = $this->_getElementForItem($postItem);
+            $errors = [];
+            $variables = [];
+            $batchNewListId = null;
 
-            if ($element instanceof ItemError) {
-                $errors[$key] = $element;
+            foreach ($postItems as $key => $postItem) {
+                // Get the element we're trying to action
+                $element = $this->_getElementForItem($postItem);
 
-                continue;
-            }
-
-            // Get the existing list (either passed in, or the users default), or create it
-            $lists = $this->_getOrCreateLists($postItem);
-
-            foreach ($lists as $list) {
-                if ($list instanceof ItemError) {
-                    $errors[$key] = $list;
+                if ($element instanceof ItemError) {
+                    $errors[$key] = $element;
 
                     continue;
                 }
 
-                // Check if we're allowed to manage lists
-                $this->enforceListPermissions($list);
+                $wantsNewList = !empty($postItem['newList']);
+                $postItemForLists = $this->_resolvePostItemForBatchNewList($postItem, $batchNewListId);
 
-                // Create the item for the list and element, with additional attributes
-                $item = $this->_getOrCreateItem($list, $element, $postItem);
+                // Get the existing list (either passed in, or the users default), or create it
+                $lists = $this->_getOrCreateLists($postItemForLists);
 
-                if ($item instanceof ItemError) {
-                    $errors[$key] = $item;
-
-                    continue;
-                }
-
-                if ($item->id) {
-                    if (!Craft::$app->getElements()->deleteElement($item)) {
-                        $errors[$key] = new ItemError('Unable to delete item from list.', ['item' => $item]);
+                foreach ($lists as $list) {
+                    if ($list instanceof ItemError) {
+                        $errors[$key] = $list;
 
                         continue;
                     }
 
-                    $variables['items'][] = array_merge(['action' => 'removed'], $item->toArray());
+                    if ($wantsNewList && $batchNewListId === null) {
+                        $batchNewListId = $list->id;
+                    }
+
+                    // Check if we're allowed to manage lists
+                    $this->enforceListPermissions($list);
+
+                    // Create the item for the list and element, with additional attributes
+                    $item = $this->_getOrCreateItem($list, $element, $postItem);
+
+                    if ($item instanceof ItemError) {
+                        $errors[$key] = $item;
+
+                        continue;
+                    }
+
+                    if ($item->id) {
+                        if (!Craft::$app->getElements()->deleteElement($item)) {
+                            $errors[$key] = new ItemError('Unable to delete item from list.', ['item' => $item]);
+
+                            continue;
+                        }
+
+                        $variables['items'][] = array_merge(['action' => 'removed'], $item->toArray());
+                    } else {
+                        if (!$this->saveItemWithGuestLimits($item, $list)) {
+                            $errors[$key] = new ItemError('Unable to save item to list.', ['item' => $item]);
+
+                            continue;
+                        }
+
+                        $variables['items'][] = array_merge(['action' => 'added'], $item->toArray());
+                    }
 
                     $itemCount++;
-                } else {
-                    $errors[$key] = new ItemError('Unable to delete item from list.', ['item' => $item]);
                 }
             }
-        }
 
-        if ($errors) {
-            foreach ($errors as $itemError) {
-                return $this->returnError($itemError->message, $itemError->params);
+            if ($errors) {
+                foreach ($errors as $itemError) {
+                    return $this->returnError($itemError->message, $itemError->params);
+                }
             }
-        }
 
-        $message = Craft::t('wishlist', '{count, number} {count, plural, =1{item} other{items}} removed from list.', [
-            'count' => $itemCount,
-        ]);
+            $message = Craft::t('wishlist', '{count, number} {count, plural, =1{item} other{items}} toggled in list.', [
+                'count' => $itemCount,
+            ]);
 
-        return $this->returnSuccess($message, $variables);
+            return $this->returnSuccess($message, $variables);
+        });
+    }
+
+    public function actionRemove(): ?Response
+    {
+        $postItems = $this->_setItemsFromPost();
+        $this->_enforceItemTargetLimit($postItems);
+
+        return $this->runGuestStorageAction(function() use ($postItems) {
+            $itemCount = 0;
+
+            $errors = [];
+            $variables = [];
+
+            foreach ($postItems as $key => $postItem) {
+                // Get the element we're trying to action
+                $element = $this->_getElementForItem($postItem);
+
+                if ($element instanceof ItemError) {
+                    $errors[$key] = $element;
+
+                    continue;
+                }
+
+                // Get the existing list (either passed in, or the users default), or create it
+                $lists = $this->_getOrCreateLists($postItem);
+
+                foreach ($lists as $list) {
+                    if ($list instanceof ItemError) {
+                        $errors[$key] = $list;
+
+                        continue;
+                    }
+
+                    // Check if we're allowed to manage lists
+                    $this->enforceListPermissions($list);
+
+                    // Create the item for the list and element, with additional attributes
+                    $item = $this->_getOrCreateItem($list, $element, $postItem);
+
+                    if ($item instanceof ItemError) {
+                        $errors[$key] = $item;
+
+                        continue;
+                    }
+
+                    if ($item->id) {
+                        if (!Craft::$app->getElements()->deleteElement($item)) {
+                            $errors[$key] = new ItemError('Unable to delete item from list.', ['item' => $item]);
+
+                            continue;
+                        }
+
+                        $variables['items'][] = array_merge(['action' => 'removed'], $item->toArray());
+
+                        $itemCount++;
+                    } else {
+                        $errors[$key] = new ItemError('Unable to delete item from list.', ['item' => $item]);
+                    }
+                }
+            }
+
+            if ($errors) {
+                foreach ($errors as $itemError) {
+                    return $this->returnError($itemError->message, $itemError->params);
+                }
+            }
+
+            $message = Craft::t('wishlist', '{count, number} {count, plural, =1{item} other{items}} removed from list.', [
+                'count' => $itemCount,
+            ]);
+
+            return $this->returnSuccess($message, $variables);
+        });
     }
 
     public function actionUpdate(): ?Response
@@ -589,7 +608,13 @@ class ItemsController extends BaseController
         $items = $this->request->getParam('items') ?? [];
 
         if ($items && is_array($items)) {
+            $this->enforceItemRequestLimit(count($items), self::ITEM_REQUEST_LIMIT);
+
             foreach ($items as $key => $item) {
+                if (!is_array($item)) {
+                    throw new BadRequestHttpException(Craft::t('wishlist', 'Each submitted item must be an array.'));
+                }
+
                 $items[$key] = array_merge($baseItem, $item);
             }
         } else {
@@ -626,7 +651,10 @@ class ItemsController extends BaseController
         $newList = $postItem['newList'] ?? false;
 
         // List IDs can either be a single ID or an array. Don't forget null is allowed to create the list.
-        if (!is_array($listIds)) {
+        if ($newList) {
+            // A new-list request creates one shared list, regardless of ignored listId values.
+            $listIds = [null];
+        } elseif (!is_array($listIds)) {
             $listIds = [$listIds];
         }
 
@@ -671,7 +699,7 @@ class ItemsController extends BaseController
             }
 
             if (!$isExistingList || $listFields) {
-                if (!Wishlist::$plugin->getLists()->saveElement($list)) {
+                if (!$this->saveListWithGuestLimits($list)) {
                     $lists[] = new ItemError('Unable to save list.', ['list' => $list]);
 
                     continue;
@@ -682,6 +710,18 @@ class ItemsController extends BaseController
         }
 
         return $lists;
+    }
+
+    private function _enforceItemTargetLimit(array $postItems): void
+    {
+        $targetCount = 0;
+
+        foreach ($postItems as $postItem) {
+            $listIds = $postItem['listId'] ?? null;
+            $targetCount += !empty($postItem['newList']) || !is_array($listIds) ? 1 : max(1, count($listIds));
+
+            $this->enforceItemRequestLimit($targetCount, self::ITEM_REQUEST_LIMIT);
+        }
     }
 
     private function _getOrCreateItem(ListElement $list, ElementInterface $element, array $postItem): Item|ItemError

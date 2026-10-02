@@ -84,6 +84,7 @@ class Install extends Migration
     public function createIndexes(): void
     {
         $this->createIndex(null, '{{%wishlist_lists}}', 'typeId', false);
+        $this->createIndex(null, '{{%wishlist_lists}}', ['sessionId', 'userId'], false);
 
         $this->createIndex(null, '{{%wishlist_listtypes}}', 'handle', true);
         $this->createIndex(null, '{{%wishlist_listtypes}}', 'fieldLayoutId', false);

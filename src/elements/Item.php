@@ -445,6 +445,16 @@ class Item extends Element
         $this->id = $record->id;
 
         parent::afterSave($isNew);
+
+        // Item changes keep the parent list active for guest-retention decisions.
+        Wishlist::$plugin->getLists()->touchList($this->listId);
+    }
+
+    public function afterDelete(): void
+    {
+        parent::afterDelete();
+
+        Wishlist::$plugin->getLists()->touchList($this->listId);
     }
 
 

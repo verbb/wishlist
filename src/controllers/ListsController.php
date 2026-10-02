@@ -244,20 +244,22 @@ class ListsController extends BaseController
         $this->enforceEnabledList($list);
         $this->enforceListPermissions($list);
 
-        if (!Wishlist::$plugin->getLists()->saveElement($list)) {
-            $error = new ListError('Unable to save list.', ['list' => $list]);
+        return $this->runGuestStorageAction(function() use ($list) {
+            if (!$this->saveListWithGuestLimits($list)) {
+                $error = new ListError('Unable to save list.', ['list' => $list]);
 
-            return $this->returnError($error->message, $error->params);
-        }
+                return $this->returnError($error->message, $error->params);
+            }
 
-        return $this->returnSuccess('List saved.', [
-            'id' => $list->id,
-            'reference' => $list->reference,
-            'title' => $list->title,
-            'status' => $list->getStatus(),
-            'url' => $list->getUrl(),
-            'cpEditUrl' => $list->getCpEditUrl(),
-        ], $list);
+            return $this->returnSuccess('List saved.', [
+                'id' => $list->id,
+                'reference' => $list->reference,
+                'title' => $list->title,
+                'status' => $list->getStatus(),
+                'url' => $list->getUrl(),
+                'cpEditUrl' => $list->getCpEditUrl(),
+            ], $list);
+        }, $list->sessionId);
     }
 
     public function actionUpdate(): ?Response

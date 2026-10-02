@@ -163,11 +163,10 @@ class Lists extends Component
         if ($doPurge) {
             // Allow batch processing for large items/lists
             $limit = 200;
-            $offset = 0;
             $listCount = 0;
 
             do {
-                $listIds = $this->_getListsIdsToPurge($limit, $offset);
+                $listIds = $this->_getListsIdsToPurge($limit);
 
                 // Taken from craft\services\Elements::deleteElement(); Using the method directly
                 // takes too many resources since it retrieves the list before deleting it.
@@ -191,8 +190,6 @@ class Lists extends Component
                 // Remove all items for lists. `wishlist_items` will take care of itself
                 Db::delete('{{%elements}}', ['id' => $itemIds]);
 
-                $offset = $offset + $limit;
-
                 $listCount = $listCount + count($listIds);
             } while ($listIds);
 
@@ -200,6 +197,13 @@ class Lists extends Component
         }
 
         return 0;
+    }
+
+    public function touchList(int $listId): void
+    {
+        Db::update('{{%wishlist_lists}}', [
+            'dateUpdated' => Db::prepareDateForDb(new DateTime()),
+        ], ['id' => $listId]);
     }
 
     public function generateReferenceNumber(): string
@@ -415,10 +419,16 @@ class Lists extends Component
         return Wishlist::$plugin->getListTypes()->getDefaultListType();
     }
 
-    private function _getListsIdsToPurge($limit = null, $offset = null): array
+    private function _getListsIdsToPurge($limit = null): array
     {
         /* @var Settings $settings */
         $settings = Wishlist::$plugin->getSettings();
+
+        $validItemsQuery = (new Query())
+            ->select('1')
+            ->from(['items' => '{{%wishlist_items}}'])
+            ->where('[[items.listId]] = [[lists.id]]')
+            ->andWhere(['not', ['items.elementId' => null]]);
 
         $configInterval = ConfigHelper::durationInSeconds($settings->purgeInactiveListsDuration);
         $edge = new DateTime();
@@ -427,19 +437,13 @@ class Lists extends Component
 
         $query = (new Query())
             ->select(['lists.id'])
-            ->from(['{{%wishlist_lists}} lists'])
-            ->join('LEFT OUTER JOIN', '{{%wishlist_items}} items', 'lists.id = [[items.listId]]')
+            ->from(['lists' => '{{%wishlist_lists}}'])
             ->where('[[lists.dateUpdated]] <= :edge', ['edge' => Db::prepareDateForDb($edge)])
-            ->limit($limit)
-            ->offset($offset);
+            ->andWhere(['not', ['lists.userId' => null]])
+            ->limit($limit);
 
         if ($settings->purgeEmptyListsOnly) {
-            // Check if there's no item records found, or if the item no longer links to an element
-            $query->andWhere([
-                'or',
-                ['is', '[[items.listId]]', null],
-                ['is', '[[items.elementId]]', null],
-            ]);
+            $query->andWhere(['not exists', clone $validItemsQuery]);
         }
 
         $userIds = $query->column();
@@ -451,20 +455,13 @@ class Lists extends Component
 
         $query = (new Query())
             ->select(['lists.id'])
-            ->from(['{{%wishlist_lists}} lists'])
-            ->join('LEFT OUTER JOIN', '{{%wishlist_items}} items', 'lists.id = [[items.listId]]')
+            ->from(['lists' => '{{%wishlist_lists}}'])
             ->where('[[lists.dateUpdated]] <= :edge', ['edge' => Db::prepareDateForDb($edge)])
-            ->andWhere(['is', '[[lists.userId]]', null])
-            ->limit($limit)
-            ->offset($offset);
+            ->andWhere(['lists.userId' => null])
+            ->limit($limit ? max(0, $limit - count($userIds)) : null);
 
         if ($settings->purgeEmptyGuestListsOnly) {
-            // Check if there's no item records found, or if the item no longer links to an element
-            $query->andWhere([
-                'or',
-                ['is', '[[items.listId]]', null],
-                ['is', '[[items.elementId]]', null],
-            ]);
+            $query->andWhere(['not exists', clone $validItemsQuery]);
         }
 
         $guestIds = $query->column();

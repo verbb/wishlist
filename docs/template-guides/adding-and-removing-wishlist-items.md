@@ -24,3 +24,5 @@ In a Twig template for an entry, use the add URL for that entry:
 This example uses the current visitor's default list. To choose a particular list type or submit custom item fields, use the complete [Managing Items](docs:template-guides/managing-items) form examples. Follow the add action, then [display the list's items](docs:template-guides/getting-list-items) and confirm the entry is present. Remove it and check the list again.
 
 Test both a guest browser and a signed-in account if your site supports both. A guest's list belongs to their visitor session; it is not a public list shared by everyone. If you want to publish a shareable list, use the explicit [sharing controls](docs:template-guides/sharing-lists).
+
+Front-end item actions accept up to 50 item targets per request. Guest visitors can create up to 100 items per 15 minutes and retain up to 500 active items. Guest creation limits use both the current client address and guest identity; multi-node deployments must use shared persistent cache and mutex implementations so rate limits apply across every node.

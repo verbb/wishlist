@@ -102,9 +102,9 @@ Whether to purge user lists only if they have no items.
 ::: reference
 #### `purgeEmptyGuestListsOnly`
 
-**Type:** `bool` · **Default:** `true`
+**Type:** `bool` · **Default:** `false`
 
-Whether to purge guest lists only if they have no items.
+Whether to restrict inactive guest-list purging to lists with no items. The default allows inactive guest lists to be purged after `purgeInactiveGuestListsDuration`, including lists that contain items.
 :::
 
 

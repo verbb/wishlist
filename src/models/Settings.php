@@ -23,7 +23,7 @@ class Settings extends Model
     public string $purgeInactiveListsDuration = 'P3M';
     public string $purgeInactiveGuestListsDuration = 'P1D';
     public bool $purgeEmptyListsOnly = true;
-    public bool $purgeEmptyGuestListsOnly = true;
+    public bool $purgeEmptyGuestListsOnly = false;
     public mixed $cookieExpiry = 0;
     public bool $updateListSearchIndexes = true;
     public bool $updateItemSearchIndexes = true;

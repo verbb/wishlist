@@ -10,6 +10,7 @@ return [
     "{{ sender.fullName }} ({{ sender.email }}) has shared their wishlist with you.\n\n" .
     "Have a look at it via {{ shareUrl }}.",
 
+  'A maximum of {limit} items can be submitted at once.' => 'A maximum of {limit} items can be submitted at once.',
   'A maximum of {limit} recipients is allowed.' => 'A maximum of {limit} recipients is allowed.',
   'All CC and BCC recipients must be valid email addresses.' => 'All CC and BCC recipients must be valid email addresses.',
   'All items' => 'All items',
@@ -45,6 +46,7 @@ return [
   'Default?' => 'Default?',
   'Delete' => 'Delete',
   'Done' => 'Done',
+  'Each submitted item must be an array.' => 'Each submitted item must be an array.',
   'Element' => 'Element',
   'Element Type' => 'Element Type',
   'Email' => 'Email',
@@ -123,6 +125,7 @@ return [
   'The element type selected when creating a new wishlist item in the control panel.' => 'The element type selected when creating a new wishlist item in the control panel.',
   'The template Wishlist will use for HTML emails.' => 'The template Wishlist will use for HTML emails.',
   'This action is not allowed for the current user.' => 'This action is not allowed for the current user.',
+  'Too many guest wishlist changes. Please try again later.' => 'Too many guest wishlist changes. Please try again later.',
   'Too many share emails. Please try again later.' => 'Too many share emails. Please try again later.',
   'Unable to duplicate list “{errors}”.' => 'Unable to duplicate list “{errors}”.',
   'Upvote' => 'Upvote',
@@ -138,7 +141,7 @@ return [
   'Whether active elements without a public site URL can be added to lists from front-end requests.' => 'Whether active elements without a public site URL can be added to lists from front-end requests.',
   'Whether to allow duplicate items to be added to lists.' => 'Whether to allow duplicate items to be added to lists.',
   'Whether to attach the PDF to the email. See PDF settings for generating the PDF.' => 'Whether to attach the PDF to the email. See PDF settings for generating the PDF.',
-  'Whether to delete a list after a certain period of time, only if the list is empty, and only for guests.' => 'Whether to delete a list after a certain period of time, only if the list is empty, and only for guests.',
+  'Whether inactive guest lists should only be deleted when empty. When disabled, inactive guest lists containing items are also deleted.' => 'Whether inactive guest lists should only be deleted when empty. When disabled, inactive guest lists containing items are also deleted.',
   'Whether to delete a list after a certain period of time, only if the list is empty.' => 'Whether to delete a list after a certain period of time, only if the list is empty.',
   'Whether to delete a list after a certain period of time.' => 'Whether to delete a list after a certain period of time.',
   'Whether disabled, archived, pending, expired, suspended or locked elements can be added to lists from front-end requests.' => 'Whether disabled, archived, pending, expired, suspended or locked elements can be added to lists from front-end requests.',

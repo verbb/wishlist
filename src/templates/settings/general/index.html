@@ -100,7 +100,7 @@
 
     {{ forms.lightswitchField({
         label: 'Purge Empty Guest Lists Only' | t('wishlist'),
-        instructions: 'Whether to delete a list after a certain period of time, only if the list is empty, and only for guests.' | t('wishlist'),
+        instructions: 'Whether inactive guest lists should only be deleted when empty. When disabled, inactive guest lists containing items are also deleted.' | t('wishlist'),
         name: 'purgeEmptyGuestListsOnly',
         on: settings.purgeEmptyGuestListsOnly,
         warning: macros.configWarning('purgeEmptyGuestListsOnly', 'wishlist'),

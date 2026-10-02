@@ -1,4 +1,7 @@
 # Managing Lists
+
+Guest visitors can create up to 10 lists per 15 minutes and retain up to 20 active lists. Guest creation limits use both the current client address and guest identity; multi-node deployments must use shared persistent cache and mutex implementations so rate limits apply across every node.
+
 You can Add, Delete or Clear lists, and its recommended that these options should only be available to registered users to prevent abuse.
 
 The URL examples on this page require the `allowGetListActions` setting, which is enabled by default for Wishlist 3 compatibility. GET requests are deprecated and will be rejected in Wishlist 4. Disable the setting and use the POST form examples to require CSRF protection for these actions.
