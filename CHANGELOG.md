@@ -16,6 +16,7 @@
 - Fixed a medium-severity email content injection vulnerability.
 - Fixed a medium-severity denial-of-service vulnerability.
 - Fixed a medium-severity information disclosure vulnerability.
+- Fixed a low-severity cross-site request forgery vulnerability.
 - Fixed default list share emails failing to render.
 
 ### Deprecated

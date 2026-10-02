@@ -60,6 +60,10 @@ class ListsController extends BaseController
             return false;
         }
 
+        if ($action->id === 'share-by-email') {
+            $this->requirePostRequest();
+        }
+
         $settings = Wishlist::$plugin->getSettings();
         $postOnlyActions = ['create', 'update', 'update-items', 'delete', 'clear', 'add-to-cart'];
 
