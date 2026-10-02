@@ -1,7 +1,7 @@
 <div id="wishlistInfo">
     <h2>{{ '{name} Wishlist’s' | t('wishlist', { name: user.fullName() }) }}</h2>
 
-    {% set lists = craft.wishlist.lists().userId(user.id).all() %}
+    {% set lists = craft.wishlist.lists(false).userId(user.id).editable().all() %}
 
     {% if lists %}
         {% for list in lists %}

@@ -334,7 +334,9 @@ class Wishlist extends Plugin
         if ($this->getSettings()->showListInfoTab) {
             // Add Wishlist info to user edit screen
             Event::on(UsersController::class, UsersController::EVENT_DEFINE_EDIT_SCREENS, function(DefineEditUserScreensEvent $event) {
-                $event->screens[WishlistUsersController::SCREEN_WISHLIST] = ['label' => Craft::t('wishlist', 'Wishlist')];
+                if (Wishlist::$plugin->getListTypes()->getEditableListTypeIds()) {
+                    $event->screens[WishlistUsersController::SCREEN_WISHLIST] = ['label' => Craft::t('wishlist', 'Wishlist')];
+                }
             });
         }
     }
