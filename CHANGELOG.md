@@ -8,6 +8,7 @@
 
 ### Fixed
 - Fixed a high-severity information disclosure vulnerability.
+- Fixed a medium-severity control panel authorization vulnerability.
 - Fixed a medium-severity email content injection vulnerability.
 - Fixed a medium-severity denial-of-service vulnerability.
 - Fixed a medium-severity information disclosure vulnerability.

@@ -49,12 +49,10 @@ class ListElement extends Element
 
     public static function defineSources(string $context = null): array
     {
-        if ($context === 'index') {
-            $listTypes = Wishlist::$plugin->getListTypes()->getEditableListTypes();
-            $editable = true;
-        } else {
-            $listTypes = Wishlist::$plugin->getListTypes()->getAllListTypes();
-            $editable = false;
+        $listTypes = Wishlist::$plugin->getListTypes()->getEditableListTypes();
+
+        if (!$listTypes) {
+            return [];
         }
 
         $listTypeIds = [];
@@ -69,7 +67,7 @@ class ListElement extends Element
                 'label' => Craft::t('wishlist', 'All lists'),
                 'criteria' => [
                     'typeId' => $listTypeIds,
-                    'editable' => $editable,
+                    'editable' => true,
                 ],
                 'defaultSort' => ['postDate', 'desc'],
             ],
@@ -88,7 +86,7 @@ class ListElement extends Element
                     'handle' => $listType->handle,
                     'editable' => $canEditLists,
                 ],
-                'criteria' => ['typeId' => $listType->id, 'editable' => $editable],
+                'criteria' => ['typeId' => $listType->id, 'editable' => true],
             ];
         }
 

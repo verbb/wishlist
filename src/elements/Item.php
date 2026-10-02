@@ -53,10 +53,17 @@ class Item extends Element
 
     public static function defineSources(string $context = null): array
     {
+        $listTypeIds = Wishlist::$plugin->getListTypes()->getEditableListTypeIds();
+
+        if (!$listTypeIds) {
+            return [];
+        }
+
         return [
             [
                 'key' => '*',
                 'label' => Craft::t('wishlist', 'All items'),
+                'criteria' => ['listTypeId' => $listTypeIds],
                 'defaultSort' => ['dateCreated', 'desc'],
             ],
         ];

@@ -2,13 +2,16 @@
 namespace verbb\wishlist\elements\db;
 
 use verbb\wishlist\WishList;
+use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\models\ListType;
 
 use Craft;
+use craft\controllers\ElementIndexesController;
 use craft\db\Query;
 use craft\db\QueryAbortedException;
 use craft\elements\db\ElementQuery;
 use craft\helpers\Db;
+use craft\web\Application;
 
 use yii\db\Expression;
 
@@ -181,7 +184,14 @@ class ListQuery extends ElementQuery
 
     private function _applyEditableParam(): void
     {
-        if (!$this->editable) {
+        $isElementIndexQuery = false;
+
+        if (Craft::$app instanceof Application && Craft::$app->controller instanceof ElementIndexesController) {
+            $elementType = Craft::$app->getRequest()->getParam('elementType');
+            $isElementIndexQuery = is_string($elementType) && is_a($elementType, ListElement::class, true);
+        }
+
+        if (!$this->editable && !$isElementIndexQuery) {
             return;
         }
 
