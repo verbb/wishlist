@@ -261,7 +261,7 @@ class ListsController extends BaseController
             return $this->returnError('List ID must be provided.');
         }
 
-        $list = $this->_setListFromPost(false);
+        $list = $this->_setListFromPost(false, true);
 
         // Check if we're allowed to manage lists
         $this->enforceEnabledList($list);
@@ -847,7 +847,7 @@ class ListsController extends BaseController
         $variables['fieldsHtml'] = $form->render();
     }
 
-    private function _setListFromPost(bool $allowUserAssignment = true): ListElement
+    private function _setListFromPost(bool $allowUserAssignment = true, bool $enforceEnabledState = false): ListElement
     {
         $listId = $this->request->getParam('listId');
 
@@ -859,6 +859,10 @@ class ListsController extends BaseController
             }
 
             $this->enforceListPermissions($list);
+
+            if ($enforceEnabledState) {
+                $this->enforceEnabledList($list);
+            }
         } else {
             $list = Wishlist::$plugin->getLists()->createList();
         }

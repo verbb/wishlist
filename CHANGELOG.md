@@ -18,6 +18,7 @@
 - Fixed a medium-severity information disclosure vulnerability.
 - Fixed a low-severity cross-site request forgery vulnerability.
 - Fixed a low-severity control panel information disclosure vulnerability.
+- Fixed a low-severity disabled-list authorization bypass.
 - Fixed default list share emails failing to render.
 
 ### Deprecated
