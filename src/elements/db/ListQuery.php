@@ -114,15 +114,23 @@ class ListQuery extends ElementQuery
 
         $this->joinElementTable('wishlist_lists');
 
-        $this->query->select([
+        $isElementIndexQuery = $this->_isElementIndexQuery();
+        $select = [
             'wishlist_lists.id',
             'wishlist_lists.reference',
             'wishlist_lists.typeId',
             'wishlist_lists.lastIp',
             'wishlist_lists.userId',
-            'wishlist_lists.sessionId',
             'wishlist_lists.default',
-        ]);
+        ];
+
+        $isElementIndexExportQuery = $isElementIndexQuery && Craft::$app->controller->action?->id === 'export';
+
+        if (!$isElementIndexExportQuery) {
+            $select[] = 'wishlist_lists.sessionId';
+        }
+
+        $this->query->select($select);
 
         if ($this->reference !== null) {
             // References are public sharing credentials, so query syntax must never broaden a match.
@@ -146,7 +154,7 @@ class ListQuery extends ElementQuery
             $this->_applyExactParam('wishlist_lists.sessionId', $this->sessionId);
         }
 
-        $this->_applyEditableParam();
+        $this->_applyEditableParam($isElementIndexQuery);
 
         return parent::beforePrepare();
     }
@@ -182,15 +190,19 @@ class ListQuery extends ElementQuery
         $this->subQuery->andWhere($condition);
     }
 
-    private function _applyEditableParam(): void
+    private function _isElementIndexQuery(): bool
     {
-        $isElementIndexQuery = false;
-
         if (Craft::$app instanceof Application && Craft::$app->controller instanceof ElementIndexesController) {
             $elementType = Craft::$app->getRequest()->getParam('elementType');
-            $isElementIndexQuery = is_string($elementType) && is_a($elementType, ListElement::class, true);
+
+            return is_string($elementType) && is_a($elementType, ListElement::class, true);
         }
 
+        return false;
+    }
+
+    private function _applyEditableParam(bool $isElementIndexQuery): void
+    {
         if (!$this->editable && !$isElementIndexQuery) {
             return;
         }
