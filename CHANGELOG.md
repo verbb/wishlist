@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.0.22 - 2026-10-05
 
 ### Added
 - Added a setting for requiring POST requests for front-end list and item actions.

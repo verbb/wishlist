@@ -2,7 +2,7 @@
     "name": "verbb/wishlist",
     "description": "A Craft CMS plugin for saving, organising and sharing lists of elements and products.",
     "type": "craft-plugin",
-    "version": "3.0.21",
+    "version": "3.0.22",
     "keywords": [
         "craft",
         "cms",
