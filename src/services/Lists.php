@@ -18,11 +18,11 @@ use craft\helpers\ConfigHelper;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
 
-use DateTime;
-
+use yii\db\Expression;
 use yii\web\Cookie;
 use yii\web\UserEvent;
 
+use DateTime;
 use Throwable;
 
 class Lists extends Component
@@ -443,8 +443,9 @@ class Lists extends Component
         /* @var Settings $settings */
         $settings = Wishlist::$plugin->getSettings();
 
+        // Use a SQL literal so Yii does not quote `1` as a column identifier.
         $validItemsQuery = (new Query())
-            ->select('1')
+            ->select(new Expression('1'))
             ->from(['items' => '{{%wishlist_items}}'])
             ->where('[[items.listId]] = [[lists.id]]')
             ->andWhere(['not', ['items.elementId' => null]]);
