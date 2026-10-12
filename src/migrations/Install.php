@@ -9,7 +9,6 @@ use verbb\wishlist\models\ListType;
 use Craft;
 use craft\db\Migration;
 use craft\helpers\Db;
-use craft\helpers\MigrationHelper;
 use craft\models\FieldLayout;
 use craft\models\FieldLayoutTab;
 
@@ -140,15 +139,20 @@ class Install extends Migration
     public function dropForeignKeys(): void
     {
         if ($this->db->tableExists('{{%wishlist_lists}}')) {
-            MigrationHelper::dropAllForeignKeysOnTable('{{%wishlist_lists}}', $this);
+            $this->dropForeignKeyIfExists('{{%wishlist_lists}}', 'id');
+            $this->dropForeignKeyIfExists('{{%wishlist_lists}}', 'typeId');
         }
 
         if ($this->db->tableExists('{{%wishlist_listtypes}}')) {
-            MigrationHelper::dropAllForeignKeysOnTable('{{%wishlist_listtypes}}', $this);
+            $this->dropForeignKeyIfExists('{{%wishlist_listtypes}}', 'fieldLayoutId');
+            $this->dropForeignKeyIfExists('{{%wishlist_listtypes}}', 'itemFieldLayoutId');
         }
 
         if ($this->db->tableExists('{{%wishlist_items}}')) {
-            MigrationHelper::dropAllForeignKeysOnTable('{{%wishlist_items}}', $this);
+            $this->dropForeignKeyIfExists('{{%wishlist_items}}', 'id');
+            $this->dropForeignKeyIfExists('{{%wishlist_items}}', 'listId');
+            $this->dropForeignKeyIfExists('{{%wishlist_items}}', 'elementId');
+            $this->dropForeignKeyIfExists('{{%wishlist_items}}', 'elementSiteId');
         }
     }
 

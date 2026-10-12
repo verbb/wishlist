@@ -398,7 +398,7 @@ class Lists extends Component
         $settings = Wishlist::$plugin->getSettings();
 
         $configInterval = ConfigHelper::durationInSeconds($settings->cookieExpiry);
-        $expiry = (new DateTime())->add(DateTimeHelper::secondsToInterval($configInterval));
+        $expiry = (new DateTime())->add(DateTimeHelper::toDateInterval($configInterval));
 
         $cookie = Craft::createObject(Craft::cookieConfig([
             'class' => Cookie::class,
@@ -452,7 +452,7 @@ class Lists extends Component
 
         $configInterval = ConfigHelper::durationInSeconds($settings->purgeInactiveListsDuration);
         $edge = new DateTime();
-        $interval = DateTimeHelper::secondsToInterval($configInterval);
+        $interval = DateTimeHelper::toDateInterval($configInterval);
         $edge->sub($interval);
 
         $query = (new Query())
@@ -470,7 +470,7 @@ class Lists extends Component
 
         $configInterval = ConfigHelper::durationInSeconds($settings->purgeInactiveGuestListsDuration);
         $edge = new DateTime();
-        $interval = DateTimeHelper::secondsToInterval($configInterval);
+        $interval = DateTimeHelper::toDateInterval($configInterval);
         $edge->sub($interval);
 
         $query = (new Query())
