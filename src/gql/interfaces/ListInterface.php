@@ -4,6 +4,7 @@ namespace verbb\wishlist\gql\interfaces;
 use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\gql\types\generators\ListGenerator;
 use verbb\wishlist\gql\arguments\ItemArguments;
+use verbb\wishlist\gql\resolvers\ItemResolver;
 
 use Craft;
 use craft\gql\interfaces\Element;
@@ -55,6 +56,7 @@ class ListInterface extends Element
                 'args' => ItemArguments::getArguments(),
                 'type' => Type::listOf(ItemInterface::getType()),
                 'description' => 'The lists items. Accepts the same arguments as the `items` query.',
+                'resolve' => [ItemResolver::class, 'resolve'],
             ],
             'typeId' => [
                 'name' => 'typeId',

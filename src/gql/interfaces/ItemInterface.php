@@ -50,6 +50,12 @@ class ItemInterface extends Element
     public static function getFieldDefinitions(): array
     {
         return Craft::$app->getGql()->prepareFieldDefinitions(array_merge(parent::getFieldDefinitions(), [
+            'title' => [
+                'name' => 'title',
+                'type' => Type::string(),
+                'description' => 'The linked element’s title, when permitted by the schema.',
+                'resolve' => fn(Item $item) => GqlHelper::resolveItemElement($item)?->title,
+            ],
             'listId' => [
                 'name' => 'listId',
                 'type' => Type::int(),
@@ -59,11 +65,13 @@ class ItemInterface extends Element
                 'name' => 'elementId',
                 'type' => Type::int(),
                 'description' => 'The ID of the element that the item relates to.',
+                'resolve' => fn(Item $item) => GqlHelper::resolveItemElement($item)?->id,
             ],
             'elementClass' => [
                 'name' => 'elementClass',
                 'type' => Type::string(),
                 'description' => 'The class of the element that the item relates to.',
+                'resolve' => fn(Item $item) => GqlHelper::resolveItemElement($item) !== null ? $item->elementClass : null,
             ],
             'element' => [
                 'name' => 'element',

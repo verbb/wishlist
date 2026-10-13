@@ -1,6 +1,12 @@
 # GraphQL
 Wishlist supports accessing [Item](docs:developers/item) and [List](docs:developers/list) objects via GraphQL. Be sure to read about [Craft's GraphQL support](https://craftcms.com/docs/4.x/graphql.html).
 
+## Linked Element Permissions
+
+The schema must permit both the wishlist list type and the linked element’s section, volume, product type or other supported scope. Site and lifecycle permissions also apply. When a linked element is unavailable to the schema, the wishlist item remains in an ordinary query, but its `title`, `elementId`, `elementClass` and `element` fields return `null`. Use the wishlist item’s own `id` and `listId` to show an unavailable-item placeholder.
+
+Queries using `title`, `search`, `elementId` or `elementClass`, or sorting by linked-element metadata, return only items whose linked elements the schema can read. This restriction is applied before `limit` and `offset`, including for nested list `items` queries. These queries need additional permission checks over matching items, so prefer a specific `listId` when searching within one wishlist. Ordinary item ordering, such as `orderBy: "id ASC"`, retains unavailable-item placeholders.
+
 ## Lists
 
 ### Example

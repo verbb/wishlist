@@ -3,11 +3,12 @@
 ## Unreleased
 
 ### Changed
+- GraphQL items now return `null` for linked-element metadata unavailable to the schema. Queries filtering or sorting by that metadata omit unavailable items; unfiltered queries retain them.
 - Updated Craft API usage to avoid deprecated calls.
 
 ### Fixed
 - Fixed a medium-severity information disclosure vulnerability.
-- Fixed a low-severity information disclosure vulnerability.
+- Fixed two low-severity information disclosure vulnerabilities.
 
 ## 3.0.23 - 2026-10-07
 
