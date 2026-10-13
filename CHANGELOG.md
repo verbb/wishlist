@@ -8,7 +8,7 @@
 
 ### Fixed
 - Fixed a medium-severity information disclosure vulnerability.
-- Fixed two low-severity information disclosure vulnerabilities.
+- Fixed three low-severity information disclosure vulnerabilities.
 
 ## 3.0.23 - 2026-10-07
 

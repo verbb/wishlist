@@ -45,7 +45,11 @@ A visitor can also add products from a publicly shared list to their own cart. I
 
 ```twig
 {% set reference = craft.app.request.getParam('id') %}
-{% set list = craft.wishlist.lists(false).reference(reference).one() %}
+{% set list = null %}
+
+{% if reference is not empty and reference is not iterable %}
+    {% set list = craft.wishlist.lists(false).reference(reference ~ '').one() %}
+{% endif %}
 
 {% if list %}
     <form method="POST">
@@ -60,6 +64,8 @@ A visitor can also add products from a publicly shared list to their own cart. I
     </form>
 {% endif %}
 ```
+
+Only look up a shared list when the reference is present and is not an array. If you copied an earlier version of this example, update your site's template to include this check; upgrading Wishlist does not update your templates.
 
 Shared-list visitors can supply quantities, notes and line-item options for their own cart. Only the list owner or a user with permission to manage the list can remove or clear source items, or copy the list’s and items’ custom fields into cart options.
 
