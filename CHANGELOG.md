@@ -5,6 +5,10 @@
 ### Changed
 - Updated Craft API usage to avoid deprecated calls.
 
+### Fixed
+- Fixed a medium-severity information disclosure vulnerability.
+- Fixed a low-severity information disclosure vulnerability.
+
 ## 3.0.23 - 2026-10-07
 
 ### Changed

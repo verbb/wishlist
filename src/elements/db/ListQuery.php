@@ -3,15 +3,14 @@ namespace verbb\wishlist\elements\db;
 
 use verbb\wishlist\WishList;
 use verbb\wishlist\elements\ListElement;
+use verbb\wishlist\helpers\ElementPermissions;
 use verbb\wishlist\models\ListType;
 
 use Craft;
-use craft\controllers\ElementIndexesController;
 use craft\db\Query;
 use craft\db\QueryAbortedException;
 use craft\elements\db\ElementQuery;
 use craft\helpers\Db;
-use craft\web\Application;
 
 use yii\db\Expression;
 
@@ -114,7 +113,7 @@ class ListQuery extends ElementQuery
 
         $this->joinElementTable('wishlist_lists');
 
-        $isElementIndexQuery = $this->_isElementIndexQuery();
+        $isElementIndexQuery = ElementPermissions::isElementIndexRequest(ListElement::class);
         $select = [
             'wishlist_lists.id',
             'wishlist_lists.reference',
@@ -154,7 +153,7 @@ class ListQuery extends ElementQuery
             $this->_applyExactParam('wishlist_lists.sessionId', $this->sessionId);
         }
 
-        $this->_applyEditableParam($isElementIndexQuery);
+        $this->_applyEditableParam(ElementPermissions::isElementReadRequest(ListElement::class));
 
         return parent::beforePrepare();
     }
@@ -190,20 +189,9 @@ class ListQuery extends ElementQuery
         $this->subQuery->andWhere($condition);
     }
 
-    private function _isElementIndexQuery(): bool
+    private function _applyEditableParam(bool $isElementReadQuery): void
     {
-        if (Craft::$app instanceof Application && Craft::$app->controller instanceof ElementIndexesController) {
-            $elementType = Craft::$app->getRequest()->getParam('elementType');
-
-            return is_string($elementType) && is_a($elementType, ListElement::class, true);
-        }
-
-        return false;
-    }
-
-    private function _applyEditableParam(bool $isElementIndexQuery): void
-    {
-        if (!$this->editable && !$isElementIndexQuery) {
+        if (!$this->editable && !$isElementReadQuery) {
             return;
         }
 

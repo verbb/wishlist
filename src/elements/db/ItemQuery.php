@@ -3,12 +3,10 @@ namespace verbb\wishlist\elements\db;
 
 use verbb\wishlist\Wishlist;
 use verbb\wishlist\elements\Item;
+use verbb\wishlist\helpers\ElementPermissions;
 
-use Craft;
-use craft\controllers\ElementIndexesController;
 use craft\elements\db\ElementQuery;
 use craft\helpers\Db;
-use craft\web\Application;
 
 class ItemQuery extends ElementQuery
 {
@@ -174,7 +172,7 @@ class ItemQuery extends ElementQuery
             $this->subQuery->andWhere(Db::parseParam('wishlist_listtypes.handle', $this->listTypeHandle));
         }
 
-        $this->_applyElementIndexPermissions();
+        $this->_applyElementReadPermissions();
 
         if (!$this->trashedElement) {
             $this->query->andWhere(['element_item.dateDeleted' => null]);
@@ -195,16 +193,9 @@ class ItemQuery extends ElementQuery
     // Private Methods
     // =========================================================================
 
-    private function _applyElementIndexPermissions(): void
+    private function _applyElementReadPermissions(): void
     {
-        $isElementIndexQuery = false;
-
-        if (Craft::$app instanceof Application && Craft::$app->controller instanceof ElementIndexesController) {
-            $elementType = Craft::$app->getRequest()->getParam('elementType');
-            $isElementIndexQuery = is_string($elementType) && is_a($elementType, Item::class, true);
-        }
-
-        if (!$isElementIndexQuery) {
+        if (!ElementPermissions::isElementReadRequest(Item::class)) {
             return;
         }
 
