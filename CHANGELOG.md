@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.0.24 - 2026-10-15
 
 ### Changed
 - GraphQL items now return `null` for linked-element metadata unavailable to the schema. Queries filtering or sorting by that metadata omit unavailable items; unfiltered queries retain them.
