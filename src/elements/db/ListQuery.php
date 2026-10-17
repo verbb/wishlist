@@ -1,7 +1,7 @@
 <?php
 namespace verbb\wishlist\elements\db;
 
-use verbb\wishlist\WishList;
+use verbb\wishlist\Wishlist;
 use verbb\wishlist\elements\ListElement;
 use verbb\wishlist\helpers\ElementPermissions;
 use verbb\wishlist\models\ListType;
