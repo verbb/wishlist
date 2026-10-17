@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.0.22 - 2026-10-17
 
 ### Fixed
 - Fixed a plugin class reference that could fail on case-sensitive filesystems.
