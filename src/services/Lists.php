@@ -398,14 +398,16 @@ class Lists extends Component
         $settings = Wishlist::$plugin->getSettings();
 
         $configInterval = ConfigHelper::durationInSeconds($settings->cookieExpiry);
-        $expiry = (new DateTime())->add(DateTimeHelper::toDateInterval($configInterval));
+
+        // A zero expiry keeps the cookie session-based.
+        $expiry = $configInterval === 0 ? 0 : time() + $configInterval;
 
         $cookie = Craft::createObject(Craft::cookieConfig([
             'class' => Cookie::class,
             'name' => 'Wishlist:sessionId',
             'value' => $sessionId,
             'httpOnly' => true,
-            'expire' => $expiry->getTimestamp(),
+            'expire' => $expiry,
         ]));
 
         Craft::$app->getResponse()->getRawCookies()->add($cookie);

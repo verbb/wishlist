@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed an error when creating or restoring a guest session with the default cookie expiry.
+
 ## 3.0.25 - 2026-10-17
 
 ### Fixed
