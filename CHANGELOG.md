@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Changed
+- Updated the frontend build toolchain to Vite 8.3.4.
+
 ### Fixed
 - Fixed an error when creating or restoring a guest session with the default cookie expiry.
 
