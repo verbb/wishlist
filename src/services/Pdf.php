@@ -101,7 +101,7 @@ class Pdf extends Component
                     $this->_cacheOutput($cacheKey, $list->id, $result['output']);
                 }
 
-                return $result['triggerAfter'] ? $this->_triggerAfterRenderPdf($list, $settings->pdfPath, $result['output']) : $result['output'];
+                return $result['triggerAfter'] ? $this->_triggerAfterRenderPdf($list, $result['template'], $result['output']) : $result['output'];
             } finally {
                 $this->_releaseRenderSlot($renderSlot);
             }
@@ -145,6 +145,8 @@ class Pdf extends Component
                 'triggerAfter' => false,
             ];
         }
+
+        $templatePath = $event->template;
 
         $view = Craft::$app->getView();
         $oldTemplateMode = $view->getTemplateMode();
@@ -230,6 +232,7 @@ class Pdf extends Component
             'output' => $dompdf->output(),
             'cacheable' => true,
             'triggerAfter' => true,
+            'template' => $templatePath,
         ];
     }
 
@@ -294,6 +297,7 @@ class Pdf extends Component
         } catch (Throwable) {
             $sessionId = null;
         }
+
         $context = [
             'version' => 1,
             'listId' => $list->id,

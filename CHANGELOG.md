@@ -4,6 +4,7 @@
 
 ### Fixed
 - Fixed users with the “Manage list types” permission being unable to save list types.
+- Fixed `beforeRenderPdf` event handlers being unable to change the PDF template.
 
 ## 3.0.26 - 2026-10-22
 
