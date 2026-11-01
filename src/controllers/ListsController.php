@@ -126,6 +126,7 @@ class ListsController extends BaseController
         }
 
         $this->requirePermission('wishlist-manageListType:' . $listType->uid);
+
         $variables['listType'] = $listType;
 
         $this->_prepareVariableArray($variables);
@@ -163,7 +164,7 @@ class ListsController extends BaseController
 
         if (!Craft::$app->getElements()->deleteElement($list)) {
             if ($this->request->getAcceptsJson()) {
-                $this->asJson(['success' => false]);
+                return $this->asJson(['success' => false]);
             }
 
             $session->setError(Craft::t('wishlist', 'Couldn’t delete list.'));
@@ -176,7 +177,7 @@ class ListsController extends BaseController
         }
 
         if ($this->request->getAcceptsJson()) {
-            $this->asJson(['success' => true]);
+            return $this->asJson(['success' => true]);
         }
 
         $session->setNotice(Craft::t('wishlist', 'List deleted.'));
