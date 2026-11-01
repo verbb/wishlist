@@ -82,12 +82,6 @@ class ListTypesController extends Controller
 
     public function actionSaveListType(): void
     {
-        $currentUser = Craft::$app->getUser()->getIdentity();
-
-        if (!$currentUser->can('manageWishlist')) {
-            throw new HttpException(403, Craft::t('wishlist', 'This action is not allowed for the current user.'));
-        }
-
         $this->requirePostRequest();
 
         $listType = new ListType();
@@ -130,6 +124,7 @@ class ListTypesController extends Controller
         $listTypeId = Craft::$app->getRequest()->getRequiredBodyParam('id');
 
         Wishlist::$plugin->getListTypes()->deleteListTypeById($listTypeId);
+
         return $this->asJson(['success' => true]);
     }
 }
