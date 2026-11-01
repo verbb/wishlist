@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.0.27 - 2026-11-01
 
 ### Fixed
 - Fixed users with the “Manage list types” permission being unable to save list types.
