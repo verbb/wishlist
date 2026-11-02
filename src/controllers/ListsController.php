@@ -919,6 +919,9 @@ class ListsController extends BaseController
             return null;
         }
 
+        // Craft only derives `fullName` when a user is saved, and this one never is.
+        $values['fullName'] = $values['firstName'] . ' ' . $values['lastName'];
+
         return new User($values);
     }
 
