@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.0.28 - 2026-11-05
 
 ### Fixed
 - Fixed share list emails leaving out the sender’s name.
