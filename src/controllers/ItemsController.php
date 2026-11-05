@@ -113,6 +113,7 @@ class ItemsController extends BaseController
             $item->listId = $list->id;
         }
 
+        $item->enabled = (bool)$this->request->getBodyParam('enabled', $item->enabled);
         $item->setFieldValuesFromRequest('fields');
 
         // Element is a little special to cater for multiple types

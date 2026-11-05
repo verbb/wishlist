@@ -4,6 +4,7 @@
 
 ### Fixed
 - Fixed share list emails leaving out the sender’s name.
+- Fixed the Enabled setting on the control panel item edit page not being saved.
 
 ## 3.0.27 - 2026-11-01
 
