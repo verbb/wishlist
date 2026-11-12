@@ -1,9 +1,9 @@
 <!-- feature-intro -->
-Let visitors create lists for any Craft element. Build favourites for entries, wishlists for products, reading lists or project-specific collections — all shareable through a unique URL.
+Let visitors create lists for any Craft element. Build favourites for entries, wishlists for products, reading lists or project-specific collections, all shareable through a unique URL.
 <!-- feature-intro-end -->
 
 <!-- feature-section media-size="large" -->
-## Save now, decide later
+## Save Craft elements to a list
 
 Guests and signed-in users can add supported Craft elements to a list. A simple site may use one default list, while list types allow several distinct collection experiences with their own behaviour.
 

@@ -5,8 +5,6 @@ Wishlist is a Craft CMS plugin that lets visitors save entries, categories, Comm
 
 A simple site can use the default list, while larger projects can create multiple list types with their own fields and behaviour. Guests and signed-in members are both supported.
 
-And yes, every list can have its own shareable URL.
-
 ## Features
 
 - Keep guest lists in the visitor's browser and member lists with their Craft account.
@@ -19,10 +17,12 @@ And yes, every list can have its own shareable URL.
 - Share lists through a unique URL or email.
 
 ## Documentation
+
 Visit the [Wishlist Plugin page](https://verbb.io/craft-plugins/wishlist) for all documentation, guides, pricing and developer resources.
 
 ## Support
-Get in touch with us via the [Wishlist Support page](https://verbb.io/craft-plugins/wishlist/support) or by [creating a Github issue](https://github.com/verbb/wishlist/issues)
+
+Get in touch with us via the [Wishlist Support page](https://verbb.io/craft-plugins/wishlist/support) or by [creating a GitHub issue](https://github.com/verbb/wishlist/issues).
 
 <h2></h2>
 

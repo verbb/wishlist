@@ -2,8 +2,6 @@ Wishlist lets visitors save entries, categories, Commerce products and other Cra
 
 A simple site can use the default list, while larger projects can create multiple list types with their own fields and behaviour. Guests and signed-in members are both supported.
 
-And yes, every list can have its own shareable URL.
-
 ## Features
 
 - Keep guest lists in the visitor's browser and member lists with their Craft account.
