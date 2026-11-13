@@ -37,7 +37,7 @@ In the template itself, you'll have access to the following Twig variables:
 
 Variable | Description
 --- | ---
-`list` | The [List](docs:developers/list) object.
+`list` | The [List](docs:reference/list) object.
 
 
 ## Example Template

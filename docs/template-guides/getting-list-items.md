@@ -42,7 +42,7 @@ As Wishlist can support multiple lists, and multiple list types, you can also lo
             <li>{{ item.title }}</li>
         {% endfor %}
     </ul>
-{% endif %}
+{% endfor %}
 ```
 
 Note that by default, this will still only return lists for the current user. You can change this be passing `false` into `lists()`.
@@ -56,5 +56,5 @@ Note that by default, this will still only return lists for the current user. Yo
             <li>{{ item.title }}</li>
         {% endfor %}
     </ul>
-{% endif %}
+{% endfor %}
 ```

@@ -65,7 +65,7 @@ A visitor can also add products from a publicly shared list to their own cart. I
 {% endif %}
 ```
 
-Only look up a shared list when the reference is present and is not an array. If you copied an earlier version of this example, update your site's template to include this check; upgrading Wishlist does not update your templates.
+Only look up a shared list when the reference is present and isn't an array, as the example does, so a request with a missing or malformed `reference` doesn't cause an error.
 
 Shared-list visitors can supply quantities, notes and line-item options for their own cart. Only the list owner or a user with permission to manage the list can remove or clear source items, or copy the list’s and items’ custom fields into cart options.
 

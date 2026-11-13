@@ -4,7 +4,7 @@ Guest visitors can create up to 10 lists per 15 minutes and retain up to 20 acti
 
 You can Add, Delete or Clear lists, and its recommended that these options should only be available to registered users to prevent abuse.
 
-The URL examples on this page require the `allowGetListActions` setting, which is enabled by default for Wishlist 3 compatibility. GET requests are deprecated and will be rejected in Wishlist 4. Disable the setting and use the POST form examples to require CSRF protection for these actions.
+The URL examples on this page need the [`allowGetListActions`](docs:get-started/configuration#allowgetlistactions) setting, which lets these actions accept GET requests. Turn it off to require POST requests with CSRF protection, and use the form examples instead.
 
 ## Add List
 

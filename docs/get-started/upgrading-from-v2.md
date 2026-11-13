@@ -204,3 +204,7 @@ The other common use-case for this was to add/remove/toggle elements added to th
 - `list.addItemUrl(entry)`
 - `list.toggleItemUrl(entry)`
 - `list.removeItemUrl(entry)`
+
+## Action Requests
+
+Front-end list, item and add-to-cart actions still accept GET requests, such as action URLs in links, while the [`allowGetListActions`](configuration.md#allowgetlistactions) setting is on, which it is by default. GET requests are deprecated, so change these links to POST forms that include a CSRF token, then turn the setting off. With it off, these actions require POST requests with CSRF protection for creating, updating, deleting and clearing lists, adding, toggling, removing and updating list items, and adding lists to a cart.

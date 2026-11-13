@@ -45,10 +45,24 @@
         "title": "Developers",
         "collapsable": false,
         "children": [
-            "developers/list",
-            "developers/item",
             "developers/events",
-            "developers/graphql"
+            "developers/console-commands"
+        ]
+    },
+    {
+        "title": "GraphQL",
+        "collapsable": false,
+        "children": [
+            "graphql/queries",
+            "graphql/interfaces-types"
+        ]
+    },
+    {
+        "title": "Reference",
+        "collapsable": false,
+        "children": [
+            "reference/list",
+            "reference/item"
         ]
     }
 ]
