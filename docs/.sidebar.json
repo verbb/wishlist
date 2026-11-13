@@ -14,7 +14,8 @@
         "collapsable": false,
         "children": [
             "feature-tour/lists",
-            "feature-tour/items"
+            "feature-tour/items",
+            "feature-tour/permissions"
         ]
     },
     {
