@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.0.29 - 2026-11-24
 
 ### Added
 - Added a first-run screen to the Lists index, shown until the first list exists, with a New list button and a link to the template guide for adding Wishlist buttons.
