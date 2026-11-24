@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Added a first-run screen to the Lists index, shown until the first list exists, with a New list button and a link to the template guide for adding Wishlist buttons.
+
+### Changed
+- A list with no items now shows a “No items yet” empty state with its Add item button, instead of “No items in this list.”
+
+### Fixed
+- Fixed the Add item button on a new list leading to a missing page.
+- Fixed the Lists index missing its breadcrumbs.
+- Fixed inactive lists not being purged when opening Lists from the control panel navigation.
+- Fixed the Lists page title and the List Items heading using another plugin’s translation category.
+
 ## 3.0.28 - 2026-11-05
 
 ### Fixed

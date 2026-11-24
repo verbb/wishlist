@@ -2,6 +2,11 @@
 
 {% do view.registerAssetBundle("verbb\\wishlist\\web\\assets\\cp\\WishlistAsset") %}
 
+{# A page that is one empty state sits straight on the page background, without Craft's content pane around it. #}
+{% if bareContent ?? false %}
+    {% set bodyClass = (bodyClass ?? [])|explodeClass|push('wishlist-bare-content') %}
+{% endif %}
+
 {% if title is not defined %}
     {% set title = craft.wishlist.getPluginName() %}
 {% endif %}
@@ -11,6 +16,8 @@
 
     {% endblock %}
 
+    {# A page that is one empty state leaves Verbb's footer off. #}
+    {% if not (hidePluginFooter ?? false) %}
     <hr>
     
     <div id="plugin-footer">
@@ -34,4 +41,5 @@
             </a>
         </div>
     </div>
+    {% endif %}
 {% endblock %}

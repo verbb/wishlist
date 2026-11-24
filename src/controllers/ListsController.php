@@ -101,6 +101,19 @@ class ListsController extends BaseController
         // Remove all inactive lists older than a certain date in config.
         Wishlist::$plugin->getLists()->purgeInactiveLists();
 
+        // Until the first list exists, the page explains where lists come from instead of showing an empty index.
+        $hasLists = ListElement::find()
+            ->status(null)
+            ->trashed(null)
+            ->site('*')
+            ->exists();
+
+        if (!$hasLists) {
+            return $this->renderTemplate('wishlist/lists/_first-run', [
+                'listTypes' => Wishlist::$plugin->getListTypes()->getEditableListTypes(),
+            ]);
+        }
+
         return $this->renderTemplate('wishlist/lists/index');
     }
 

@@ -1,0 +1,12 @@
+{#- Wishlist's spot illustration for Lists, drawn into a page empty state's icon slot. Coloured by plugin-kit.css.
+    Symmetrical around the centre, so it sits evenly in the rings: a list card with saved rows and a heart on its
+    top edge. -#}
+<svg slot="icon" class="wishlist-spot" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+    <rect class="wishlist-spot__paper" x="14" y="16" width="36" height="40" rx="4"/>
+    {% for y in [30, 38, 46] %}
+        <rect class="wishlist-spot__fill" x="20" y="{{ y - 2.5 }}" width="5" height="5" rx="1.5"/>
+        <line class="wishlist-spot__line" x1="29" y1="{{ y }}" x2="{{ loop.last ? 38 : 44 }}" y2="{{ y }}"/>
+    {% endfor %}
+    <circle class="wishlist-spot__fill" cx="32" cy="16" r="9"/>
+    <path class="wishlist-spot__heart" d="M32 20.6c-3.9-2.6-6-4.9-6-7.2 0-1.8 1.4-3.2 3.1-3.2 1.2 0 2.3.7 2.9 1.7.6-1 1.7-1.7 2.9-1.7 1.7 0 3.1 1.4 3.1 3.2 0 2.3-2.1 4.6-6 7.2z"/>
+</svg>

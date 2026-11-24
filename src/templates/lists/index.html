@@ -1,7 +1,12 @@
 {% extends '_layouts/elementindex' %}
 
-{% set title = 'Lists' | t('gift-voucher') %}
+{% set title = 'Lists' | t('wishlist') %}
 {% set selectedSubnavItem = 'lists' %}
+
+{% set crumbs = [
+    { label: craft.wishlist.getPluginName() | t('wishlist'), url: url('wishlist') },
+    { label: 'Lists' | t('wishlist'), url: url('wishlist/lists') },
+] %}
 
 {% set docTitle = title ~ ' - Wishlist' %}
 {% set elementType = 'verbb\\wishlist\\elements\\ListElement' %}

@@ -1,0 +1,44 @@
+{#- The Lists screen before the first list exists. It has no header New list button, so the panel holds the page's
+    create action as its one primary button. Lists usually come from visitors using the site's Wishlist buttons, so the
+    template guide is the grey second path. Someone who can't edit any list type sees only the guide. -#}
+{% extends 'wishlist/_layouts' %}
+
+{% set title = 'Lists' | t('wishlist') %}
+{% set selectedSubnavItem = 'lists' %}
+
+{% set crumbs = [
+    { label: craft.wishlist.getPluginName() | t('wishlist'), url: url('wishlist') },
+    { label: 'Lists' | t('wishlist'), url: url('wishlist/lists') },
+] %}
+{% set docTitle = title ~ ' - ' ~ craft.wishlist.getPluginName() %}
+
+{% set bareContent = true %}
+{% set hidePluginFooter = true %}
+
+{% do view.registerAssetBundle('verbb\\wishlist\\web\\assets\\cp\\PluginKitAsset') %}
+
+{% block blockContent %}
+    <pk-state-panel layout="page" heading="{{ 'Add Wishlist buttons to your templates' | t('wishlist') }}" heading-level="2">
+        {% include 'wishlist/_includes/spots/lists' %}
+
+        {{ 'Add a save button to your entry or product templates, and each visitor’s list shows here once they use it.' | t('wishlist') }}
+
+        {# A list made here belongs to the list type it's made in, so several types need a choice first. #}
+        {% if listTypes | length == 1 %}
+            <a slot="actions" class="btn submit add icon" href="{{ url('wishlist/lists/' ~ (listTypes | first).handle ~ '/new') }}">{{ 'New list' | t('wishlist') }}</a>
+        {% elseif listTypes | length > 1 %}
+            <div slot="actions">
+                <button type="button" class="btn submit add icon menubtn">{{ 'New list' | t('wishlist') }}</button>
+                <div class="menu">
+                    <ul>
+                        {% for listType in listTypes %}
+                            <li><a href="{{ url('wishlist/lists/' ~ listType.handle ~ '/new') }}">{{ listType.name | t('site') }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+
+        <a slot="actions" class="btn" href="https://verbb.io/craft-plugins/wishlist/docs/template-guides/adding-and-removing-wishlist-items" target="_blank" rel="noopener">{{ 'View template guide' | t('wishlist') }}</a>
+    </pk-state-panel>
+{% endblock %}

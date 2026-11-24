@@ -160,6 +160,7 @@ class Wishlist extends Plugin
                 'users/<userId:\d+>/wishlist' => 'wishlist/users/index',
 
                 'wishlist' => 'wishlist/lists/index',
+                'wishlist/lists' => 'wishlist/lists/index',
 
                 'wishlist/lists/<listTypeHandle:{handle}>' => 'wishlist/lists/index',
                 'wishlist/lists/<listTypeHandle:{handle}>/new' => 'wishlist/lists/edit-list',

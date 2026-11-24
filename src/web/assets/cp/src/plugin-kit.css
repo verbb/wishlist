@@ -1,0 +1,42 @@
+/* A page with nothing to show yet: Plugin Kit's page empty state, straight on the page background. */
+.wishlist-bare-content #content.content-pane {
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.wishlist-bare-content #content > pk-state-panel[layout='page'] {
+    flex: 1 1 auto;
+}
+
+/* Wishlist's spot illustration: a duotone in Wishlist's brand colour (#fa6400, from icon.svg), a darker line on white
+   with soft tinted fills and the heart in the brand colour itself. */
+.wishlist-spot {
+    --wishlist-spot-line: #b84a00;
+    --wishlist-spot-tint: #ffeadb;
+    --wishlist-spot-heart: #fa6400;
+    overflow: visible;
+}
+
+.wishlist-spot :is(.wishlist-spot__paper, .wishlist-spot__fill, .wishlist-spot__line) {
+    stroke: var(--wishlist-spot-line);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.wishlist-spot .wishlist-spot__paper {
+    fill: var(--white, #fff);
+}
+
+.wishlist-spot .wishlist-spot__fill {
+    fill: var(--wishlist-spot-tint);
+}
+
+.wishlist-spot .wishlist-spot__line {
+    fill: none;
+}
+
+.wishlist-spot .wishlist-spot__heart {
+    fill: var(--wishlist-spot-heart);
+}

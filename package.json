@@ -2,9 +2,12 @@
     "name": "wishlist",
     "private": true,
     "scripts": {
-        "build": "vite build"
+        "build": "vite build --mode production && vite build --mode plugin-kit"
     },
     "devDependencies": {
         "vite": "^8.3.5"
+    },
+    "dependencies": {
+        "@verbb/plugin-kit-web": "file:../../../plugin-kit/plugin-kit/plugin-kit-web"
     }
 }
