@@ -1,7 +1,7 @@
 {#- Wishlist's spot illustration for Lists, drawn into a page empty state's icon slot. Coloured by plugin-kit.css.
     Symmetrical around the centre, so it sits evenly in the rings: a list card with saved rows and a heart on its
     top edge. -#}
-<svg slot="icon" class="wishlist-spot" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+<svg slot="icon" class="wishlist-spot" width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
     <rect class="wishlist-spot__paper" x="14" y="16" width="36" height="40" rx="4"/>
     {% for y in [30, 38, 46] %}
         <rect class="wishlist-spot__fill" x="20" y="{{ y - 2.5 }}" width="5" height="5" rx="1.5"/>
